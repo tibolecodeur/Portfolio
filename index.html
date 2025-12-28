@@ -8,15 +8,31 @@
 </head>
 <body>
 
-    <h1 class="name">THIBAULT<br/>BREBION</h1>
+    <div id="home-content">
+        <h1 class="name">THIBAULT<br/>BREBION</h1>
+        <button class="action-button">DECOUVRIR</button>
+        <video class="bg-video" autoplay muted loop>
+            <source src="assets/images/videos/video.mp4" type="video/mp4" />
+        </video>
+        <canvas id="paint" class="canvas"></canvas>
+    </div>
 
-    <button class="action-button">DECOUVRIR</button>
+    <div class="wave-transition">
+        <svg class="wave-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="#000" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64V320H0V160Z"></path>
+        </svg>
+    
+        <div class="wave-body"></div>
 
-    <video class="bg-video" autoplay muted loop>
-        <source src="assets/images/videos/video.mp4" type="video/mp4" />
-    </video>
+        <svg class="wave-svg" viewBox="0 0 1440 320" preserveAspectRatio="none" style="transform: rotate(180deg);">
+            <path fill="#000" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64V320H0V160Z"></path>
+        </svg>
+    </div>
 
-    <canvas id="paint" class="canvas"></canvas>
+    <section id="projects-content" class="projects-hidden">
+        <h2>Mes Projets</h2>
+        <p>Bienvenue sur mon portfolio.</p>
+    </section>
 
     <script src="assets/js/script.js"></script>
 </body>
