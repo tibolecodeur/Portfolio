@@ -64,3 +64,50 @@ html,body {
     background-color: #fff;
     color: #000;
 }
+
+.wave-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 260vh; /* Augmenté pour contenir les deux courbes + le corps */
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%); 
+}
+
+.wave-svg {
+    width: 100%;
+    height: 30vh; /* Taille de la courbure */
+    display: block;
+    flex-shrink: 0;
+}
+
+.wave-body {
+    width: 100%;
+    height: 200vh; /* Corps noir massif */
+    background-color: #000;
+    margin: -1px 0; /* Évite les fissures de pixels */
+}
+
+.wave-transition.active {
+    /* On ralentit un peu pour bien voir l'effet de vague */
+    animation: waveMove 2.8s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translateY(100%);
+    }
+    /* La vague couvre tout l'écran au milieu */
+    50% {
+        transform: translateY(-30vh); 
+    }
+    /* Elle continue de monter pour sortir par le haut */
+    100% {
+        transform: translateY(-260vh);
+    }
+}
+

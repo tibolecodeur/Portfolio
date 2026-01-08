@@ -17,3 +17,28 @@ const erase=e=>{
 };
 
 canvas.onpointermove=erase;
+
+
+const btnDiscover = document.querySelector('.action-button');
+const wave = document.querySelector('.wave-transition');
+const homeContent = document.getElementById('home-content');
+const projectsContent = document.getElementById('projects-content');
+
+btnDiscover.addEventListener('click', () => {
+    wave.classList.add('active');
+
+    // On switch le contenu à 1.4s (milieu de l'anim de 2.8s)
+    setTimeout(() => {
+        if(homeContent) homeContent.style.display = 'none';
+        if(projectsContent) {
+            projectsContent.classList.remove('projects-hidden');
+            projectsContent.style.display = 'block';
+        }
+        window.scrollTo(0, 0);
+    }, 1400); 
+
+    // Reset pour permettre de cliquer à nouveau plus tard
+    setTimeout(() => {
+        wave.classList.remove('active');
+    }, 2800);
+});
