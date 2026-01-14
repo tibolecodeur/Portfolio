@@ -65,49 +65,117 @@ html,body {
     color: #000;
 }
 
+/* --- WAVE TRANSITION (CORRECTED) --- */
+
 .wave-transition {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 260vh; /* Augmenté pour contenir les deux courbes + le corps */
+    height: 100%;
     z-index: 9999;
     pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    transform: translateY(100%); 
-}
-
-.wave-svg {
-    width: 100%;
-    height: 30vh; /* Taille de la courbure */
-    display: block;
-    flex-shrink: 0;
-}
-
-.wave-body {
-    width: 100%;
-    height: 200vh; /* Corps noir massif */
-    background-color: #000;
-    margin: -1px 0; /* Évite les fissures de pixels */
+    display: none;
 }
 
 .wave-transition.active {
-    /* On ralentit un peu pour bien voir l'effet de vague */
-    animation: waveMove 2.8s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+    display: block;
 }
 
-@keyframes waveMove {
-    0% {
-        transform: translateY(100%);
-    }
-    /* La vague couvre tout l'écran au milieu */
-    50% {
-        transform: translateY(-30vh); 
-    }
-    /* Elle continue de monter pour sortir par le haut */
-    100% {
-        transform: translateY(-260vh);
-    }
+.wave-layer {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    /* On positionne le départ bien en bas pour être sûr qu'on ne voit rien au début */
+    bottom: -300vh; 
+    display: flex;
+    flex-direction: column;
 }
+
+/* Le haut de la vague */
+.wave-top {
+    display: block;
+    width: 100%;
+    height: 30vh; /* Taille de la crête */
+    margin-bottom: -1px; /* Colle au corps */
+}
+
+/* Le corps solide - TRÈS HAUT pour éviter les trous */
+.wave-body {
+    background-color: #000;
+    width: 100%;
+    height: 150vh; /* 150% de la hauteur écran = sécurité totale */
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+
+/* Le bas de la vague (la queue) */
+.wave-bottom {
+    display: block;
+    width: 100%;
+    height: 30vh;
+    transform: rotate(180deg); /* On la retourne pour faire la queue */
+    margin-top: -1px; /* Colle au corps */
+}
+
+
+/* --- ANIMATIONS --- */
+
+/* Logique : 
+   On déplace tout le bloc de bas en haut.
+   Départ : TranslateY(0) (positionné via bottom: -300vh en CSS base, on ajuste ici)
+   Arrivée : On le remonte de 400vh pour qu'il sorte totalement par le haut.
+*/
+
+.active .w1 {
+    animation: waveAnim1 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
+    opacity: 0.6; 
+    z-index: 1;
+}
+
+.active .w2 {
+    animation: waveAnim2 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
+    opacity: 0.8;
+    z-index: 2;
+}
+
+.active .w3 {
+    animation: waveAnim3 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
+    z-index: 3;
+    opacity: 1; 
+}
+
+/* W3 (Vague Opaque - Noir total)
+   ENTRÉE : Elle monte le plus LENTEMENT (pour recouvrir les autres vagues lors de la montée).
+   PAUSE : Courte pause au milieu.
+   SORTIE : Elle repart le plus VITE (pour dégager la vue et montrer les vagues derrière).
+*/
+@keyframes waveAnim3 {
+    0% { transform: translateY(0); }
+    45% { transform: translateY(-220vh); } /* Arrive à 45% (plus tard que les autres) */
+    50% { transform: translateY(-220vh); } /* Reste stable pendant le switch JS */
+    100% { transform: translateY(-460vh); } /* Part très haut, très vite */
+}
+
+/* W2 (Vague Intermédiaire)
+   Vitesse moyenne à l'entrée et à la sortie.
+*/
+@keyframes waveAnim2 {
+    0% { transform: translateY(0); }
+    42% { transform: translateY(-220vh); } /* Arrive un peu avant W3 */
+    55% { transform: translateY(-220vh); } /* Repart un peu après W3 */
+    100% { transform: translateY(-455vh); } 
+}
+
+/* W1 (Vague Claire - La plus transparente)
+   ENTRÉE : Elle monte le plus VITE (on la voit mener la danse au début).
+   SORTIE : Elle repart le plus LENTEMENT (on voit sa traîne flotter à la fin).
+*/
+@keyframes waveAnim1 {
+    0% { transform: translateY(0); }
+    39% { transform: translateY(-220vh); } /* Arrive très tôt */
+    58% { transform: translateY(-220vh); } /* Reste le plus longtemps */
+    100% { transform: translateY(-450vh); } /* Finit sa course en dernier */
+}
+
 
