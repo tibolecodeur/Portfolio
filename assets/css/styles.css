@@ -178,4 +178,128 @@ html,body {
     100% { transform: translateY(-450vh); } /* Finit sa course en dernier */
 }
 
+/* --- SECTION PROJETS STYLE --- */
+
+#projects-content {
+    background-color: #0e0e0e; /* Fond presque noir pour le contraste */
+    min-height: 100vh;
+    color: #fff;
+    padding: 120px 40px 40px 40px;
+    font-family: 'Arial', sans-serif; /* Tu pourras changer pour une font plus stylée */
+    position: relative;
+    /* Pour s'assurer que ça passe sous la vague lors de la transition */
+    z-index: 1; 
+}
+
+/* Header discret */
+.projects-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 20px;
+    margin-bottom: 60px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+}
+
+/* Liste des projets */
+.project-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-item {
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: opacity 0.3s;
+}
+
+/* Effet de focus : quand on survole la liste, les autres s'assombrissent */
+.project-list:hover .project-item {
+    opacity: 0.3;
+}
+.project-list:hover .project-item:hover {
+    opacity: 1;
+}
+
+.project-link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    text-decoration: none;
+    color: #fff;
+    padding: 40px 0;
+    position: relative;
+    z-index: 2; /* Texte au dessus de l'image flottante */
+    cursor: pointer;
+}
+
+/* Typographie Impactante */
+.p-id {
+    font-size: 16px;
+    margin-right: 40px;
+    color: #555;
+    font-weight: 300;
+}
+
+.p-name {
+    font-size: 6vw; /* Responsive huge text */
+    margin: 0;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.p-cat {
+    font-size: 16px;
+    margin-left: auto;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+/* Petit mouvement du texte au survol */
+.project-item:hover .p-name {
+    transform: translateX(20px);
+}
+
+/* --- LE PORTAL FLOTTANT (IMAGE) --- */
+
+.hover-media-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 350px; /* Taille de l'image flottante */
+    height: 450px;
+    pointer-events: none; /* Important pour cliquer au travers */
+    z-index: 10; /* Au dessus du texte, ou en dessous selon ton goût. Ici je mets au dessus mais mix-blend */
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    mix-blend-mode: normal; 
+    overflow: hidden;
+}
+
+.hover-media {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    /* On ajoute un petit effet de scale interne pour le dynamisme */
+    transform: scale(1.2); 
+    transition: transform 0.5s ease;
+}
+
+/* Quand la classe 'is-active' est ajoutée via JS */
+.hover-media-wrapper.is-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hover-media-wrapper.is-active .hover-media {
+    transform: scale(1);
+}
 
