@@ -1,305 +1,626 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap');
+
+/* --- VARIABLES & RESET --- */
+:root {
+    --accent1: #ed6a5a;
+    --accent2: #f4f1bb;
+    --accent3: #9bc1bc;
+    --accent4: #5d576b;
+    --fg-loading: #141414;
+    --text-color: #ffffff;
+    --bg-color: #0a0a0a;
+    --blur-amount: 0px;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: none; /* On cache le curseur par défaut pour mettre le nôtre */
 }
 
-html,body {
+html, body {
     width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif; /* Uniformisation de la font */
 }
 
-.bg-video {
-    width: 100%;
-    height: 100%;
-    inset:0;
-    position: fixed;
-    object-fit: cover;
-}
-
-.canvas {
-    position:fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    cursor:crosshair;
-    touch-action:none;
-}
-
-.name{
-    position: absolute;
-    color: #fff;
-    bottom: 40px;
-    z-index: 4;
-    left: 40px;
-    line-height: 90%;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 132px;
-    font-weight: 600;
-    text-transform: uppercase;
+/* --- BUBBLE MENU --- */
+.bubble-menu {
+    left: 0;
+    right: 0;
+    top: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 2em;
     pointer-events: none;
-    mix-blend-mode: difference;
- }
+    z-index: 99;
+}
 
-.action-button {
-    position: absolute;
-    bottom: 100px;
-    right: 40px;
-    z-index: 4;
-    font-size: 64px;
-    font-weight: 600;
-    font-family: Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
-    padding: 20px 40px;
-    color: #fff;
-    background-color: transparent;
-    border: 2px solid #fff;
+.bubble-menu.fixed  { position: fixed; }
+.bubble-menu.absolute { position: absolute; }
+
+.bubble-menu .bubble {
+    --bubble-size: 48px;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.bubble-menu .logo-bubble,
+.bubble-menu .toggle-bubble {
+    will-change: transform;
+}
+
+.bubble-menu .logo-bubble {
+    width: auto;
+    min-height: var(--bubble-size);
+    height: var(--bubble-size);
+    padding: 0 16px;
+    border-radius: calc(var(--bubble-size) / 2);
+    gap: 8px;
+}
+
+.bubble-menu .toggle-bubble {
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+}
+
+.bubble-menu .logo-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 100%;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #111;
+}
+
+.bubble-menu .menu-btn {
+    border: none;
+    background: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    mix-blend-mode: difference;
-}
-
-.action-button:hover {
-    background-color: #fff;
-    color: #000;
-}
-
-/* --- WAVE TRANSITION (CORRECTED) --- */
-
-.wave-transition {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    pointer-events: none;
-    display: none;
-}
-
-.wave-transition.active {
-    display: block;
-}
-
-.wave-layer {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    /* On positionne le départ bien en bas pour être sûr qu'on ne voit rien au début */
-    bottom: -300vh; 
     display: flex;
     flex-direction: column;
-}
-
-/* Le haut de la vague */
-.wave-top {
-    display: block;
-    width: 100%;
-    height: 30vh; /* Taille de la crête */
-    margin-bottom: -1px; /* Colle au corps */
-}
-
-/* Le corps solide - TRÈS HAUT pour éviter les trous */
-.wave-body {
-    background-color: #000;
-    width: 100%;
-    height: 150vh; /* 150% de la hauteur écran = sécurité totale */
-    margin-top: -1px;
-    margin-bottom: -1px;
-}
-
-/* Le bas de la vague (la queue) */
-.wave-bottom {
-    display: block;
-    width: 100%;
-    height: 30vh;
-    transform: rotate(180deg); /* On la retourne pour faire la queue */
-    margin-top: -1px; /* Colle au corps */
-}
-
-
-/* --- ANIMATIONS --- */
-
-/* Logique : 
-   On déplace tout le bloc de bas en haut.
-   Départ : TranslateY(0) (positionné via bottom: -300vh en CSS base, on ajuste ici)
-   Arrivée : On le remonte de 400vh pour qu'il sorte totalement par le haut.
-*/
-
-.active .w1 {
-    animation: waveAnim1 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
-    opacity: 0.6; 
-    z-index: 1;
-}
-
-.active .w2 {
-    animation: waveAnim2 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
-    opacity: 0.8;
-    z-index: 2;
-}
-
-.active .w3 {
-    animation: waveAnim3 2.8s cubic-bezier(0.42, 0, 0.58, 1) forwards;
-    z-index: 3;
-    opacity: 1; 
-}
-
-/* W3 (Vague Opaque - Noir total)
-   ENTRÉE : Elle monte le plus LENTEMENT (pour recouvrir les autres vagues lors de la montée).
-   PAUSE : Courte pause au milieu.
-   SORTIE : Elle repart le plus VITE (pour dégager la vue et montrer les vagues derrière).
-*/
-@keyframes waveAnim3 {
-    0% { transform: translateY(0); }
-    45% { transform: translateY(-220vh); } /* Arrive à 45% (plus tard que les autres) */
-    50% { transform: translateY(-220vh); } /* Reste stable pendant le switch JS */
-    100% { transform: translateY(-460vh); } /* Part très haut, très vite */
-}
-
-/* W2 (Vague Intermédiaire)
-   Vitesse moyenne à l'entrée et à la sortie.
-*/
-@keyframes waveAnim2 {
-    0% { transform: translateY(0); }
-    42% { transform: translateY(-220vh); } /* Arrive un peu avant W3 */
-    55% { transform: translateY(-220vh); } /* Repart un peu après W3 */
-    100% { transform: translateY(-455vh); } 
-}
-
-/* W1 (Vague Claire - La plus transparente)
-   ENTRÉE : Elle monte le plus VITE (on la voit mener la danse au début).
-   SORTIE : Elle repart le plus LENTEMENT (on voit sa traîne flotter à la fin).
-*/
-@keyframes waveAnim1 {
-    0% { transform: translateY(0); }
-    39% { transform: translateY(-220vh); } /* Arrive très tôt */
-    58% { transform: translateY(-220vh); } /* Reste le plus longtemps */
-    100% { transform: translateY(-450vh); } /* Finit sa course en dernier */
-}
-
-/* --- SECTION PROJETS STYLE --- */
-
-#projects-content {
-    background-color: #0e0e0e; /* Fond presque noir pour le contraste */
-    min-height: 100vh;
-    color: #fff;
-    padding: 120px 40px 40px 40px;
-    font-family: 'Arial', sans-serif; /* Tu pourras changer pour une font plus stylée */
-    position: relative;
-    /* Pour s'assurer que ça passe sous la vague lors de la transition */
-    z-index: 10; 
-}
-
-/* Header discret */
-.projects-header {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    padding-bottom: 20px;
-    margin-bottom: 60px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-}
-
-/* Liste des projets */
-.project-list {
-    list-style: none;
+    align-items: center;
+    justify-content: center;
     padding: 0;
+}
+
+.bubble-menu .menu-line {
+    width: 26px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: center;
+}
+
+.bubble-menu .menu-line + .menu-line { margin-top: 6px; }
+
+.bubble-menu .menu-btn.open .menu-line:first-child {
+    transform: translateY(4px) rotate(45deg);
+}
+.bubble-menu .menu-btn.open .menu-line:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+}
+
+@media (min-width: 768px) {
+    .bubble-menu .bubble { --bubble-size: 56px; }
+    .bubble-menu .logo-bubble { padding: 0 16px; }
+}
+
+/* --- BUBBLE MENU ITEMS & OVERLAY --- */
+.bubble-menu-items {
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 98;
+}
+
+.bubble-menu-items.fixed    { position: fixed; }
+.bubble-menu-items.absolute { position: absolute; }
+
+.bubble-menu-items .pill-list {
+    list-style: none;
     margin: 0;
-}
-
-.project-item {
-    position: relative;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    transition: opacity 0.3s;
-}
-
-/* Effet de focus : quand on survole la liste, les autres s'assombrissent */
-.project-list:hover .project-item {
-    opacity: 0.3;
-}
-.project-list:hover .project-item:hover {
-    opacity: 1;
-}
-
-.project-link {
+    padding: 0 24px;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    text-decoration: none;
-    color: #fff;
-    padding: 40px 0;
-    position: relative;
-    z-index: 2; /* Texte au dessus de l'image flottante */
-    cursor: pointer;
-}
-
-/* Typographie Impactante */
-.p-id {
-    font-size: 16px;
-    margin-right: 40px;
-    color: #555;
-    font-weight: 300;
-}
-
-.p-name {
-    font-size: 6vw; /* Responsive huge text */
-    margin: 0;
-    font-weight: 400;
-    text-transform: uppercase;
-    line-height: 1;
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.p-cat {
-    font-size: 16px;
+    flex-wrap: wrap;
+    gap: 0;
+    row-gap: 4px;
+    width: 100%;
+    max-width: 1600px;
     margin-left: auto;
-    font-weight: 300;
-    text-transform: uppercase;
+    margin-right: auto;
+    pointer-events: auto;
+    justify-content: stretch;
 }
 
-/* Petit mouvement du texte au survol */
-.project-item:hover .p-name {
-    transform: translateX(20px);
+.bubble-menu-items .pill-col {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex: 0 0 calc(100% / 3);
+    box-sizing: border-box;
 }
 
-/* --- LE PORTAL FLOTTANT (IMAGE) --- */
+.bubble-menu-items .pill-col:nth-child(4):nth-last-child(2) {
+    margin-left: calc(100% / 6);
+}
+.bubble-menu-items .pill-col:nth-child(4):last-child {
+    margin-left: calc(100% / 3);
+}
 
-.hover-media-wrapper {
+.bubble-menu-items .pill-link {
+    --pill-bg: #0a0a0a;
+    --pill-color: #ffffff;
+    --item-rot: 0deg;
+    --pill-min-h: 160px;
+    --hover-bg: #1a1a1a;
+    --hover-color: #ffffff;
+    width: 100%;
+    min-height: var(--pill-min-h);
+    padding: clamp(1.5rem, 3vw, 8rem) 0;
+    font-size: clamp(1.5rem, 4vw, 4rem);
+    font-weight: 400;
+    line-height: 0;
+    border-radius: 999px;
+    background: var(--pill-bg);
+    color: var(--pill-color);
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.3s ease, color 0.3s ease;
+    will-change: transform;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 10px;
+}
+
+@media (min-width: 900px) {
+    .bubble-menu-items .pill-link {
+        transform: rotate(var(--item-rot));
+    }
+    .bubble-menu-items .pill-link:hover {
+        transform: rotate(var(--item-rot)) scale(1.06);
+        background: var(--hover-bg);
+        color: var(--hover-color);
+    }
+    .bubble-menu-items .pill-link:active {
+        transform: rotate(var(--item-rot)) scale(0.94);
+    }
+}
+
+.bubble-menu-items .pill-link .pill-label {
+    display: inline-block;
+    will-change: transform, opacity;
+    height: 1.2em;
+    line-height: 1.2;
+}
+
+@media (max-width: 899px) {
+    .bubble-menu-items {
+        align-items: flex-start;
+        padding-top: 120px;
+    }
+    .bubble-menu-items .pill-list { row-gap: 16px; }
+    .bubble-menu-items .pill-col {
+        flex: 0 0 100%;
+        margin-left: 0 !important;
+        overflow: visible;
+    }
+    .bubble-menu-items .pill-link {
+        font-size: clamp(1.2rem, 3vw, 4rem);
+        padding: clamp(1rem, 2vw, 2rem) 0;
+        min-height: 80px;
+    }
+    .bubble-menu-items .pill-link:hover {
+        transform: scale(1.06);
+        background: var(--hover-bg);
+        color: var(--hover-color);
+    }
+    .bubble-menu-items .pill-link:active {
+        transform: scale(0.94);
+    }
+}
+
+/* --- CUSTOM CURSOR --- */
+.cursor {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    mix-blend-mode: difference;
+}
+
+.cursor-follower {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    z-index: 9998;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    mix-blend-mode: difference;
+}
+
+.cursor-hover .cursor-follower {
+    transform: translate(-50%, -50%) scale(1.5);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: transparent;
+    transition: width 0.3s, height 0.3s; /* Garder juste scale et background */
+}
+
+/* --- LOADING SCREEN & CURTAIN (Inchangés ou presque) --- */
+#loading-screen {
     position: fixed;
     top: 0;
     left: 0;
-    width: 350px; /* Taille de l'image flottante */
-    height: 450px;
-    pointer-events: none; /* Important pour cliquer au travers */
-    z-index: 10; /* Au dessus du texte, ou en dessous selon ton goût. Ici je mets au dessus mais mix-blend */
-    opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    mix-blend-mode: normal; 
-    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background: var(--accent4);
+    z-index: 200000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
 }
 
-.hover-media {
+#loading-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-container {
+    filter: url('#gooey');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.loading-text {
+    letter-spacing: 10px;
+    font-size: 8rem;
+    color: var(--accent2);
+}
+
+.drop {
+    position: absolute;
+    background: var(--accent2);
+    width: 22px;
+    height: 22px;
+    border-radius: 60% 70% 50% 60% / 65% 66% 60% 65%;
+    animation: move 3s ease infinite;
+}
+
+.drop::after {
+    width: 17px;
+    height: 17px;
+    content: '';
+    position: absolute;
+    background: var(--accent2);
+    border-radius: 50% 60% 60% 70% / 60% 65% 65% 65%;
+    left: 25px;
+    top: 3px;
+    animation: drop_effect 3s ease infinite;
+}
+
+@keyframes move {
+    0%, 100% { transform: translateX(370px); }
+    50% { transform: translateX(-370px); }
+}
+
+@keyframes drop_effect {
+    0% { left: 0px; } 5% { left: 35px; } 45% { left: 0px; } 50% { left: 0px; } 55% { left: -30px; } 95% { left: 0px; } 100% { left: 0; }
+}
+
+/* --- TRANSITION CURTAIN ---
+ * FIX BUG 1 : les couches reçoivent contain:layout + isolation pour éviter 
+ * le freeze et les repaints multiples lors de la disparition des layers.
+ */
+.transition-curtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100000;
+    pointer-events: none;
+    /* Isolation du contexte de composition */
+    isolation: isolate;
+}
+
+.curtain-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
-    /* On ajoute un petit effet de scale interne pour le dynamisme */
-    transform: scale(1.2); 
-    transition: transform 0.5s ease;
+    transform: scaleY(1);
+    transform-origin: top;
+    /* contain:layout évite que le navigateur recalcule le layout global
+       à chaque frame, ce qui causait le micro-freeze en fin d'animation */
+    contain: layout style;
 }
+.curtain-layer.layer-1 { background-color: var(--fg-loading); }
+.curtain-layer.layer-2 { background-color: var(--accent1); }
+.curtain-layer.layer-3 { background-color: var(--accent2); }
+.curtain-layer.layer-4 { background-color: var(--accent3); }
+.curtain-layer.layer-5 { background-color: var(--accent4); }
 
-/* Quand la classe 'is-active' est ajoutée via JS */
-.hover-media-wrapper.is-active {
+/* --- HOME CONTENT ---
+ * FIX BUG 1 : on retire la CSS transition sur opacity.
+ * GSAP gère maintenant l'intégralité du fade-in pour éviter
+ * tout conflit entre la transition CSS et la timeline GSAP.
+ */
+#home-content {
+    opacity: 0;
+    filter: blur(var(--blur-amount));
+    will-change: filter;
+}
+#home-content.content-visible {
+    /* Pas de transition CSS ici — GSAP s'en charge */
     opacity: 1;
-    transform: scale(1);
 }
 
-.hover-media-wrapper.is-active .hover-media {
-    transform: scale(1);
+/* --- HERO SECTION --- */
+.hero {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.hero-bg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Un petit scale initial pour l'effet de zoom au scroll */
+    transform: scale(1.1);
+    will-change: transform;
+}
+
+.hero-text-container {
+    text-align: center;
+    z-index: 2;
+    mix-blend-mode: overlay; /* Effet de fusion avec l'image */
+}
+
+.name {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10vw; /* Responsive font size */
+    font-weight: 900;
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0; /* Animé par JS */
+    transform: translateY(50px);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-top: 20px;
+    letter-spacing: 2px;
+    opacity: 0;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.scroll-indicator span {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+}
+
+.scroll-indicator .line {
+    width: 1px;
+    height: 40px;
+    background: #fff;
+    animation: scrollLine 2s infinite;
+    transform-origin: top;
+    will-change: transform;
+    animation-delay: 0;
+    animation-iteration-count: infinite;
+}
+
+@keyframes scrollLine {
+    0% { transform: scaleY(0); }
+    50% { transform: scaleY(1); }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* --- SCROLL STACK EFFECT --- */
+.scroll-stack-section {
+    position: relative;
+    width: 100%;
+}
+
+.scroll-stack-scroller {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: contain;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: scroll-position;
+}
+
+.scroll-stack-inner {
+    padding: 20vh 5rem 50rem;
+    min-height: 100vh;
+}
+
+.scroll-stack-card {
+    transform-origin: top center;
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    height: 20rem;
+    width: 100%;
+    margin: 30px 0;
+    padding: 3rem;
+    border-radius: 40px;
+    box-sizing: border-box;
+    position: relative;
+    /* FIX BUG 3 : on retire le double transform: translateZ(0) du CSS
+       pour éviter le conflit avec celui appliqué par JS */
+    contain: paint;
+}
+
+.scroll-stack-end {
+    width: 100%;
+    height: 1px;
+}
+
+/* Card styles */
+.card-1 { background: #1a1a2e; border: 1px solid rgba(255,255,255,0.08); }
+.card-2 { background: #16213e; border: 1px solid rgba(255,255,255,0.08); }
+.card-3 { background: #0f3460; border: 1px solid rgba(255,255,255,0.08); }
+.card-4 { background: #533483; border: 1px solid rgba(255,255,255,0.08); }
+.card-5 { background: #2d132c; border: 1px solid rgba(255,255,255,0.08); }
+
+.card-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-family: monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 1.5rem;
+}
+
+.card-title {
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.card-body {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    max-width: 500px;
+}
+
+.card-accent {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 3rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0.25;
+}
+
+.card-1 .card-accent { background: #ed6a5a; }
+.card-2 .card-accent { background: #f4f1bb; }
+.card-3 .card-accent { background: #9bc1bc; }
+.card-4 .card-accent { background: #5d576b; }
+.card-5 .card-accent { background: #a855f7; }
+
+@media (max-width: 600px) {
+    .scroll-stack-inner { padding: 20vh 1.5rem 50rem; }
+}
+
+/* --- FOOTER --- */
+.footer {
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-color);
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.email-link {
+    font-size: 2rem;
+    color: var(--accent1);
+    text-decoration: none;
+    position: relative;
+}
+
+.email-link::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background: var(--accent1);
+    transition: width 0.3s ease;
+}
+
+.email-link:hover::after { width: 100%; }
+
+@media (max-width: 768px) {
+    .loading-text { font-size: 4rem; letter-spacing: 5px; }
+    .name { font-size: 14vw; }
+    .project-item { flex-direction: column; }
+    .project-item.right { text-align: left; align-items: flex-start; }
+    .project-info { margin-left: 0; margin-top: 20px; }
+    .project-item.right .project-num { order: 0; }
+    .project-item.right .project-info { margin-right: 0; }
+}
