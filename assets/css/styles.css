@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap');
+/* Suppression de l'import DM Sans inutile */
 
 /* --- VARIABLES & RESET --- */
 :root {
@@ -12,19 +12,26 @@
     --blur-amount: 0px;
 }
 
+/* CLASS UTILITAIRE POUR BLOQUER LE SCROLL */
+.no-scroll {
+    overflow: hidden !important;
+    height: 100vh !important;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    cursor: none; /* On cache le curseur par défaut pour mettre le nôtre */
+    cursor: none; 
 }
 
 html, body {
     width: 100%;
+    /* overflow-x est géré, mais overflow-y est laissé libre sauf si .no-scroll est présent */
     overflow-x: hidden;
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Poppins', sans-serif; /* Uniformisation de la font */
+    font-family: 'Poppins', sans-serif;
 }
 
 /* --- BUBBLE MENU --- */
@@ -275,10 +282,10 @@ html, body {
     transform: translate(-50%, -50%) scale(1.5);
     background: rgba(255, 255, 255, 0.1);
     border-color: transparent;
-    transition: width 0.3s, height 0.3s; /* Garder juste scale et background */
+    transition: width 0.3s, height 0.3s;
 }
 
-/* --- LOADING SCREEN & CURTAIN (Inchangés ou presque) --- */
+/* --- LOADING SCREEN --- */
 #loading-screen {
     position: fixed;
     top: 0;
@@ -342,10 +349,7 @@ html, body {
     0% { left: 0px; } 5% { left: 35px; } 45% { left: 0px; } 50% { left: 0px; } 55% { left: -30px; } 95% { left: 0px; } 100% { left: 0; }
 }
 
-/* --- TRANSITION CURTAIN ---
- * FIX BUG 1 : les couches reçoivent contain:layout + isolation pour éviter 
- * le freeze et les repaints multiples lors de la disparition des layers.
- */
+/* --- TRANSITION CURTAIN --- */
 .transition-curtain {
     position: fixed;
     top: 0;
@@ -354,7 +358,6 @@ html, body {
     height: 100vh;
     z-index: 100000;
     pointer-events: none;
-    /* Isolation du contexte de composition */
     isolation: isolate;
 }
 
@@ -366,8 +369,6 @@ html, body {
     height: 100%;
     transform: scaleY(1);
     transform-origin: top;
-    /* contain:layout évite que le navigateur recalcule le layout global
-       à chaque frame, ce qui causait le micro-freeze en fin d'animation */
     contain: layout style;
 }
 .curtain-layer.layer-1 { background-color: var(--fg-loading); }
@@ -376,18 +377,13 @@ html, body {
 .curtain-layer.layer-4 { background-color: var(--accent3); }
 .curtain-layer.layer-5 { background-color: var(--accent4); }
 
-/* --- HOME CONTENT ---
- * FIX BUG 1 : on retire la CSS transition sur opacity.
- * GSAP gère maintenant l'intégralité du fade-in pour éviter
- * tout conflit entre la transition CSS et la timeline GSAP.
- */
+/* --- HOME CONTENT --- */
 #home-content {
     opacity: 0;
     filter: blur(var(--blur-amount));
     will-change: filter;
 }
 #home-content.content-visible {
-    /* Pas de transition CSS ici — GSAP s'en charge */
     opacity: 1;
 }
 
@@ -415,7 +411,6 @@ html, body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Un petit scale initial pour l'effet de zoom au scroll */
     transform: scale(1.1);
     will-change: transform;
 }
@@ -423,17 +418,17 @@ html, body {
 .hero-text-container {
     text-align: center;
     z-index: 2;
-    mix-blend-mode: overlay; /* Effet de fusion avec l'image */
+    mix-blend-mode: overlay; 
 }
 
 .name {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 10vw; /* Responsive font size */
+    font-size: 10vw; 
     font-weight: 900;
     line-height: 0.9;
     text-transform: uppercase;
     color: #fff;
-    opacity: 0; /* Animé par JS */
+    opacity: 0; 
     transform: translateY(50px);
 }
 
@@ -469,8 +464,6 @@ html, body {
     animation: scrollLine 2s infinite;
     transform-origin: top;
     will-change: transform;
-    animation-delay: 0;
-    animation-iteration-count: infinite;
 }
 
 @keyframes scrollLine {
@@ -492,7 +485,6 @@ html, body {
     overscroll-behavior: contain;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
-    will-change: scroll-position;
 }
 
 .scroll-stack-inner {
@@ -513,8 +505,6 @@ html, body {
     border-radius: 40px;
     box-sizing: border-box;
     position: relative;
-    /* FIX BUG 3 : on retire le double transform: translateZ(0) du CSS
-       pour éviter le conflit avec celui appliqué par JS */
     contain: paint;
 }
 
@@ -618,9 +608,4 @@ html, body {
 @media (max-width: 768px) {
     .loading-text { font-size: 4rem; letter-spacing: 5px; }
     .name { font-size: 14vw; }
-    .project-item { flex-direction: column; }
-    .project-item.right { text-align: left; align-items: flex-start; }
-    .project-info { margin-left: 0; margin-top: 20px; }
-    .project-item.right .project-num { order: 0; }
-    .project-item.right .project-info { margin-right: 0; }
 }

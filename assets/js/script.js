@@ -3,6 +3,23 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
     // ============================================
+    // 0. INIT SMOOTH SCROLL (LENIS) - FIX JITTER
+    // ============================================
+    // L'ajout de Lenis corrige le problème de tremblement 
+    // en lissant le scroll delta entre le navigateur et GSAP.
+    const lenis = new Lenis({
+        lerp: 0.1, // Douceur du scroll
+        smoothWheel: true
+    });
+
+    // Synchronisation de Lenis avec GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // ============================================
     // 1. CUSTOM CURSOR
     // ============================================
     const cursor = document.querySelector('.cursor');
@@ -10,11 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let mouseX = 0, mouseY = 0;
     let followerX = 0, followerY = 0;
     
-    // Déplacement de base avec optimisation - throttle le mousemove
+    // Déplacement de base
     let lastMouseMove = 0;
     document.addEventListener('mousemove', (e) => {
         const now = Date.now();
-        if (now - lastMouseMove > 16) { // ~60fps throttling
+        if (now - lastMouseMove > 16) { 
             mouseX = e.clientX;
             mouseY = e.clientY;
             gsap.set(cursor, { x: mouseX, y: mouseY });
@@ -22,16 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, { passive: true });
     
-    // Animation fluide du follower avec requestAnimationFrame
     function animateFollower() {
-        followerX += (mouseX - followerX) * 0.15; // Easing
+        followerX += (mouseX - followerX) * 0.15; 
         followerY += (mouseY - followerY) * 0.15;
         gsap.set(follower, { x: followerX, y: followerY });
         requestAnimationFrame(animateFollower);
     }
     animateFollower();
 
-    // Effet hover sur les liens et boutons
     const hoverables = document.querySelectorAll('a, button');
     hoverables.forEach(el => {
         el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
@@ -42,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================================
     // 1.5 BUBBLE MENU
     // ============================================
-    const MENU_BG           = '#0a0a0a';
-    const MENU_CONTENT_COLOR = '#ffffff';
+    const MENU_BG           = '#ffffff';
+    const MENU_CONTENT_COLOR = '#000000';
     const ANIMATION_EASE    = 'back.out(1.5)';
     const ANIMATION_DURATION = 0.5;
     const STAGGER_DELAY     = 0.12;
@@ -53,15 +68,14 @@ document.addEventListener("DOMContentLoaded", () => {
       { label: 'about',    href: '#', ariaLabel: 'About',    rotation:  8, hoverStyles: { bgColor: '#f4f1bb', textColor: '#111111' } },
       { label: 'projects', href: '#', ariaLabel: 'Projects', rotation:  8, hoverStyles: { bgColor: '#9bc1bc', textColor: '#111111' } },
       { label: 'contact',  href: '#', ariaLabel: 'Contact',  rotation: -8, hoverStyles: { bgColor: '#5d576b', textColor: '#ffffff' } },
-      { label: 'blog',  href: '#', ariaLabel: 'Blog',  rotation: -8, hoverStyles: { bgColor: '#5d576b', textColor: '#ffffff' } },
+      { label: 'blog',     href: '#', ariaLabel: 'Blog',     rotation: -8, hoverStyles: { bgColor: '#5d576b', textColor: '#ffffff' } },
     ];
 
-    // Build pill items in DOM
     const pillList   = document.querySelector('.pill-list');
     const bubbleEls  = [];
     const labelEls   = [];
 
-    menuItems.forEach((item, idx) => {
+    menuItems.forEach((item) => {
       const li = document.createElement('li');
       li.className = 'pill-col';
       li.setAttribute('role', 'none');
@@ -89,9 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       labelEls.push(span);
     });
 
-    // State & Toggle logic
     let isMenuOpen = false;
-
     const toggleBtn = document.getElementById('menuToggle');
     const overlay   = document.getElementById('menuOverlay');
 
@@ -101,21 +113,26 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleBtn.classList.toggle('open', isMenuOpen);
       overlay.setAttribute('aria-hidden', String(!isMenuOpen));
 
+      // Gestion de la scrollbar quand le menu est ouvert
       if (isMenuOpen) {
+        document.body.classList.add('no-scroll');
+        // Stop Lenis
+        lenis.stop();
         openMenu();
       } else {
+        document.body.classList.remove('no-scroll');
+        // Restart Lenis
+        lenis.start();
         closeMenu();
       }
     });
 
-    // Open animation
     function openMenu() {
       gsap.set(overlay, { display: 'flex' });
       gsap.killTweensOf([...bubbleEls, ...labelEls]);
       gsap.set(bubbleEls, { scale: 0, transformOrigin: '50% 50%' });
       gsap.set(labelEls,  { y: 24, autoAlpha: 0 });
 
-      // Blur animation
       gsap.to(document.documentElement, {
         '--blur-amount': '8px',
         duration: 0.6,
@@ -144,11 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Close animation
     function closeMenu() {
       gsap.killTweensOf([...bubbleEls, ...labelEls]);
 
-      // Blur animation
       gsap.to(document.documentElement, {
         '--blur-amount': '0px',
         duration: 0.4,
@@ -172,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Handle resize: sync rotation on desktop
     window.addEventListener('resize', () => {
       if (!isMenuOpen) return;
       const isDesktop = window.innerWidth >= 900;
@@ -183,13 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    // ============================================
+    // 2. LOADING SCREEN & TRANSITION
+    // ============================================
     const loadingScreen = document.getElementById('loading-screen');
     const homeContent = document.getElementById('home-content');
 
-    // Optimisation : réduire les délais de transition pour meilleure UX
-    const LOADING_DURATION = 1800; // Réduit de 2500 à 1800ms
-    const FADE_OUT_DELAY = 400; // Réduit de 500 à 400ms
-    const REVEAL_DELAY = 700; // Réduit de 800 à 700ms
+    const LOADING_DURATION = 1800; 
+    const FADE_OUT_DELAY = 400; 
+    const REVEAL_DELAY = 700; 
 
     setTimeout(() => {
         loadingScreen.classList.add('fade-out');
@@ -199,9 +215,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             setTimeout(() => {
                 homeContent.classList.add('content-visible');
-                // Lancer les animations de la Home une fois visible
+                
+                // C'est ICI qu'on rend la main à l'utilisateur
+                // On enlève la classe qui bloque le scroll
+                document.body.classList.remove('no-scroll');
+                
                 initHomeAnimations();
-                // Nettoyer le loading screen du DOM après animation
+                
                 setTimeout(() => {
                     if (loadingScreen.parentNode) {
                         loadingScreen.remove();
@@ -227,14 +247,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. ANIMATIONS HOME & SCROLL
     // ============================================
     function initHomeAnimations() {
-        
-        // A. Intro du texte Hero
         const tl = gsap.timeline();
         tl.to(".name", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" })
           .to(".subtitle", { opacity: 1, duration: 1 }, "-=1");
 
-        // B. Parallax Image (optimisé - sans scrub)
-        // L'image descend plus lentement que le scroll
         gsap.to(".hero-img", {
             yPercent: 30,
             ease: "none",
@@ -242,11 +258,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 trigger: ".hero",
                 start: "top top",
                 end: "bottom top",
-                scrub: 0.5 // Valeur réduite pour meilleure perf
+                scrub: 0.5 
             }
         });
 
-        // C. Disparition du titre au scroll (optimisé)
         gsap.to(".hero-text-container", {
             y: -100,
             opacity: 0,
@@ -254,14 +269,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 trigger: ".hero",
                 start: "top top",
                 end: "bottom 30%",
-                scrub: 0.3 // Valeur réduite pour meilleure perf
+                scrub: 0.3 
             }
         });
-        /* Boucle sur .project-item supprimée - section projects supprimée du HTML */
     }
 
     // ============================================
-    // 4. SCROLL STACK EFFECT (CARD SCROLL)
+    // 4. SCROLL STACK EFFECT (Optimized)
     // ============================================
     const CONFIG = {
         itemDistance:      100,
@@ -271,7 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
         scaleEndPosition:  '10%',
         baseScale:         0.85,
         rotationAmount:    0,
-        blurAmount:        0,
     };
 
     const cards    = Array.from(document.querySelectorAll('.scroll-stack-card'));
@@ -283,18 +296,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function cacheOffsets() {
         viewportH   = window.innerHeight;
-        cardOffsets = cards.map(c => c.getBoundingClientRect().top + window.scrollY);
-        endOffset   = stackEnd.getBoundingClientRect().top + window.scrollY;
+        // Correction du calcul des offsets avec Lenis (window.scrollY)
+        const currentScroll = window.scrollY;
+        cardOffsets = cards.map(c => c.getBoundingClientRect().top + currentScroll);
+        endOffset   = stackEnd.getBoundingClientRect().top + currentScroll;
     }
 
-    // Init card styles
     cards.forEach((card, i) => {
         if (i < cards.length - 1) card.style.marginBottom = `${CONFIG.itemDistance}px`;
-        card.style.willChange         = 'transform, filter';
+        card.style.willChange         = 'transform';
         card.style.transformOrigin    = 'top center';
         card.style.backfaceVisibility = 'hidden';
-        card.style.transform          = 'translateZ(0)';
-        card.style.perspective        = '1000px';
     });
 
     const lastTransforms = new Map();
@@ -317,15 +329,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const scaleEndPx = parsePercentage(CONFIG.scaleEndPosition, viewportH);
         const pinEnd     = endOffset - viewportH / 2;
 
-        let topCardIndex = 0;
-        if (CONFIG.blurAmount) {
-            for (let j = 0; j < cards.length; j++) {
-                if (scrollTop >= cardOffsets[j] - stackPx - CONFIG.itemStackDistance * j) {
-                    topCardIndex = j;
-                }
-            }
-        }
-
         for (let i = 0; i < cards.length; i++) {
             const cardTop      = cardOffsets[i];
             const triggerStart = cardTop - stackPx - CONFIG.itemStackDistance * i;
@@ -338,10 +341,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const rotation      = CONFIG.rotationAmount
                 ? i * CONFIG.rotationAmount * scaleProgress : 0;
 
-            const blur = (CONFIG.blurAmount && i < topCardIndex)
-                ? Math.max(0, (topCardIndex - i) * CONFIG.blurAmount)
-                : 0;
-
             let translateY = 0;
             if (scrollTop >= pinStart && scrollTop <= pinEnd) {
                 translateY = scrollTop - cardTop + stackPx + CONFIG.itemStackDistance * i;
@@ -349,50 +348,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 translateY = pinEnd   - cardTop + stackPx + CONFIG.itemStackDistance * i;
             }
 
+            // OPTIMISATION : Retrait du Math.round agressif qui causait le tremblement
+            // On garde 3 décimales pour la précision sans saccade
             const t = {
-                ty:  Math.round(translateY * 100) / 100,
+                ty:  Math.round(translateY * 1000) / 1000,
                 s:   Math.round(scale      * 1000) / 1000,
                 r:   Math.round(rotation   * 100) / 100,
-                b:   Math.round(blur       * 100) / 100,
             };
 
             const prev    = lastTransforms.get(i);
             const changed = !prev
-                || Math.abs(prev.ty - t.ty) > 0.1
-                || Math.abs(prev.s  - t.s)  > 0.001
-                || Math.abs(prev.r  - t.r)  > 0.1
-                || Math.abs(prev.b  - t.b)  > 0.1;
+                || Math.abs(prev.ty - t.ty) > 0.1 
+                || Math.abs(prev.s  - t.s)  > 0.0001;
 
             if (changed) {
                 cards[i].style.transform = `translate3d(0,${t.ty}px,0) scale(${t.s}) rotate(${t.r}deg)`;
-                cards[i].style.filter    = t.b > 0 ? `blur(${t.b}px)` : '';
                 lastTransforms.set(i, t);
             }
         }
     }
 
-    // Scroll listener via window.scrollY (will-change optimized)
-    let lastScrollTop = 0;
-    function handleScroll() {
-        lastScrollTop = window.scrollY;
-        updateCardTransforms(lastScrollTop);
-    }
+    // IMPORTANT : On utilise le ticker GSAP au lieu de 'scroll' event
+    // Cela synchronise le calcul avec le rafraîchissement écran (60/120fps)
+    gsap.ticker.add(() => {
+        updateCardTransforms(window.scrollY);
+    });
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Resize: re-cache then re-render
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             cacheOffsets();
-            updateCardTransforms(lastScrollTop);
         }, 100);
     });
 
-    // Boot: measure after first paint
-    requestAnimationFrame(() => {
-        cacheOffsets();
-        updateCardTransforms(0);
-    });
+    // Boot
+    cacheOffsets();
 });
