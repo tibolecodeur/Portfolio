@@ -2,16 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.registerPlugin(ScrollTrigger);
 
   // ============================================
-  // 0. INIT SMOOTH SCROLL (LENIS) - FIX JITTER
+  // 1. SMOOTH SCROLL SETUP (Lenis)
   // ============================================
-  // L'ajout de Lenis corrige le problème de tremblement
-  // en lissant le scroll delta entre le navigateur et GSAP.
   const lenis = new Lenis({
-    lerp: 0.1, // Douceur du scroll
+    lerp: 0.1,
     smoothWheel: true,
   });
 
-  // Synchronisation de Lenis avec GSAP ScrollTrigger
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
@@ -19,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.ticker.lagSmoothing(0);
 
   // ============================================
-  // 1. CUSTOM CURSOR
+  // 2. CUSTOM CURSOR
   // ============================================
   const cursor = document.querySelector(".cursor");
   const follower = document.querySelector(".cursor-follower");
@@ -28,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let followerX = 0,
     followerY = 0;
 
-  // Déplacement de base
   let lastMouseMove = 0;
   document.addEventListener(
     "mousemove",
@@ -41,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lastMouseMove = now;
       }
     },
-    { passive: true }
+    { passive: true },
   );
 
   function animateFollower() {
@@ -55,15 +51,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const hoverables = document.querySelectorAll("a, button");
   hoverables.forEach((el) => {
     el.addEventListener("mouseenter", () =>
-      document.body.classList.add("cursor-hover")
+      document.body.classList.add("cursor-hover"),
     );
     el.addEventListener("mouseleave", () =>
-      document.body.classList.remove("cursor-hover")
+      document.body.classList.remove("cursor-hover"),
     );
   });
 
   // ============================================
-  // 1.5 BUBBLE MENU
+  // 3. BUBBLE MENU
   // ============================================
   const MENU_BG = "#ffffff";
   const MENU_CONTENT_COLOR = "#000000";
@@ -129,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     a.style.setProperty("--hover-bg", item.hoverStyles?.bgColor || "#1a1a1a");
     a.style.setProperty(
       "--hover-color",
-      item.hoverStyles?.textColor || MENU_CONTENT_COLOR
+      item.hoverStyles?.textColor || MENU_CONTENT_COLOR,
     );
 
     const span = document.createElement("span");
@@ -154,15 +150,12 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleBtn.classList.toggle("open", isMenuOpen);
     overlay.setAttribute("aria-hidden", String(!isMenuOpen));
 
-    // Gestion de la scrollbar quand le menu est ouvert
     if (isMenuOpen) {
       document.body.classList.add("no-scroll");
-      // Stop Lenis
       lenis.stop();
       openMenu();
     } else {
       document.body.classList.remove("no-scroll");
-      // Restart Lenis
       lenis.start();
       closeMenu();
     }
@@ -200,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
             duration: ANIMATION_DURATION,
             ease: "power3.out",
           },
-          `-=${ANIMATION_DURATION * 0.9}`
+          `-=${ANIMATION_DURATION * 0.9}`,
         );
       }
     });
@@ -236,13 +229,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!isMenuOpen) return;
     const isDesktop = window.innerWidth >= 900;
     bubbleEls.forEach((bubble, i) => {
-      const rotation = isDesktop ? menuItems[i].rotation ?? 0 : 0;
+      const rotation = isDesktop ? (menuItems[i].rotation ?? 0) : 0;
       gsap.set(bubble, { rotation });
     });
   });
 
   // ============================================
-  // 2. LOADING SCREEN & TRANSITION
+  // 4. LOADING SCREEN & TRANSITION
   // ============================================
   const loadingScreen = document.getElementById("loading-screen");
   const homeContent = document.getElementById("home-content");
@@ -259,9 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
         homeContent.classList.add("content-visible");
-
-        // C'est ICI qu'on rend la main à l'utilisateur
-        // On enlève la classe qui bloque le scroll
         document.body.classList.remove("no-scroll");
 
         initHomeAnimations();
@@ -286,14 +276,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 3. ANIMATIONS HOME & SCROLL
+  // 5. HOME ANIMATIONS & SCROLL EFFECTS
   // ============================================
   function initHomeAnimations() {
     const tl = gsap.timeline();
     tl.to(".name", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }).to(
       ".subtitle",
       { opacity: 1, duration: 1 },
-      "-=1"
+      "-=1",
     );
 
     gsap.to(".hero-img", {
@@ -320,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 4. SCROLL STACK EFFECT (Optimized)
+  // 6. SCROLL STACK CARD EFFECT
   // ============================================
   const CONFIG = {
     itemDistance: 100,
@@ -341,10 +331,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function cacheOffsets() {
     viewportH = window.innerHeight;
-    // Correction du calcul des offsets avec Lenis (window.scrollY)
     const currentScroll = window.scrollY;
     cardOffsets = cards.map(
-      (c) => c.getBoundingClientRect().top + currentScroll
+      (c) => c.getBoundingClientRect().top + currentScroll,
     );
     endOffset = stackEnd.getBoundingClientRect().top + currentScroll;
   }
@@ -386,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const scaleProgress = clampedProgress(
         scrollTop,
         triggerStart,
-        triggerEnd
+        triggerEnd,
       );
       const targetScale = CONFIG.baseScale + i * CONFIG.itemScale;
       const scale = 1 - scaleProgress * (1 - targetScale);
@@ -402,8 +391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         translateY = pinEnd - cardTop + stackPx + CONFIG.itemStackDistance * i;
       }
 
-      // OPTIMISATION : Retrait du Math.round agressif qui causait le tremblement
-      // On garde 3 décimales pour la précision sans saccade
       const t = {
         ty: Math.round(translateY * 1000) / 1000,
         s: Math.round(scale * 1000) / 1000,
@@ -417,16 +404,14 @@ document.addEventListener("DOMContentLoaded", () => {
         Math.abs(prev.s - t.s) > 0.0001;
 
       if (changed) {
-        cards[
-          i
-        ].style.transform = `translate3d(0,${t.ty}px,0) scale(${t.s}) rotate(${t.r}deg)`;
+        cards[i].style.transform =
+          `translate3d(0,${t.ty}px,0) scale(${t.s}) rotate(${t.r}deg)`;
         lastTransforms.set(i, t);
       }
     }
   }
 
-  // IMPORTANT : On utilise le ticker GSAP au lieu de 'scroll' event
-  // Cela synchronise le calcul avec le rafraîchissement écran (60/120fps)
+  // Utilisation du ticker GSAP pour synchroniser avec le rafraîchissement écran
   gsap.ticker.add(() => {
     updateCardTransforms(window.scrollY);
   });
@@ -439,6 +424,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 100);
   });
 
-  // Boot
+  // Initialisation
   cacheOffsets();
 });
