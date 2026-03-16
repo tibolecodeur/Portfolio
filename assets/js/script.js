@@ -464,12 +464,104 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.from(".tech-row", {
     scrollTrigger: {
       trigger: ".tech-list",
-      start: "top 85%", // Se déclenche quand le haut de la liste atteint 85% de l'écran
+      start: "top 85%",
     },
     y: 50,
     opacity: 0,
     duration: 0.8,
     stagger: 0.15,
+    ease: "power3.out",
+  });
+
+  // ============================================
+  // 8. ABOUT SECTION ANIMATIONS
+  // ============================================
+
+  // Compteur animé pour les stats
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    gsap.to(
+      { val: 0 },
+      {
+        val: target,
+        duration: 1.6,
+        ease: "power3.out",
+        onUpdate: function () {
+          el.textContent = Math.round(this.targets()[0].val);
+        },
+      },
+    );
+  }
+
+  ScrollTrigger.create({
+    trigger: ".about-stats",
+    start: "top 80%",
+    once: true,
+    onEnter: () => {
+      document.querySelectorAll(".stat-number").forEach(animateCounter);
+    },
+  });
+
+  // Révélation des mots de la grande phrase au scroll
+  const wordSpans = document.querySelectorAll(".word-reveal");
+  if (wordSpans.length) {
+    ScrollTrigger.create({
+      trigger: ".about-statement",
+      start: "top 75%",
+      end: "bottom 30%",
+      scrub: 0.8,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        wordSpans.forEach((span, i) => {
+          const threshold = i / wordSpans.length;
+          if (progress >= threshold) {
+            span.classList.add("lit");
+          } else {
+            span.classList.remove("lit");
+          }
+        });
+      },
+    });
+  }
+
+  // Animation d'entrée de la grille about
+  gsap.from(".about-photo-frame", {
+    scrollTrigger: { trigger: ".about-grid", start: "top 80%" },
+    x: -60,
+    opacity: 0,
+    duration: 1.2,
+    ease: "power3.out",
+  });
+
+  gsap.from(".about-content-col > *", {
+    scrollTrigger: { trigger: ".about-grid", start: "top 80%" },
+    y: 40,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.15,
+    ease: "power3.out",
+  });
+
+  // ============================================
+  // 9. PROJECTS SECTION ANIMATIONS
+  // ============================================
+
+  // Titre projects — reveal au scroll
+  gsap.from(".projects-title", {
+    scrollTrigger: { trigger: ".projects-header", start: "top 85%" },
+    y: 80,
+    opacity: 0,
+    duration: 1.2,
+    ease: "power4.out",
+  });
+
+  // Items de la liste — stagger au scroll
+  gsap.from(".project-item", {
+    scrollTrigger: { trigger: ".projects-list", start: "top 85%" },
+    y: 30,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.12,
     ease: "power3.out",
   });
 });

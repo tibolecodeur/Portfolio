@@ -93,9 +93,45 @@
     <main id="home-content" class="content-hidden">
       <!-- Hero Section -->
       <section class="hero">
+        <!-- Badge disponibilité — à remplacer selon ton statut -->
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          Available for freelance
+        </div>
+
         <div class="hero-text-container">
           <h1 class="name">THIBAULT<br />BREBION</h1>
           <p class="subtitle">Creative Developer & Designer</p>
+        </div>
+
+        <!-- Méta-infos flottantes — à remplacer par tes vraies données -->
+        <div class="hero-meta hero-meta--left">
+          <div class="hero-meta-item">
+            <span class="hero-meta-value">3+</span>
+            <span class="hero-meta-label">Années d'expérience</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-value">20+</span>
+            <span class="hero-meta-label">Projets livrés</span>
+          </div>
+        </div>
+
+        <div class="hero-meta hero-meta--right">
+          <div class="hero-meta-item">
+            <span class="hero-meta-value">Paris</span>
+            <span class="hero-meta-label">Basé à — [Ville]</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-value">FR / EN</span>
+            <span class="hero-meta-label">Langues</span>
+          </div>
+        </div>
+
+        <!-- Ligne de séparation décorative -->
+        <div class="hero-divider">
+          <span class="hero-divider-line"></span>
+          <span class="hero-divider-text">EST. 2022</span>
+          <span class="hero-divider-line"></span>
         </div>
 
         <div class="scroll-indicator">
@@ -164,6 +200,266 @@
         </div>
       </section>
 
+      <!-- ══════════════════════════════════════
+           ABOUT SECTION — remplace les placeholders
+           ══════════════════════════════════════ -->
+      <section class="about-section" id="about">
+        <div class="about-header">
+          <span class="about-tag">[ À PROPOS ]</span>
+        </div>
+
+        <!-- Grande phrase révélée au scroll -->
+        <div class="about-statement">
+          <p class="about-statement-text">
+            <span class="word-reveal">Je conçois des expériences</span>
+            <span class="word-reveal accent-word">numériques</span>
+            <span class="word-reveal">qui allient</span>
+            <span class="word-reveal accent-word">créativité</span>
+            <span class="word-reveal">et</span>
+            <span class="word-reveal accent-word">précision technique.</span>
+          </p>
+        </div>
+
+        <!-- Grille about : photo + bio + stats -->
+        <div class="about-grid">
+          <!-- Colonne gauche : photo placeholder -->
+          <div class="about-photo-col">
+            <div class="about-photo-frame">
+              <div class="about-photo-placeholder">
+                <!-- Remplace ce bloc par une vraie <img src="..." alt="Thibault Brebion" /> -->
+                <span class="photo-placeholder-text"
+                  >PHOTO<br />[ À AJOUTER ]</span
+                >
+                <div class="photo-placeholder-deco"></div>
+              </div>
+              <!-- Badge flottant sur la photo -->
+              <div class="about-photo-badge">
+                <span>Creative<br />Developer</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Colonne droite : bio + stats -->
+          <div class="about-content-col">
+            <div class="about-bio">
+              <!-- ↓ Remplace ce texte par ta vraie bio ↓ -->
+              <p>
+                Étudiant en [Formation] à [École / Université], je suis
+                passionné par la création d'interfaces qui racontent une
+                histoire. Je travaille à l'intersection du design et du code,
+                avec une attention particulière portée aux animations et à
+                l'expérience utilisateur.
+              </p>
+              <p>
+                Quand je ne code pas, vous me trouverez à [Activité / Passion],
+                ce qui nourrit ma façon d'approcher chaque projet avec un regard
+                frais et créatif.
+              </p>
+            </div>
+
+            <!-- Stats — à renseigner avec tes vraies valeurs -->
+            <div class="about-stats">
+              <div class="about-stat">
+                <span class="stat-number" data-target="3">0</span>
+                <span class="stat-suffix">+</span>
+                <span class="stat-label">Ans d'expérience</span>
+              </div>
+              <div class="about-stat">
+                <span class="stat-number" data-target="20">0</span>
+                <span class="stat-suffix">+</span>
+                <span class="stat-label">Projets réalisés</span>
+              </div>
+              <div class="about-stat">
+                <span class="stat-number" data-target="8">0</span>
+                <span class="stat-suffix"></span>
+                <span class="stat-label">Technologies maîtrisées</span>
+              </div>
+            </div>
+
+            <!-- CTA discret -->
+            <a href="#" class="about-cta">
+              <span>Télécharger mon CV</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════
+           PROJECTS SECTION — remplace les placeholders
+           ══════════════════════════════════════ -->
+      <section class="projects-section" id="projects">
+        <div class="projects-header">
+          <span class="about-tag">[ PROJETS ]</span>
+          <h2 class="projects-title">Selected<br /><em>Work</em></h2>
+          <p class="projects-count">— 04 projets sélectionnés</p>
+        </div>
+
+        <div class="projects-list">
+          <!-- Projet 1 — à remplacer -->
+          <article class="project-item" data-index="01">
+            <div class="project-item-inner">
+              <div class="project-left">
+                <span class="project-num">01</span>
+                <div class="project-info">
+                  <h3 class="project-name">Nom du Projet</h3>
+                  <div class="project-tags">
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent1)"
+                      >Design</span
+                    >
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent3)"
+                      >Dev</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2024</span>
+                <span class="project-arrow">↗</span>
+              </div>
+            </div>
+            <!-- Image de preview au hover — remplace src par ton image -->
+            <div class="project-preview">
+              <div
+                class="project-preview-img"
+                style="background: var(--accent1); opacity: 0.15"
+              >
+                <span>[ IMAGE DU PROJET ]</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="project-divider"></div>
+
+          <!-- Projet 2 — à remplacer -->
+          <article class="project-item" data-index="02">
+            <div class="project-item-inner">
+              <div class="project-left">
+                <span class="project-num">02</span>
+                <div class="project-info">
+                  <h3 class="project-name">Nom du Projet</h3>
+                  <div class="project-tags">
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent2)"
+                      >Motion</span
+                    >
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent3)"
+                      >GSAP</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2024</span>
+                <span class="project-arrow">↗</span>
+              </div>
+            </div>
+            <div class="project-preview">
+              <div
+                class="project-preview-img"
+                style="background: var(--accent2); opacity: 0.15"
+              >
+                <span>[ IMAGE DU PROJET ]</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="project-divider"></div>
+
+          <!-- Projet 3 — à remplacer -->
+          <article class="project-item" data-index="03">
+            <div class="project-item-inner">
+              <div class="project-left">
+                <span class="project-num">03</span>
+                <div class="project-info">
+                  <h3 class="project-name">Nom du Projet</h3>
+                  <div class="project-tags">
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent3)"
+                      >UI/UX</span
+                    >
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent4)"
+                      >Branding</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2023</span>
+                <span class="project-arrow">↗</span>
+              </div>
+            </div>
+            <div class="project-preview">
+              <div
+                class="project-preview-img"
+                style="background: var(--accent3); opacity: 0.15"
+              >
+                <span>[ IMAGE DU PROJET ]</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="project-divider"></div>
+
+          <!-- Projet 4 — à remplacer -->
+          <article class="project-item" data-index="04">
+            <div class="project-item-inner">
+              <div class="project-left">
+                <span class="project-num">04</span>
+                <div class="project-info">
+                  <h3 class="project-name">Nom du Projet</h3>
+                  <div class="project-tags">
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent4)"
+                      >Full-Stack</span
+                    >
+                    <span
+                      class="project-tag"
+                      style="--tag-color: var(--accent1)"
+                      >Dev</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="project-right">
+                <span class="project-year">2023</span>
+                <span class="project-arrow">↗</span>
+              </div>
+            </div>
+            <div class="project-preview">
+              <div
+                class="project-preview-img"
+                style="background: var(--accent4); opacity: 0.15"
+              >
+                <span>[ IMAGE DU PROJET ]</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="project-divider"></div>
+        </div>
+      </section>
+
       <section class="tech-stack-section">
         <div class="tech-stack-header">
           <div class="sys-status">
@@ -229,10 +525,111 @@
 
       <!-- Footer -->
       <footer class="footer">
-        <h2>LET'S TALK</h2>
-        <a href="mailto:hello@thibault.com" class="email-link"
-          >hello@thibault.com</a
-        >
+        <!-- Ligne du haut : statut + navigation rapide -->
+        <div class="footer-top">
+          <div class="footer-status">
+            <span class="footer-status-dot"></span>
+            <span
+              >Disponible pour de nouvelles opportunités —
+              <em>[Ville], France</em></span
+            >
+          </div>
+          <nav class="footer-nav" aria-label="Footer navigation">
+            <a href="#">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+          </nav>
+        </div>
+
+        <!-- Titre principal -->
+        <div class="footer-cta">
+          <h2 class="footer-title">LET'S<br /><em>TALK.</em></h2>
+          <a href="mailto:hello@thibault.com" class="footer-email">
+            <span class="footer-email-label">[ MAIL ME ]</span>
+            <span class="footer-email-address">hello@thibault.com</span>
+            <span class="footer-email-arrow">↗</span>
+          </a>
+        </div>
+
+        <!-- Réseaux sociaux -->
+        <div class="footer-socials">
+          <!-- Remplace les href par tes vrais liens -->
+          <a href="#" class="footer-social-link" aria-label="GitHub">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+              />
+            </svg>
+            <span>GitHub</span>
+          </a>
+          <a href="#" class="footer-social-link" aria-label="LinkedIn">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+              />
+              <rect x="2" y="9" width="4" height="12" />
+              <circle cx="4" cy="4" r="2" />
+            </svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="#" class="footer-social-link" aria-label="Dribbble">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path
+                d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"
+              />
+            </svg>
+            <span>Dribbble</span>
+          </a>
+          <a href="#" class="footer-social-link" aria-label="Twitter / X">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.4 5.6 3.9 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"
+              />
+            </svg>
+            <span>Twitter</span>
+          </a>
+        </div>
+
+        <!-- Ligne du bas : copyright + mention -->
+        <div class="footer-bottom">
+          <span class="footer-copy"
+            >&copy; 2025 Thibault Brebion — Tous droits réservés</span
+          >
+          <span class="footer-made"
+            >Conçu &amp; développé avec
+            <span class="footer-heart">&#9829;</span> en vanilla JS</span
+          >
+        </div>
       </footer>
     </main>
   </body>
