@@ -426,4 +426,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialisation
   cacheOffsets();
+
+  // ============================================
+  // 7. TECH STACK INTERACTIVE MARQUEE
+  // ============================================
+  const techRows = document.querySelectorAll(".tech-row");
+
+  techRows.forEach((row) => {
+    const marqueeInner = row.querySelector(".tech-marquee-inner");
+
+    // 1. On clone le contenu pour créer une boucle infinie parfaite
+    const content = marqueeInner.innerHTML;
+    marqueeInner.innerHTML = content + content + content; // On triple pour être sûr d'avoir de la marge
+
+    // 2. On crée l'animation GSAP du bandeau défilant
+    const tween = gsap.to(marqueeInner, {
+      xPercent: -33.33, // On décale d'un tiers (puisqu'on a triplé le contenu)
+      duration: 10,
+      ease: "none",
+      repeat: -1,
+      paused: true,
+    });
+
+    // 3. Interactions au survol
+    row.addEventListener("mouseenter", () => {
+      document.body.classList.add("cursor-hover"); // Fait grossir ton curseur custom
+      tween.play(); // Lance le défilement
+    });
+
+    row.addEventListener("mouseleave", () => {
+      document.body.classList.remove("cursor-hover");
+      tween.pause(); // Met en pause le défilement
+    });
+  });
+
+  // Animation d'entrée au scroll
+  gsap.from(".tech-row", {
+    scrollTrigger: {
+      trigger: ".tech-list",
+      start: "top 85%", // Se déclenche quand le haut de la liste atteint 85% de l'écran
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: "power3.out",
+  });
 });
