@@ -1,6 +1,6 @@
-/* Suppression de l'import DM Sans inutile */
-
-/* --- VARIABLES & RESET --- */
+/* ============================================
+   VARIABLES & RESET
+   ============================================ */
 :root {
   --accent1: #ed6a5a;
   --accent2: #f4f1bb;
@@ -12,7 +12,6 @@
   --blur-amount: 0px;
 }
 
-/* CLASS UTILITAIRE POUR BLOQUER LE SCROLL */
 .no-scroll {
   overflow: hidden !important;
   height: 100vh !important;
@@ -28,14 +27,15 @@
 html,
 body {
   width: 100%;
-  /* overflow-x est géré, mais overflow-y est laissé libre sauf si .no-scroll est présent */
   overflow-x: hidden;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: "Poppins", sans-serif;
 }
 
-/* --- BUBBLE MENU --- */
+/* ============================================
+   BUBBLE MENU
+   ============================================ */
 .bubble-menu {
   left: 0;
   right: 0;
@@ -117,7 +117,9 @@ body {
   border-radius: 2px;
   display: block;
   margin: 0 auto;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   transform-origin: center;
 }
 
@@ -141,7 +143,9 @@ body {
   }
 }
 
-/* --- BUBBLE MENU ITEMS & OVERLAY --- */
+/* ============================================
+   BUBBLE MENU ITEMS & OVERLAY
+   ============================================ */
 .bubble-menu-items {
   inset: 0;
   display: none;
@@ -211,7 +215,9 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
   will-change: transform;
   box-sizing: border-box;
   white-space: nowrap;
@@ -268,7 +274,9 @@ body {
   }
 }
 
-/* --- CUSTOM CURSOR --- */
+/* ============================================
+   CUSTOM CURSOR
+   ============================================ */
 .cursor {
   position: fixed;
   width: 10px;
@@ -299,10 +307,14 @@ body {
   transform: translate(-50%, -50%) scale(1.5);
   background: rgba(255, 255, 255, 0.1);
   border-color: transparent;
-  transition: width 0.3s, height 0.3s;
+  transition:
+    width 0.3s,
+    height 0.3s;
 }
 
-/* --- LOADING SCREEN --- */
+/* ============================================
+   LOADING SCREEN
+   ============================================ */
 #loading-screen {
   position: fixed;
   top: 0;
@@ -391,7 +403,9 @@ body {
   }
 }
 
-/* --- TRANSITION CURTAIN --- */
+/* ============================================
+   TRANSITION CURTAIN
+   ============================================ */
 .transition-curtain {
   position: fixed;
   top: 0;
@@ -429,7 +443,9 @@ body {
   background-color: var(--accent4);
 }
 
-/* --- HOME CONTENT --- */
+/* ============================================
+   HOME CONTENT
+   ============================================ */
 #home-content {
   opacity: 0;
   filter: blur(var(--blur-amount));
@@ -439,7 +455,9 @@ body {
   opacity: 1;
 }
 
-/* --- HERO SECTION --- */
+/* ============================================
+   HERO SECTION
+   ============================================ */
 .hero {
   position: relative;
   height: 100vh;
@@ -531,7 +549,9 @@ body {
   }
 }
 
-/* --- SCROLL STACK EFFECT --- */
+/* ============================================
+   SCROLL STACK EFFECT
+   ============================================ */
 .scroll-stack-section {
   position: relative;
   width: 100%;
@@ -655,7 +675,9 @@ body {
   }
 }
 
-/* --- FOOTER --- */
+/* ============================================
+   FOOTER
+   ============================================ */
 .footer {
   height: 50vh;
   display: flex;
