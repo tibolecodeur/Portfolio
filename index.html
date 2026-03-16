@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thibault Brebion | Portfolio</title>
 
-    <script src="./assets/js/script.js" defer></script>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Scripts -->
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
       defer
@@ -18,17 +25,14 @@
       src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"
       defer
     ></script>
-
-    <link
-      href="https://fonts.googleapis.com/css?family=Poppins:900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script src="./assets/js/script.js" defer></script>
   </head>
   <body class="no-scroll">
+    <!-- Custom Cursor -->
     <div class="cursor"></div>
     <div class="cursor-follower"></div>
 
+    <!-- Loading Screen -->
     <div id="loading-screen">
       <div class="loading-container">
         <span class="loading-text">LOADING</span>
@@ -49,6 +53,7 @@
       </svg>
     </div>
 
+    <!-- Transition Curtain -->
     <div class="transition-curtain">
       <div class="curtain-layer layer-1"></div>
       <div class="curtain-layer layer-2"></div>
@@ -57,6 +62,7 @@
       <div class="curtain-layer layer-5"></div>
     </div>
 
+    <!-- Navigation Bubble Menu -->
     <nav class="bubble-menu absolute" aria-label="Main navigation">
       <div
         class="bubble logo-bubble"
@@ -78,11 +84,14 @@
       </button>
     </nav>
 
+    <!-- Menu Overlay -->
     <div class="bubble-menu-items absolute" id="menuOverlay" aria-hidden="true">
       <ul class="pill-list" role="menu" aria-label="Menu links"></ul>
     </div>
 
+    <!-- Main Content -->
     <main id="home-content" class="content-hidden">
+      <!-- Hero Section -->
       <section class="hero">
         <div class="hero-text-container">
           <h1 class="name">THIBAULT<br />BREBION</h1>
@@ -95,6 +104,7 @@
         </div>
       </section>
 
+      <!-- Scroll Stack Section -->
       <section class="scroll-stack-section">
         <div class="scroll-stack-scroller">
           <div class="scroll-stack-inner">
@@ -154,6 +164,7 @@
         </div>
       </section>
 
+      <!-- Footer -->
       <footer class="footer">
         <h2>LET'S TALK</h2>
         <a href="mailto:hello@thibault.com" class="email-link"

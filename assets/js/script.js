@@ -2,16 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.registerPlugin(ScrollTrigger);
 
   // ============================================
-  // 0. INIT SMOOTH SCROLL (LENIS) - FIX JITTER
+  // 1. SMOOTH SCROLL SETUP (Lenis)
   // ============================================
-  // L'ajout de Lenis corrige le problème de tremblement
-  // en lissant le scroll delta entre le navigateur et GSAP.
   const lenis = new Lenis({
-    lerp: 0.1, // Douceur du scroll
+    lerp: 0.1,
     smoothWheel: true,
   });
 
-  // Synchronisation de Lenis avec GSAP ScrollTrigger
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
@@ -19,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.ticker.lagSmoothing(0);
 
   // ============================================
-  // 1. CUSTOM CURSOR
+  // 2. CUSTOM CURSOR
   // ============================================
   const cursor = document.querySelector(".cursor");
   const follower = document.querySelector(".cursor-follower");
@@ -28,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let followerX = 0,
     followerY = 0;
 
-  // Déplacement de base
   let lastMouseMove = 0;
   document.addEventListener(
     "mousemove",
@@ -63,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================
-  // 1.5 BUBBLE MENU
+  // 3. BUBBLE MENU
   // ============================================
   const MENU_BG = "#ffffff";
   const MENU_CONTENT_COLOR = "#000000";
@@ -154,15 +150,12 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleBtn.classList.toggle("open", isMenuOpen);
     overlay.setAttribute("aria-hidden", String(!isMenuOpen));
 
-    // Gestion de la scrollbar quand le menu est ouvert
     if (isMenuOpen) {
       document.body.classList.add("no-scroll");
-      // Stop Lenis
       lenis.stop();
       openMenu();
     } else {
       document.body.classList.remove("no-scroll");
-      // Restart Lenis
       lenis.start();
       closeMenu();
     }
@@ -242,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================
-  // 2. LOADING SCREEN & TRANSITION
+  // 4. LOADING SCREEN & TRANSITION
   // ============================================
   const loadingScreen = document.getElementById("loading-screen");
   const homeContent = document.getElementById("home-content");
@@ -259,9 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => {
         homeContent.classList.add("content-visible");
-
-        // C'est ICI qu'on rend la main à l'utilisateur
-        // On enlève la classe qui bloque le scroll
         document.body.classList.remove("no-scroll");
 
         initHomeAnimations();
@@ -286,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 3. ANIMATIONS HOME & SCROLL
+  // 5. HOME ANIMATIONS & SCROLL EFFECTS
   // ============================================
   function initHomeAnimations() {
     const tl = gsap.timeline();
@@ -320,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 4. SCROLL STACK EFFECT (Optimized)
+  // 6. SCROLL STACK CARD EFFECT
   // ============================================
   const CONFIG = {
     itemDistance: 100,
@@ -341,7 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function cacheOffsets() {
     viewportH = window.innerHeight;
-    // Correction du calcul des offsets avec Lenis (window.scrollY)
     const currentScroll = window.scrollY;
     cardOffsets = cards.map(
       (c) => c.getBoundingClientRect().top + currentScroll,
@@ -402,8 +391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         translateY = pinEnd - cardTop + stackPx + CONFIG.itemStackDistance * i;
       }
 
-      // OPTIMISATION : Retrait du Math.round agressif qui causait le tremblement
-      // On garde 3 décimales pour la précision sans saccade
       const t = {
         ty: Math.round(translateY * 1000) / 1000,
         s: Math.round(scale * 1000) / 1000,
@@ -424,8 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // IMPORTANT : On utilise le ticker GSAP au lieu de 'scroll' event
-  // Cela synchronise le calcul avec le rafraîchissement écran (60/120fps)
+  // Utilisation du ticker GSAP pour synchroniser avec le rafraîchissement écran
   gsap.ticker.add(() => {
     updateCardTransforms(window.scrollY);
   });
@@ -438,6 +424,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 100);
   });
 
-  // Boot
+  // Initialisation
   cacheOffsets();
 });
