@@ -12,7 +12,8 @@
   --blur-amount: 0px;
 }
 
-.no-scroll {
+html.no-scroll,
+body.no-scroll {
   overflow: hidden !important;
   height: 100vh !important;
 }
@@ -24,8 +25,7 @@
   cursor: none;
 }
 
-html,
-body {
+html {
   width: 100%;
   overflow-x: hidden;
   background-color: var(--bg-color);
@@ -33,10 +33,16 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+body {
+  width: 100%;
+  /* pas de overflow-x ici */
+}
+
 /* ============================================
    BUBBLE MENU
    ============================================ */
 .bubble-menu {
+  position: fixed; /* Toujours visible au scroll */
   left: 0;
   right: 0;
   top: 2em;
@@ -49,11 +55,12 @@ body {
   z-index: 99;
 }
 
+/* Conserver les classes pour la compatibilité JS */
 .bubble-menu.fixed {
   position: fixed;
 }
 .bubble-menu.absolute {
-  position: absolute;
+  position: fixed;
 }
 
 .bubble-menu .bubble {
@@ -147,6 +154,7 @@ body {
    BUBBLE MENU ITEMS & OVERLAY
    ============================================ */
 .bubble-menu-items {
+  position: fixed; /* Couvre toujours le viewport, même après scroll */
   inset: 0;
   display: none;
   align-items: center;
@@ -155,11 +163,12 @@ body {
   z-index: 98;
 }
 
+/* Conserver les classes pour la compatibilité JS */
 .bubble-menu-items.fixed {
   position: fixed;
 }
 .bubble-menu-items.absolute {
-  position: absolute;
+  position: fixed;
 }
 
 .bubble-menu-items .pill-list {
@@ -555,6 +564,7 @@ body {
 .scroll-stack-section {
   position: relative;
   width: 100%;
+  margin-bottom: 10rem;
 }
 
 .scroll-stack-scroller {
@@ -671,7 +681,7 @@ body {
 
 @media (max-width: 600px) {
   .scroll-stack-inner {
-    padding: 20vh 1.5rem 50rem;
+    padding: 20vh 1.5rem 5rem; /* Était 50rem — bug géant */
   }
 }
 
@@ -866,46 +876,6 @@ body {
   }
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
-.footer {
-  height: 50vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: var(--bg-color);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.footer h2 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-}
-
-.email-link {
-  font-size: 2rem;
-  color: var(--accent1);
-  text-decoration: none;
-  position: relative;
-}
-
-.email-link::after {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 2px;
-  bottom: -5px;
-  left: 0;
-  background: var(--accent1);
-  transition: width 0.3s ease;
-}
-
-.email-link:hover::after {
-  width: 100%;
-}
-
 @media (max-width: 768px) {
   .loading-text {
     font-size: 4rem;
@@ -1066,6 +1036,13 @@ body {
   .hero-badge {
     top: 5.5rem;
   }
+  /* hero-divider (bottom: 6vh) et scroll-indicator (bottom: 40px) se superposent sur petit écran */
+  .hero-divider {
+    display: none;
+  }
+  .scroll-indicator {
+    bottom: 24px;
+  }
 }
 
 /* ─────────────────────────────────────────
@@ -1223,8 +1200,10 @@ body {
 
 .about-stat {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  column-gap: 2px;
+  row-gap: 4px;
 }
 
 .stat-number {
@@ -1245,6 +1224,7 @@ body {
 }
 
 .stat-label {
+  flex: 0 0 100%; /* Force sur sa propre ligne */
   font-size: 0.65rem;
   font-family: monospace;
   letter-spacing: 0.12em;
@@ -1723,4 +1703,72 @@ body {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* ============================================
+   PROJECT TRANSITION — "THE ORIGIN"
+   ============================================ */
+
+/* Wrapper fixe qui couvre tout le viewport */
+.pt-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  pointer-events: all;
+  overflow: hidden;
+}
+
+/* Cercle coloré qui s'expand depuis le clic */
+.pt-circle {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}
+
+/* Le grand numéro fantôme centré */
+.pt-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 48vw;
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.08);
+  user-select: none;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Flash final avant navigation */
+.pt-flash {
+  position: absolute;
+  inset: 0;
+  background: #0a0a0a;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Lignes verticales qui "déchirent" la page */
+.pt-shards {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.pt-shard {
+  flex: 1;
+  height: 100%;
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+/* Retour depuis une page projet — animation d'entrée */
+.page-entering .pt-wrap-return {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  pointer-events: none;
 }

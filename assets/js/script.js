@@ -564,4 +564,208 @@ document.addEventListener("DOMContentLoaded", () => {
     stagger: 0.12,
     ease: "power3.out",
   });
+
+  // ============================================
+  // 10. PROJECT TRANSITIONS — "THE ORIGIN"
+  // Concept : un cercle coloré explose depuis
+  // le point de clic exact, le numéro du projet
+  // se matérialise en géant puis s'implose avant
+  // que la page vole en éclats verticaux.
+  // ============================================
+
+  (function initProjectTransitions() {
+    // ── Détecte si on revient d'une page projet ──
+    if (document.referrer.includes("projects/")) {
+      playReturnTransition();
+    }
+
+    // ── Attache les handlers sur chaque projet ──
+    document.querySelectorAll(".project-item[data-href]").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const href = item.dataset.href;
+        const color = item.dataset.color || "#ed6a5a";
+        const num = item.querySelector(".project-num").textContent.trim();
+
+        // Micro-feedback immédiat sur l'élément cliqué
+        gsap.to(item, {
+          scale: 1.015,
+          duration: 0.12,
+          ease: "power2.out",
+          onComplete: () => gsap.set(item, { scale: 1 }),
+        });
+
+        playOriginTransition(e.clientX, e.clientY, color, num, href);
+      });
+    });
+
+    // ─────────────────────────────────────────
+    // TRANSITION SORTIE — "THE ORIGIN"
+    // ─────────────────────────────────────────
+    function playOriginTransition(ox, oy, color, num, href) {
+      // Rayon max pour couvrir tout le viewport depuis le point de clic
+      const maxR =
+        Math.hypot(
+          Math.max(ox, innerWidth - ox),
+          Math.max(oy, innerHeight - oy),
+        ) * 1.15;
+
+      // ── Construire les éléments overlay ──
+      const wrap = document.createElement("div");
+      wrap.className = "pt-wrap";
+
+      // 1. Barres verticales (déchirure finale)
+      const SHARDS = 9;
+      const shardsEl = document.createElement("div");
+      shardsEl.className = "pt-shards";
+      for (let i = 0; i < SHARDS; i++) {
+        const s = document.createElement("div");
+        s.className = "pt-shard";
+        s.style.background = color;
+        s.style.transform = "scaleY(0)";
+        shardsEl.appendChild(s);
+      }
+
+      // 2. Cercle coloré (clip-path expand depuis le clic)
+      const circle = document.createElement("div");
+      circle.className = "pt-circle";
+      circle.style.background = color;
+      circle.style.clipPath = `circle(0px at ${ox}px ${oy}px)`;
+
+      // 3. Numéro géant fantôme centré
+      const numEl = document.createElement("div");
+      numEl.className = "pt-number";
+      numEl.textContent = num;
+      numEl.style.opacity = "0";
+      numEl.style.transform = "scale(0.4)";
+
+      // 4. Flash de fin
+      const flash = document.createElement("div");
+      flash.className = "pt-flash";
+
+      wrap.appendChild(shardsEl);
+      wrap.appendChild(circle);
+      wrap.appendChild(numEl);
+      wrap.appendChild(flash);
+      document.body.appendChild(wrap);
+
+      lenis.stop(); // Stoppe le smooth scroll
+
+      // ── Timeline ──
+      const tl = gsap.timeline({ defaults: { overwrite: "auto" } });
+
+      // Phase 1 — Les sections de la page tombent de façon alternée (0 → 0.45s)
+      tl.to(
+        [
+          ".hero",
+          ".scroll-stack-section",
+          ".about-section",
+          ".projects-section",
+          ".tech-stack-section",
+          ".footer",
+        ],
+        {
+          y: (i) => (i % 2 === 0 ? -60 : 60),
+          opacity: 0,
+          duration: 0.45,
+          ease: "power3.in",
+          stagger: { each: 0.04, from: "center" },
+        },
+        0,
+      );
+
+      // Phase 2 — Le cercle coloré explose depuis le point de clic (0.1 → 0.9s)
+      tl.to(
+        circle,
+        {
+          clipPath: `circle(${maxR}px at ${ox}px ${oy}px)`,
+          duration: 0.8,
+          ease: "expo.inOut",
+        },
+        0.1,
+      );
+
+      // Phase 3 — Le numéro géant se matérialise au centre (0.45 → 0.85s)
+      tl.to(
+        numEl,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out(1.5)",
+        },
+        0.45,
+      );
+
+      // Phase 4 — Le numéro s'implose (0.85 → 1.2s)
+      tl.to(
+        numEl,
+        {
+          scale: 0.05,
+          opacity: 0,
+          duration: 0.35,
+          ease: "power4.in",
+        },
+        0.85,
+      );
+
+      // Phase 5 — Barres verticales déchirent l'écran depuis le centre (1.0 → 1.35s)
+      tl.to(
+        ".pt-shard",
+        {
+          scaleY: 1,
+          transformOrigin: "top center",
+          duration: 0.3,
+          ease: "power3.in",
+          stagger: {
+            each: 0.025,
+            from: "center",
+          },
+        },
+        1.0,
+      );
+
+      // Phase 6 — Flash final puis navigation (1.3 → 1.45s)
+      tl.to(
+        flash,
+        {
+          opacity: 1,
+          duration: 0.15,
+          ease: "none",
+          onComplete() {
+            window.location.href = href;
+          },
+        },
+        1.3,
+      );
+    }
+
+    // ─────────────────────────────────────────
+    // TRANSITION RETOUR
+    // Dans tes pages projet, ajoute un lien retour
+    // vers index.html?from=project pour activer
+    // cette animation d'entrée.
+    // ─────────────────────────────────────────
+    function playReturnTransition() {
+      const curtain = document.createElement("div");
+      curtain.style.cssText = [
+        "position:fixed",
+        "inset:0",
+        "z-index:9999999",
+        "background:#0a0a0a",
+        "pointer-events:all",
+        "transform-origin:top",
+      ].join(";");
+      document.body.appendChild(curtain);
+
+      gsap.to(curtain, {
+        scaleY: 0,
+        duration: 0.9,
+        ease: "expo.inOut",
+        delay: 0.1,
+        onComplete: () => curtain.remove(),
+      });
+    }
+  })(); // fin initProjectTransitions
 });
