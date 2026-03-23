@@ -310,120 +310,343 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 6. SCROLL STACK CARD EFFECT
+  // 6. TECH STACK INTERACTIVE MARQUEE
   // ============================================
-  const CONFIG = {
-    itemDistance: 100,
-    itemScale: 0.03,
-    itemStackDistance: 30,
-    stackPosition: "20%",
-    scaleEndPosition: "10%",
-    baseScale: 0.85,
-    rotationAmount: 0,
-  };
+  const techRows = document.querySelectorAll(".tech-row");
 
-  const cards = Array.from(document.querySelectorAll(".scroll-stack-card"));
-  const stackEnd = document.getElementById("stackEnd");
+  techRows.forEach((row) => {
+    const marqueeInner = row.querySelector(".tech-marquee-inner");
 
-  let cardOffsets = [];
-  let endOffset = 0;
-  let viewportH = window.innerHeight;
+    // 1. On clone le contenu pour créer une boucle infinie parfaite
+    const content = marqueeInner.innerHTML;
+    marqueeInner.innerHTML = content + content + content; // On triple pour être sûr d'avoir de la marge
 
-  function cacheOffsets() {
-    viewportH = window.innerHeight;
-    const currentScroll = window.scrollY;
-    cardOffsets = cards.map(
-      (c) => c.getBoundingClientRect().top + currentScroll,
+    // 2. On crée l'animation GSAP du bandeau défilant
+    const tween = gsap.to(marqueeInner, {
+      xPercent: -33.33, // On décale d'un tiers (puisqu'on a triplé le contenu)
+      duration: 10,
+      ease: "none",
+      repeat: -1,
+      paused: true,
+    });
+
+    // 3. Interactions au survol
+    row.addEventListener("mouseenter", () => {
+      document.body.classList.add("cursor-hover"); // Fait grossir ton curseur custom
+      tween.play(); // Lance le défilement
+    });
+
+    row.addEventListener("mouseleave", () => {
+      document.body.classList.remove("cursor-hover");
+      tween.pause(); // Met en pause le défilement
+    });
+  });
+
+  // Animation d'entrée au scroll
+  gsap.from(".tech-row", {
+    scrollTrigger: {
+      trigger: ".tech-list",
+      start: "top 85%",
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: "power3.out",
+  });
+
+  // ============================================
+  // 8. ABOUT SECTION ANIMATIONS
+  // ============================================
+
+  // Compteur animé pour les stats
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    gsap.to(
+      { val: 0 },
+      {
+        val: target,
+        duration: 1.6,
+        ease: "power3.out",
+        onUpdate: function () {
+          el.textContent = Math.round(this.targets()[0].val);
+        },
+      },
     );
-    endOffset = stackEnd.getBoundingClientRect().top + currentScroll;
   }
 
-  cards.forEach((card, i) => {
-    if (i < cards.length - 1)
-      card.style.marginBottom = `${CONFIG.itemDistance}px`;
-    card.style.willChange = "transform";
-    card.style.transformOrigin = "top center";
-    card.style.backfaceVisibility = "hidden";
+  ScrollTrigger.create({
+    trigger: ".about-stats",
+    start: "top 80%",
+    once: true,
+    onEnter: () => {
+      document.querySelectorAll(".stat-number").forEach(animateCounter);
+    },
   });
 
-  const lastTransforms = new Map();
+  // Révélation des mots de la grande phrase au scroll
+  const wordSpans = document.querySelectorAll(".word-reveal");
+  if (wordSpans.length) {
+    ScrollTrigger.create({
+      trigger: ".about-statement",
+      start: "top 75%",
+      end: "bottom 30%",
+      scrub: 0.8,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        wordSpans.forEach((span, i) => {
+          const threshold = i / wordSpans.length;
+          if (progress >= threshold) {
+            span.classList.add("lit");
+          } else {
+            span.classList.remove("lit");
+          }
+        });
+      },
+    });
+  }
 
-  function parsePercentage(value, h) {
-    if (typeof value === "string" && value.includes("%")) {
-      return (parseFloat(value) / 100) * h;
+  // Animation d'entrée de la grille about
+  gsap.from(".about-photo-frame", {
+    scrollTrigger: { trigger: ".about-grid", start: "top 80%" },
+    x: -60,
+    opacity: 0,
+    duration: 1.2,
+    ease: "power3.out",
+  });
+
+  gsap.from(".about-content-col > *", {
+    scrollTrigger: { trigger: ".about-grid", start: "top 80%" },
+    y: 40,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.15,
+    ease: "power3.out",
+  });
+
+  // ============================================
+  // 9. PROJECTS SECTION ANIMATIONS
+  // ============================================
+
+  // Titre projects — reveal au scroll
+  gsap.from(".projects-title", {
+    scrollTrigger: { trigger: ".projects-header", start: "top 85%" },
+    y: 80,
+    opacity: 0,
+    duration: 1.2,
+    ease: "power4.out",
+  });
+
+  // Items de la liste — stagger au scroll
+  gsap.from(".project-item", {
+    scrollTrigger: { trigger: ".projects-list", start: "top 85%" },
+    y: 30,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.12,
+    ease: "power3.out",
+  });
+
+  // ============================================
+  // 10. PROJECT TRANSITIONS — "THE ORIGIN"
+  // Concept : un cercle coloré explose depuis
+  // le point de clic exact, le numéro du projet
+  // se matérialise en géant puis s'implose avant
+  // que la page vole en éclats verticaux.
+  // ============================================
+
+  (function initProjectTransitions() {
+    // ── Détecte si on revient d'une page projet ──
+    if (document.referrer.includes("projects/")) {
+      playReturnTransition();
     }
-    return parseFloat(value);
-  }
 
-  function clampedProgress(scroll, start, end) {
-    if (scroll <= start) return 0;
-    if (scroll >= end) return 1;
-    return (scroll - start) / (end - start);
-  }
+    // ── Attache les handlers sur chaque projet ──
+    document.querySelectorAll(".project-item[data-href]").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
 
-  function updateCardTransforms(scrollTop) {
-    const stackPx = parsePercentage(CONFIG.stackPosition, viewportH);
-    const scaleEndPx = parsePercentage(CONFIG.scaleEndPosition, viewportH);
-    const pinEnd = endOffset - viewportH / 2;
+        const href = item.dataset.href;
+        const color = item.dataset.color || "#ed6a5a";
+        const num = item.querySelector(".project-num").textContent.trim();
 
-    for (let i = 0; i < cards.length; i++) {
-      const cardTop = cardOffsets[i];
-      const triggerStart = cardTop - stackPx - CONFIG.itemStackDistance * i;
-      const triggerEnd = cardTop - scaleEndPx;
-      const pinStart = triggerStart;
+        // Micro-feedback immédiat sur l'élément cliqué
+        gsap.to(item, {
+          scale: 1.015,
+          duration: 0.12,
+          ease: "power2.out",
+          onComplete: () => gsap.set(item, { scale: 1 }),
+        });
 
-      const scaleProgress = clampedProgress(
-        scrollTop,
-        triggerStart,
-        triggerEnd,
+        playOriginTransition(e.clientX, e.clientY, color, num, href);
+      });
+    });
+
+    // ─────────────────────────────────────────
+    // TRANSITION SORTIE — "THE ORIGIN"
+    // ─────────────────────────────────────────
+    function playOriginTransition(ox, oy, color, num, href) {
+      // Rayon max pour couvrir tout le viewport depuis le point de clic
+      const maxR =
+        Math.hypot(
+          Math.max(ox, innerWidth - ox),
+          Math.max(oy, innerHeight - oy),
+        ) * 1.15;
+
+      // ── Construire les éléments overlay ──
+      const wrap = document.createElement("div");
+      wrap.className = "pt-wrap";
+
+      // 1. Barres verticales (déchirure finale)
+      const SHARDS = 9;
+      const shardsEl = document.createElement("div");
+      shardsEl.className = "pt-shards";
+      for (let i = 0; i < SHARDS; i++) {
+        const s = document.createElement("div");
+        s.className = "pt-shard";
+        s.style.background = color;
+        s.style.transform = "scaleY(0)";
+        shardsEl.appendChild(s);
+      }
+
+      // 2. Cercle coloré (clip-path expand depuis le clic)
+      const circle = document.createElement("div");
+      circle.className = "pt-circle";
+      circle.style.background = color;
+      circle.style.clipPath = `circle(0px at ${ox}px ${oy}px)`;
+
+      // 3. Numéro géant fantôme centré
+      const numEl = document.createElement("div");
+      numEl.className = "pt-number";
+      numEl.textContent = num;
+      numEl.style.opacity = "0";
+      numEl.style.transform = "scale(0.4)";
+
+      // 4. Flash de fin
+      const flash = document.createElement("div");
+      flash.className = "pt-flash";
+
+      wrap.appendChild(shardsEl);
+      wrap.appendChild(circle);
+      wrap.appendChild(numEl);
+      wrap.appendChild(flash);
+      document.body.appendChild(wrap);
+
+      lenis.stop(); // Stoppe le smooth scroll
+
+      // ── Timeline ──
+      const tl = gsap.timeline({ defaults: { overwrite: "auto" } });
+
+      // Phase 1 — Les sections de la page tombent de façon alternée (0 → 0.45s)
+      tl.to(
+        [
+          ".hero",
+          ".about-section",
+          ".projects-section",
+          ".tech-stack-section",
+          ".footer",
+        ],
+        {
+          y: (i) => (i % 2 === 0 ? -60 : 60),
+          opacity: 0,
+          duration: 0.45,
+          ease: "power3.in",
+          stagger: { each: 0.04, from: "center" },
+        },
+        0,
       );
-      const targetScale = CONFIG.baseScale + i * CONFIG.itemScale;
-      const scale = 1 - scaleProgress * (1 - targetScale);
-      const rotation = CONFIG.rotationAmount
-        ? i * CONFIG.rotationAmount * scaleProgress
-        : 0;
 
-      let translateY = 0;
-      if (scrollTop >= pinStart && scrollTop <= pinEnd) {
-        translateY =
-          scrollTop - cardTop + stackPx + CONFIG.itemStackDistance * i;
-      } else if (scrollTop > pinEnd) {
-        translateY = pinEnd - cardTop + stackPx + CONFIG.itemStackDistance * i;
-      }
+      // Phase 2 — Le cercle coloré explose depuis le point de clic (0.1 → 0.9s)
+      tl.to(
+        circle,
+        {
+          clipPath: `circle(${maxR}px at ${ox}px ${oy}px)`,
+          duration: 0.8,
+          ease: "expo.inOut",
+        },
+        0.1,
+      );
 
-      const t = {
-        ty: Math.round(translateY * 1000) / 1000,
-        s: Math.round(scale * 1000) / 1000,
-        r: Math.round(rotation * 100) / 100,
-      };
+      // Phase 3 — Le numéro géant se matérialise au centre (0.45 → 0.85s)
+      tl.to(
+        numEl,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out(1.5)",
+        },
+        0.45,
+      );
 
-      const prev = lastTransforms.get(i);
-      const changed =
-        !prev ||
-        Math.abs(prev.ty - t.ty) > 0.1 ||
-        Math.abs(prev.s - t.s) > 0.0001;
+      // Phase 4 — Le numéro s'implose (0.85 → 1.2s)
+      tl.to(
+        numEl,
+        {
+          scale: 0.05,
+          opacity: 0,
+          duration: 0.35,
+          ease: "power4.in",
+        },
+        0.85,
+      );
 
-      if (changed) {
-        cards[i].style.transform =
-          `translate3d(0,${t.ty}px,0) scale(${t.s}) rotate(${t.r}deg)`;
-        lastTransforms.set(i, t);
-      }
+      // Phase 5 — Barres verticales déchirent l'écran depuis le centre (1.0 → 1.35s)
+      tl.to(
+        ".pt-shard",
+        {
+          scaleY: 1,
+          transformOrigin: "top center",
+          duration: 0.3,
+          ease: "power3.in",
+          stagger: {
+            each: 0.025,
+            from: "center",
+          },
+        },
+        1.0,
+      );
+
+      // Phase 6 — Flash final puis navigation (1.3 → 1.45s)
+      tl.to(
+        flash,
+        {
+          opacity: 1,
+          duration: 0.15,
+          ease: "none",
+          onComplete() {
+            window.location.href = href;
+          },
+        },
+        1.3,
+      );
     }
-  }
 
-  // Utilisation du ticker GSAP pour synchroniser avec le rafraîchissement écran
-  gsap.ticker.add(() => {
-    updateCardTransforms(window.scrollY);
-  });
+    // ─────────────────────────────────────────
+    // TRANSITION RETOUR
+    // Dans tes pages projet, ajoute un lien retour
+    // vers index.html?from=project pour activer
+    // cette animation d'entrée.
+    // ─────────────────────────────────────────
+    function playReturnTransition() {
+      const curtain = document.createElement("div");
+      curtain.style.cssText = [
+        "position:fixed",
+        "inset:0",
+        "z-index:9999999",
+        "background:#0a0a0a",
+        "pointer-events:all",
+        "transform-origin:top",
+      ].join(";");
+      document.body.appendChild(curtain);
 
-  let resizeTimer;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      cacheOffsets();
-    }, 100);
-  });
-
-  // Initialisation
-  cacheOffsets();
+      gsap.to(curtain, {
+        scaleY: 0,
+        duration: 0.9,
+        ease: "expo.inOut",
+        delay: 0.1,
+        onComplete: () => curtain.remove(),
+      });
+    }
+  })(); // fin initProjectTransitions
 });
