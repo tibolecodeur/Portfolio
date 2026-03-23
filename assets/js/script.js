@@ -310,125 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 6. SCROLL STACK CARD EFFECT
-  // ============================================
-  const CONFIG = {
-    itemDistance: 100,
-    itemScale: 0.03,
-    itemStackDistance: 30,
-    stackPosition: "20%",
-    scaleEndPosition: "10%",
-    baseScale: 0.85,
-    rotationAmount: 0,
-  };
-
-  const cards = Array.from(document.querySelectorAll(".scroll-stack-card"));
-  const stackEnd = document.getElementById("stackEnd");
-
-  let cardOffsets = [];
-  let endOffset = 0;
-  let viewportH = window.innerHeight;
-
-  function cacheOffsets() {
-    viewportH = window.innerHeight;
-    const currentScroll = window.scrollY;
-    cardOffsets = cards.map(
-      (c) => c.getBoundingClientRect().top + currentScroll,
-    );
-    endOffset = stackEnd.getBoundingClientRect().top + currentScroll;
-  }
-
-  cards.forEach((card, i) => {
-    if (i < cards.length - 1)
-      card.style.marginBottom = `${CONFIG.itemDistance}px`;
-    card.style.willChange = "transform";
-    card.style.transformOrigin = "top center";
-    card.style.backfaceVisibility = "hidden";
-  });
-
-  const lastTransforms = new Map();
-
-  function parsePercentage(value, h) {
-    if (typeof value === "string" && value.includes("%")) {
-      return (parseFloat(value) / 100) * h;
-    }
-    return parseFloat(value);
-  }
-
-  function clampedProgress(scroll, start, end) {
-    if (scroll <= start) return 0;
-    if (scroll >= end) return 1;
-    return (scroll - start) / (end - start);
-  }
-
-  function updateCardTransforms(scrollTop) {
-    const stackPx = parsePercentage(CONFIG.stackPosition, viewportH);
-    const scaleEndPx = parsePercentage(CONFIG.scaleEndPosition, viewportH);
-    const pinEnd = endOffset - viewportH / 2;
-
-    for (let i = 0; i < cards.length; i++) {
-      const cardTop = cardOffsets[i];
-      const triggerStart = cardTop - stackPx - CONFIG.itemStackDistance * i;
-      const triggerEnd = cardTop - scaleEndPx;
-      const pinStart = triggerStart;
-
-      const scaleProgress = clampedProgress(
-        scrollTop,
-        triggerStart,
-        triggerEnd,
-      );
-      const targetScale = CONFIG.baseScale + i * CONFIG.itemScale;
-      const scale = 1 - scaleProgress * (1 - targetScale);
-      const rotation = CONFIG.rotationAmount
-        ? i * CONFIG.rotationAmount * scaleProgress
-        : 0;
-
-      let translateY = 0;
-      if (scrollTop >= pinStart && scrollTop <= pinEnd) {
-        translateY =
-          scrollTop - cardTop + stackPx + CONFIG.itemStackDistance * i;
-      } else if (scrollTop > pinEnd) {
-        translateY = pinEnd - cardTop + stackPx + CONFIG.itemStackDistance * i;
-      }
-
-      const t = {
-        ty: Math.round(translateY * 1000) / 1000,
-        s: Math.round(scale * 1000) / 1000,
-        r: Math.round(rotation * 100) / 100,
-      };
-
-      const prev = lastTransforms.get(i);
-      const changed =
-        !prev ||
-        Math.abs(prev.ty - t.ty) > 0.1 ||
-        Math.abs(prev.s - t.s) > 0.0001;
-
-      if (changed) {
-        cards[i].style.transform =
-          `translate3d(0,${t.ty}px,0) scale(${t.s}) rotate(${t.r}deg)`;
-        lastTransforms.set(i, t);
-      }
-    }
-  }
-
-  // Utilisation du ticker GSAP pour synchroniser avec le rafraîchissement écran
-  gsap.ticker.add(() => {
-    updateCardTransforms(window.scrollY);
-  });
-
-  let resizeTimer;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      cacheOffsets();
-    }, 100);
-  });
-
-  // Initialisation
-  cacheOffsets();
-
-  // ============================================
-  // 7. TECH STACK INTERACTIVE MARQUEE
+  // 6. TECH STACK INTERACTIVE MARQUEE
   // ============================================
   const techRows = document.querySelectorAll(".tech-row");
 
@@ -659,7 +541,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tl.to(
         [
           ".hero",
-          ".scroll-stack-section",
           ".about-section",
           ".projects-section",
           ".tech-stack-section",
