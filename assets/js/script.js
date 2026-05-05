@@ -320,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
       homeContent.classList.add("content-visible");
       document.body.classList.remove("no-scroll");
       initHomeAnimations();
+      initDissolveEffect();
     },
   });
 
@@ -328,11 +329,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   function initHomeAnimations() {
     // Préparer les stickers : composer rotation (depuis --rot CSS) + scale + opacity initiale
+    // Préparer les stickers : on lit la rotation cible depuis --rot,
+    // on les met scale 0.4 + opacity 0 pour l'animation d'entrée
     document.querySelectorAll(".sticker").forEach((el) => {
-      const rot =
-        getComputedStyle(el).getPropertyValue("--rot").trim() || "0deg";
+      const rotStr = getComputedStyle(el).getPropertyValue("--rot").trim();
+      const rot = parseFloat(rotStr) || 0;
+      // Stocker la rotation cible pour la réutiliser à la fin
+      el.dataset.targetRot = rot;
       gsap.set(el, {
-        rotation: parseFloat(rot),
+        rotation: rot,
         scale: 0.4,
         opacity: 0,
       });
@@ -412,4 +417,129 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
   }
+
+  // ============================================
+  // 6. DISSOLVE EFFECT (Ironhill-style WebGL shader)
+  // ============================================
+  function initDissolveEffect() {
+    const canvas = document.querySelector(".hero-canvas");
+    const hero = document.querySelector(".hero");
+    if (!canvas || !hero || typeof THREE === "undefined") return;
+
+    const vertexShader = `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      uniform float uProgress;
+      uniform vec2 uResolution;
+      uniform vec3 uColor;
+      uniform float uSpread;
+      varying vec2 vUv;
+
+      float Hash(vec2 p) {
+        vec3 p2 = vec3(p.xy, 1.0);
+        return fract(sin(dot(p2, vec3(37.1, 61.7, 12.4))) * 3758.5453123);
+      }
+
+      float noise(in vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f *= f * (3.0 - 2.0 * f);
+        return mix(
+          mix(Hash(i + vec2(0.0, 0.0)), Hash(i + vec2(1.0, 0.0)), f.x),
+          mix(Hash(i + vec2(0.0, 1.0)), Hash(i + vec2(1.0, 1.0)), f.x),
+          f.y
+        );
+      }
+
+      float fbm(vec2 p) {
+        float v = 0.0;
+        v += noise(p * 1.0) * 0.5;
+        v += noise(p * 2.0) * 0.25;
+        v += noise(p * 4.0) * 0.125;
+        return v;
+      }
+
+      void main() {
+        vec2 uv = vUv;
+        float aspect = uResolution.x / uResolution.y;
+        vec2 centeredUv = (uv - 0.5) * vec2(aspect, 1.0);
+
+        float dissolveEdge = uv.y - uProgress * 1.2;
+        float noiseValue = fbm(centeredUv * 15.0);
+        float d = dissolveEdge + noiseValue * uSpread;
+
+        float pixelSize = 1.0 / uResolution.y;
+        float alpha = 1.0 - smoothstep(-pixelSize, pixelSize, d);
+
+        gl_FragColor = vec4(uColor, alpha);
+      }
+    `;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: false,
+    });
+
+    function resize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      material.uniforms.uResolution.value.set(width, height);
+    }
+
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uProgress: { value: 0 },
+        uResolution: {
+          value: new THREE.Vector2(hero.offsetWidth, window.innerHeight),
+        },
+        // Couleur de la dissolution : blanc cassé/blanc pour matcher la suite
+        uColor: { value: new THREE.Vector3(1.0, 1.0, 1.0) },
+        uSpread: { value: 0.5 },
+      },
+      transparent: true,
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    let scrollProgress = 0;
+
+    function animate() {
+      material.uniforms.uProgress.value = scrollProgress;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Update progress via ScrollTrigger pour rester en phase avec Lenis
+    ScrollTrigger.create({
+      trigger: ".hero",
+      start: "top top", // déclenche dès qu'on commence à scroller
+      end: "bottom top", // termine quand le hero a complètement quitté l'écran
+      scrub: 0.5,
+      onUpdate: (self) => {
+        scrollProgress = Math.min(self.progress * 1.15, 1.15);
+      },
+    });
+  }
+
+  // Lancer l'effet après que le contenu soit révélé
+  // (juste après initHomeAnimations dans la timeline du loader)
 });

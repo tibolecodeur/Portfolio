@@ -29,6 +29,10 @@
       src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"
       defer
     ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"
+      defer
+    ></script>
     <script src="./assets/js/script.js" defer></script>
   </head>
   <body class="no-scroll">
@@ -115,105 +119,213 @@
     <main id="home-content" class="content-hidden">
       <!-- Hero Section -->
       <section class="hero">
-        <!-- Background light zone (covers full hero, with arch cut from top) -->
-        <div class="hero-bottom" aria-hidden="true">
-          <div class="hero-grid"></div>
-        </div>
-
-        <!-- Top dark zone (sits on top, gets clipped by the arch) -->
-        <div class="hero-top">
-          <h1 class="name">
-            <span class="name-line"
-              ><span class="name-word">CREATIVE</span></span
-            >
-            <span class="name-line"
-              ><span class="name-word">DEVELOPER</span></span
-            >
-          </h1>
-
-          <div class="hero-info">
-            <p class="hero-info-text">
-              Étudiant en développement basé à Paris, je conçois et code des
-              applications web et mobiles. Récemment focalisé sur Android (Java)
-              et le développement backend avec Symfony.
-            </p>
-            <p class="hero-info-text">
-              Passionné par le design d'interfaces et les expériences
-              interactives, je travaille à la jonction du code, de l'animation
-              et de la pensée produit pour créer des outils utiles et soignés.
-            </p>
-            <a href="#contact" class="hero-cta">
-              <span>GET IN TOUCH</span>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path
-                  d="M1 13L13 1M13 1H4M13 1V10"
-                  stroke="currentColor"
-                  stroke-width="1.4"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Stickers layer (above everything, positioned on the light area) -->
-        <div class="hero-stickers">
-          <div class="sticker sticker--design-strategy">
-            <div class="sticker-icon"><span></span><span></span></div>
-            <div class="sticker-title">DESIGN<br />STRATEGY</div>
-            <div class="sticker-sub">
-              ALIGNING<br />YOUR → BUSINESS<br />&amp; USER NEEDS
-            </div>
+        <div class="hero-pin">
+          <!-- Background blanc en arche -->
+          <div class="hero-bottom" aria-hidden="true">
+            <div class="hero-grid"></div>
           </div>
 
-          <div class="sticker sticker--ecomm">
-            <span class="sticker-www">WWW.</span>
-            <div class="sticker-ecomm-title">E—COMM.<br />⊙ EXPERIENCES</div>
-          </div>
-
-          <div class="sticker sticker--ux">
-            USER<br />EXPER—IENCE<br />DESIGN©
-          </div>
-
-          <div class="sticker sticker--motion">
-            <div class="sticker-motion-line">M ⎯⎯ TION &amp;</div>
-            <div class="sticker-motion-line">INTERACTION</div>
-            <div class="sticker-motion-line">→ DESIGN</div>
-          </div>
-
-          <div class="sticker sticker--branding">
-            <span class="sticker-star">✻</span>
-            BRANDING &amp;<br />IDENTITY<br />©'22
-          </div>
-
-          <div class="sticker sticker--usability">
-            <svg viewBox="0 0 100 100" class="sticker-circle-text">
-              <defs>
-                <path
-                  id="circlePath"
-                  d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-                />
-              </defs>
-              <text font-size="11" font-weight="700" letter-spacing="2.5">
-                <textPath href="#circlePath">
-                  USABILITY TESTING ✦ USABILITY TESTING ✦
-                </textPath>
-              </text>
-            </svg>
-            <div class="sticker-usability-icon">
-              <svg
-                viewBox="0 0 24 24"
-                width="22"
-                height="22"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
+          <!-- Texte -->
+          <div class="hero-top">
+            <h1 class="name">
+              <span class="name-line"
+                ><span class="name-word">CREATIVE</span></span
               >
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 3v18M3 12h18" />
-              </svg>
+              <span class="name-line"
+                ><span class="name-word">DEVELOPER</span></span
+              >
+            </h1>
+
+            <div class="hero-info">
+              <p class="hero-info-text">
+                Étudiant en développement basé à Paris, je conçois et code des
+                applications web et mobiles. Récemment focalisé sur Android
+                (Java) et le développement backend avec Symfony.
+              </p>
+              <p class="hero-info-text">
+                Passionné par le design d'interfaces et les expériences
+                interactives, je travaille à la jonction du code, de l'animation
+                et de la pensée produit pour créer des outils utiles et soignés.
+              </p>
+              <a href="#contact" class="hero-cta">
+                <span>GET IN TOUCH</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M1 13L13 1M13 1H4M13 1V10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </a>
             </div>
           </div>
+
+          <!-- Stickers -->
+          <div class="hero-stickers">
+            <div class="sticker sticker--design-strategy">
+              <div class="sticker-icon"><span></span><span></span></div>
+              <div class="sticker-title">DESIGN<br />STRATEGY</div>
+              <div class="sticker-sub">
+                ALIGNING<br />YOUR → BUSINESS<br />&amp; USER NEEDS
+              </div>
+            </div>
+            <div class="sticker sticker--ecomm">
+              <span class="sticker-www">WWW.</span>
+              <div class="sticker-ecomm-title">E—COMM.<br />⊙ EXPERIENCES</div>
+            </div>
+            <div class="sticker sticker--ux">
+              USER<br />EXPER—IENCE<br />DESIGN©
+            </div>
+            <div class="sticker sticker--motion">
+              <div class="sticker-motion-line">M ⎯⎯ TION &amp;</div>
+              <div class="sticker-motion-line">INTERACTION</div>
+              <div class="sticker-motion-line">→ DESIGN</div>
+            </div>
+            <div class="sticker sticker--branding">
+              <span class="sticker-star">✻</span>
+              BRANDING &amp;<br />IDENTITY<br />©'22
+            </div>
+            <div class="sticker sticker--usability">
+              <svg viewBox="0 0 100 100" class="sticker-circle-text">
+                <defs>
+                  <path
+                    id="circlePath"
+                    d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                  />
+                </defs>
+                <text font-size="11" font-weight="700" letter-spacing="2.5">
+                  <textPath href="#circlePath">
+                    USABILITY TESTING ✦ USABILITY TESTING ✦
+                  </textPath>
+                </text>
+              </svg>
+              <div class="sticker-usability-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 3v18M3 12h18" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas dissolve overlay -->
+          <canvas class="hero-canvas"></canvas>
+        </div>
+      </section>
+
+      <!-- ============================================
+     ABOUT — quelques infos pour habiter la suite
+     ============================================ -->
+      <section class="about-section next-section">
+        <div class="about-grid">
+          <div class="about-label">A&nbsp;—&nbsp;PROPOS</div>
+          <div class="about-body">
+            <p>
+              Étudiant développeur basé à Paris, je travaille principalement sur
+              des applications Android en Java et des APIs Symfony, tout en
+              explorant le développement web créatif côté front.
+            </p>
+            <p>
+              Mon approche : transformer des idées en interfaces lisibles,
+              fluides et soignées — du brief technique au pixel final.
+            </p>
+          </div>
+        </div>
+
+        <div class="about-meta">
+          <div class="meta-item">
+            <span class="meta-num">01</span>
+            <span class="meta-label">Développement<br />Android</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-num">02</span>
+            <span class="meta-label">API &amp;<br />Backend</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-num">03</span>
+            <span class="meta-label">Web<br />Créatif</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-num">04</span>
+            <span class="meta-label">Design<br />d'Interface</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+     SELECTED WORK — liste minimaliste
+     ============================================ -->
+      <section class="works-section">
+        <div class="works-header">
+          <span class="works-label">SELECTED WORK</span>
+          <span class="works-count">/ 04</span>
+        </div>
+
+        <ul class="works-list">
+          <li class="work-item">
+            <a href="#" class="work-link">
+              <span class="work-num">01</span>
+              <span class="work-name">Zoucolis</span>
+              <span class="work-tag">Android · Java</span>
+              <span class="work-year">2025</span>
+            </a>
+          </li>
+          <li class="work-item">
+            <a href="#" class="work-link">
+              <span class="work-num">02</span>
+              <span class="work-name">Claude Interface</span>
+              <span class="work-tag">HTML · API</span>
+              <span class="work-year">2025</span>
+            </a>
+          </li>
+          <li class="work-item">
+            <a href="#" class="work-link">
+              <span class="work-num">03</span>
+              <span class="work-name">Brand Identity</span>
+              <span class="work-tag">Design · Motion</span>
+              <span class="work-year">2024</span>
+            </a>
+          </li>
+          <li class="work-item">
+            <a href="#" class="work-link">
+              <span class="work-num">04</span>
+              <span class="work-name">E-Commerce Redesign</span>
+              <span class="work-tag">Web · UX</span>
+              <span class="work-year">2024</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============================================
+     CONTACT FOOTER
+     ============================================ -->
+      <section class="contact-section">
+        <span class="contact-label">PROCHAIN PROJET</span>
+        <h2 class="contact-big">Travaillons<br /><em>ensemble.</em></h2>
+        <a href="mailto:hello@thibaultbrebion.fr" class="contact-mail">
+          hello@thibaultbrebion.fr
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path
+              d="M1 13L13 1M13 1H4M13 1V10"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+          </svg>
+        </a>
+        <div class="contact-meta">
+          <span>© 2025 Thibault Brebion</span>
+          <span>Paris, France</span>
+          <span>FR / EN</span>
         </div>
       </section>
     </main>
