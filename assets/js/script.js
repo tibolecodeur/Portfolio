@@ -324,36 +324,92 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================
-  // 5. HOME ANIMATIONS & SCROLL EFFECTS
+  // 5. HOME ANIMATIONS — révélation smooth après le loader
   // ============================================
   function initHomeAnimations() {
-    const tl = gsap.timeline();
-    tl.to(".name", { y: 0, opacity: 1, duration: 1.5, ease: "power4.out" }).to(
-      ".subtitle",
-      { opacity: 1, duration: 1 },
-      "-=1",
-    );
-
-    gsap.to(".hero-img", {
-      yPercent: 30,
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".hero",
-        start: "top top",
-        end: "bottom top",
-        scrub: 0.5,
-      },
+    // Préparer les stickers : composer rotation (depuis --rot CSS) + scale + opacity initiale
+    document.querySelectorAll(".sticker").forEach((el) => {
+      const rot =
+        getComputedStyle(el).getPropertyValue("--rot").trim() || "0deg";
+      gsap.set(el, {
+        rotation: parseFloat(rot),
+        scale: 0.4,
+        opacity: 0,
+      });
     });
 
-    gsap.to(".hero-text-container", {
-      y: -100,
-      opacity: 0,
-      scrollTrigger: {
-        trigger: ".hero",
-        start: "top top",
-        end: "bottom 30%",
-        scrub: 0.3,
-      },
-    });
+    // Timeline de révélation
+    const reveal = gsap.timeline();
+
+    reveal
+      // 1. Le conteneur entier : translate + scale + deblur
+      .to(homeContent, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: 1.4,
+        ease: "expo.out",
+      })
+
+      // 2. Les mots du nom slident depuis le bas (effet masque)
+      .to(
+        ".name-word",
+        {
+          y: "0%",
+          duration: 1.3,
+          stagger: 0.12,
+          ease: "expo.out",
+        },
+        "-=1.0",
+      )
+
+      // 3. Paragraphes + CTA
+      .to(
+        ".hero-info",
+        {
+          opacity: 1,
+          duration: 0.9,
+          ease: "power2.out",
+        },
+        "-=0.7",
+      )
+
+      // 4. Grille
+      .to(
+        ".hero-grid",
+        {
+          opacity: 1,
+          duration: 1.4,
+          ease: "power2.out",
+        },
+        "-=0.9",
+      )
+
+      // 5. Stickers : pop avec rotation conservée
+      .to(
+        ".sticker",
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "back.out(2)",
+        },
+        "-=1.0",
+      )
+
+      // 6. Démarrer la flottaison continue après l'intro
+      .add(() => {
+        document.querySelectorAll(".sticker").forEach((el, i) => {
+          gsap.to(el, {
+            y: "+=10",
+            duration: 2.4 + (i % 3) * 0.5,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+        });
+      });
   }
 });

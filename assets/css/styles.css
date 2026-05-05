@@ -22,7 +22,6 @@ body.no-scroll {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none;
 }
 
 html {
@@ -31,11 +30,13 @@ html {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: "Poppins", sans-serif;
+  cursor: none;
 }
 
 body {
   width: 100%;
   /* pas de overflow-x ici */
+  cursor: none;
 }
 
 /* ============================================
@@ -394,276 +395,360 @@ body {
 }
 
 /* ============================================
-   HOME CONTENT
+   HOME CONTENT — état initial pour révélation smooth
    ============================================ */
 #home-content {
   opacity: 0;
-  filter: blur(var(--blur-amount));
-  will-change: filter;
-}
-#home-content.content-visible {
-  opacity: 1;
+  transform: translateY(40px) scale(0.985);
+  filter: blur(20px);
+  will-change: opacity, transform, filter;
 }
 
 /* ============================================
-   HERO SECTION
+   HERO SECTION — DEVANTA STYLE
    ============================================ */
 .hero {
   position: relative;
-  height: 100vh;
   width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.hero-bg-wrapper {
+/* ── BACKGROUND CRÈME EN ARCHE ── */
+.hero-bottom {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  inset: 0;
+  background: #ece7dd;
+  /* Arche : ellipse centrée en haut, le crème commence après l'arche */
+  clip-path: ellipse(75% 55% at 50% 100%);
+  z-index: 1;
 }
 
-.hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
-  will-change: transform;
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  opacity: 0;
 }
 
-.hero-text-container {
-  text-align: center;
+/* ── ZONE NOIRE TEXTE ── */
+.hero-top {
+  position: relative;
   z-index: 2;
-  mix-blend-mode: overlay;
+  padding: 9rem 3.5rem 3rem;
+  pointer-events: none;
+}
+.hero-top * {
+  pointer-events: auto;
 }
 
 .name {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 10vw;
-  font-weight: 900;
-  line-height: 0.9;
+  font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+  font-size: clamp(4.5rem, 13.5vw, 14rem);
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
-  color: #fff;
+  color: #f3ebd9;
+  margin-bottom: 2.5rem;
+}
+
+.name-line {
+  display: block;
+  overflow: hidden;
+}
+.name-word {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+.hero-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 3rem;
+  align-items: start;
   opacity: 0;
-  transform: translateY(50px);
 }
 
-.subtitle {
-  font-size: 1.5rem;
-  font-weight: 300;
-  margin-top: 20px;
-  letter-spacing: 2px;
-  opacity: 0;
+.hero-info-text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #f3ebd9;
+  max-width: 32ch;
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  opacity: 0.7;
-}
-
-.scroll-indicator span {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
-}
-
-.scroll-indicator .line {
-  width: 1px;
-  height: 40px;
-  background: #fff;
-  animation: scrollLine 2s infinite;
-  transform-origin: top;
-  will-change: transform;
-}
-
-@keyframes scrollLine {
-  0% {
-    transform: scaleY(0);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
-}
-
-@media (max-width: 768px) {
-  .loading-text {
-    font-size: 4rem;
-    letter-spacing: 5px;
-  }
-  .name {
-    font-size: 14vw;
-  }
-}
-
-/* ─────────────────────────────────────────
-   HERO ENRICHMENTS
-───────────────────────────────────────── */
-
-/* Badge disponibilité */
-.hero-badge {
-  position: absolute;
-  top: 7rem;
-  left: 50%;
-  transform: translateX(-50%);
+.hero-cta {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.7rem;
-  font-family: monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 999px;
-  padding: 6px 16px;
+  gap: 0.55rem;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #f3ebd9;
+  text-decoration: none;
+  letter-spacing: 0.05em;
   white-space: nowrap;
-  z-index: 3;
-  opacity: 0;
-  animation: fadeInBadge 0.8s ease forwards 3.2s;
+  align-self: end;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f3ebd9;
+  transition: gap 0.3s ease;
+}
+.hero-cta:hover {
+  gap: 0.9rem;
 }
 
-.hero-badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 8px #4ade80;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.8);
-  }
-}
-
-@keyframes fadeInBadge {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* Méta-infos flottantes gauche / droite */
-.hero-meta {
+/* ── STICKERS LAYER ── */
+.hero-stickers {
   position: absolute;
-  bottom: 12vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+  inset: 0;
   z-index: 3;
-  opacity: 0;
-  animation: fadeInMeta 1s ease forwards 3.5s;
+  pointer-events: none;
+}
+.hero-stickers .sticker {
+  pointer-events: auto;
 }
 
-.hero-meta--left {
-  left: 2.5rem;
-  align-items: flex-start;
-}
-.hero-meta--right {
-  right: 2.5rem;
-  align-items: flex-end;
-  text-align: right;
-}
-
-.hero-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hero-meta-value {
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
-  font-weight: 900;
-  line-height: 1;
-  color: #fff;
-}
-
-.hero-meta-label {
-  font-size: 0.6rem;
-  font-family: monospace;
-  letter-spacing: 0.15em;
+.sticker {
+  position: absolute;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-weight: 800;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.02em;
+  opacity: 0;
 }
 
-@keyframes fadeInMeta {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* 1. DESIGN STRATEGY — cyan circle, top-left of cream zone */
+.sticker--design-strategy {
+  top: 48%;
+  left: 12%;
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  background: #6ad6d4;
+  color: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  --rot: -8deg;
+}
+.sticker-icon {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.sticker-icon span {
+  width: 12px;
+  height: 12px;
+  background: #0a0a0a;
+  border-radius: 50%;
+}
+.sticker-title {
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+.sticker-sub {
+  font-size: 0.45rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
 }
 
-/* Ligne de séparation décorative en bas du hero */
-.hero-divider {
+/* 2. E-COMM — yellow tag, mid-left */
+.sticker--ecomm {
+  top: 67%;
+  left: 7%;
+  background: #f0d836;
+  color: #0a0a0a;
+  padding: 10px 14px 12px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  --rot: -7deg;
+}
+.sticker-www {
+  background: #0a0a0a;
+  color: #f0d836;
+  font-size: 0.6rem;
+  padding: 2px 9px;
+  align-self: flex-end;
+  border-radius: 2px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.sticker-ecomm-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* 3. UX DESIGN — pink, top-right of cream */
+.sticker--ux {
+  top: 52%;
+  right: 26%;
+  background: #ff5d8f;
+  color: #0a0a0a;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  border-radius: 3px;
+  --rot: 5deg;
+}
+
+/* 4. MOTION — orange, bottom-left */
+.sticker--motion {
+  bottom: 12%;
+  left: 18%;
+  background: #f59542;
+  color: #0a0a0a;
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-weight: 900;
+  line-height: 1.25;
+  font-size: 0.92rem;
+  --rot: -6deg;
+}
+.sticker-motion-line {
+  white-space: nowrap;
+}
+
+/* 5. BRANDING — cyan, mid-right */
+.sticker--branding {
+  top: 70%;
+  right: 4%;
+  background: #6ad6d4;
+  color: #0a0a0a;
+  padding: 13px 19px;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.15;
+  --rot: 8deg;
+}
+.sticker-star {
   position: absolute;
-  bottom: 6vh;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -10px;
+  right: -10px;
+  background: #ff5d8f;
+  color: #0a0a0a;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  z-index: 3;
-  opacity: 0;
-  animation: fadeInBadge 0.8s ease forwards 3.8s;
-  white-space: nowrap;
+  justify-content: center;
+  font-size: 1rem;
+  transform: rotate(-8deg);
 }
 
-.hero-divider-line {
-  display: block;
-  width: 80px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+/* 6. USABILITY TESTING — green circle, bottom-right */
+.sticker--usability {
+  bottom: 8%;
+  right: 18%;
+  width: 170px;
+  height: 170px;
+  background: #aee05f;
+  border-radius: 50%;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --rot: -3deg;
+}
+.sticker-circle-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: rotate-circle 14s linear infinite;
+}
+.sticker-circle-text text {
+  fill: #0a0a0a;
+}
+.sticker-usability-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #0a0a0a;
+  color: #aee05f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes rotate-circle {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.hero-divider-text {
-  font-size: 0.6rem;
-  font-family: monospace;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hero-info {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .hero-cta {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .hero-meta {
-    display: none;
+  .hero-top {
+    padding: 7rem 1.25rem 2rem;
   }
-  .hero-badge {
-    top: 5.5rem;
+  .name {
+    font-size: 17vw;
   }
-  /* hero-divider (bottom: 6vh) et scroll-indicator (bottom: 40px) se superposent sur petit écran */
-  .hero-divider {
-    display: none;
+  .hero-info {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  .scroll-indicator {
-    bottom: 24px;
+  .hero-info-text {
+    font-size: 0.85rem;
+  }
+  .hero-bottom {
+    clip-path: ellipse(110% 60% at 50% 100%);
+  }
+  .sticker {
+    transform: scale(0.55) rotate(var(--rot)) !important;
+  }
+  .sticker--design-strategy {
+    top: 42%;
+    left: -3%;
+  }
+  .sticker--ecomm {
+    top: 60%;
+    left: -2%;
+  }
+  .sticker--ux {
+    top: 48%;
+    right: 5%;
+  }
+  .sticker--motion {
+    bottom: 14%;
+    left: 5%;
+  }
+  .sticker--branding {
+    top: 65%;
+    right: -2%;
+  }
+  .sticker--usability {
+    bottom: 5%;
+    right: 5%;
   }
 }
