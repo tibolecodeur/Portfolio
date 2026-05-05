@@ -235,45 +235,93 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ============================================
-  // 4. LOADING SCREEN & TRANSITION
+  // 4. LOADING SCREEN (Insane Preloader)
   // ============================================
-  const loadingScreen = document.getElementById("loading-screen");
   const homeContent = document.getElementById("home-content");
 
-  const LOADING_DURATION = 1800;
-  const FADE_OUT_DELAY = 400;
-  const REVEAL_DELAY = 700;
+  // Génération dynamique des chiffres counter-3
+  const counter3 = document.querySelector(".counter-3");
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 10; j++) {
+      const div = document.createElement("div");
+      div.className = "num";
+      div.textContent = j;
+      counter3.appendChild(div);
+    }
+  }
+  const finalDiv = document.createElement("div");
+  finalDiv.className = "num";
+  finalDiv.textContent = "0";
+  counter3.appendChild(finalDiv);
 
-  setTimeout(() => {
-    loadingScreen.classList.add("fade-out");
-
-    setTimeout(() => {
-      revealTransition();
-
-      setTimeout(() => {
-        homeContent.classList.add("content-visible");
-        document.body.classList.remove("no-scroll");
-
-        initHomeAnimations();
-
-        setTimeout(() => {
-          if (loadingScreen.parentNode) {
-            loadingScreen.remove();
-          }
-        }, 1000);
-      }, REVEAL_DELAY);
-    }, FADE_OUT_DELAY);
-  }, LOADING_DURATION);
-
-  function revealTransition() {
-    gsap.set(".curtain-layer", { scaleY: 1, transformOrigin: "top" });
-    gsap.to(".curtain-layer", {
-      scaleY: 0,
-      duration: 0.8,
-      stagger: -0.1,
+  function animateCounter(counter, duration, delay = 0) {
+    const numHeight = counter.querySelector(".num").clientHeight;
+    const totalDistance =
+      (counter.querySelectorAll(".num").length - 1) * numHeight;
+    gsap.to(counter, {
+      y: -totalDistance,
+      duration: duration,
+      delay: delay,
       ease: "power2.inOut",
     });
   }
+
+  animateCounter(counter3, 5);
+  animateCounter(document.querySelector(".counter-2"), 6);
+  animateCounter(document.querySelector(".counter-1"), 2, 4);
+
+  // Sortie des chiffres
+  gsap.to(".digit", {
+    top: "-150px",
+    stagger: { amount: 0.25 },
+    delay: 6,
+    duration: 1,
+    ease: "power4.inOut",
+  });
+
+  // Animation des barres
+  gsap.from(".loader-1", { width: 0, duration: 6, ease: "power2.inOut" });
+  gsap.from(".loader-2", {
+    width: 0,
+    delay: 1.9,
+    duration: 2,
+    ease: "power2.inOut",
+  });
+
+  // Explosion des barres
+  gsap.to(".loader", { background: "none", delay: 6, duration: 0.1 });
+  gsap.to(".loader-1", { rotate: 90, y: -50, duration: 0.5, delay: 6 });
+  gsap.to(".loader-2", { x: -75, y: 75, duration: 0.5 }, "<");
+
+  // Scale explosion → transition de couleur
+  gsap.to(".loader", {
+    scale: 40,
+    duration: 1,
+    delay: 7,
+    ease: "power2.inOut",
+  });
+  gsap.to(".loader", {
+    rotate: 45,
+    y: 500,
+    x: 2000,
+    duration: 1,
+    delay: 7,
+    ease: "power2.inOut",
+  });
+
+  // Fade out du loading screen
+  gsap.to(".loading-screen", {
+    opacity: 0,
+    duration: 0.5,
+    delay: 7.5,
+    ease: "power1.inOut",
+    onComplete: () => {
+      document.querySelector(".loading-screen").remove();
+      homeContent.classList.add("content-visible");
+      document.body.classList.remove("no-scroll");
+      initHomeAnimations();
+    },
+  });
 
   // ============================================
   // 5. HOME ANIMATIONS & SCROLL EFFECTS

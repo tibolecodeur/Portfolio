@@ -33,24 +33,42 @@
     <div class="cursor-follower"></div>
 
     <!-- Loading Screen -->
-    <div id="loading-screen">
-      <div class="loading-container">
-        <span class="loading-text">LOADING</span>
-        <span class="drop"></span>
+    <div class="loading-screen">
+      <div class="loader">
+        <div class="loader-1 bar"></div>
+        <div class="loader-2 bar"></div>
       </div>
-      <svg style="position: absolute; pointer-events: none">
-        <defs>
-          <filter id="gooey">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-            <feColorMatrix
-              in="blur"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -20"
-              result="gooey"
-            />
-            <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
+      <div class="counter">
+        <div class="counter-1 digit">
+          <div class="num">0</div>
+          <div class="num num1offset1">1</div>
+        </div>
+        <div class="counter-2 digit">
+          <div class="num">0</div>
+          <div class="num num1offset2">1</div>
+          <div class="num">2</div>
+          <div class="num">3</div>
+          <div class="num">4</div>
+          <div class="num">5</div>
+          <div class="num">6</div>
+          <div class="num">7</div>
+          <div class="num">8</div>
+          <div class="num">9</div>
+          <div class="num">0</div>
+        </div>
+        <div class="counter-3 digit">
+          <div class="num">0</div>
+          <div class="num">1</div>
+          <div class="num">2</div>
+          <div class="num">3</div>
+          <div class="num">4</div>
+          <div class="num">5</div>
+          <div class="num">6</div>
+          <div class="num">7</div>
+          <div class="num">8</div>
+          <div class="num">9</div>
+        </div>
+      </div>
     </div>
 
     <!-- Transition Curtain -->
