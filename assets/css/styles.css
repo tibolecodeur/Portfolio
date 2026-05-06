@@ -423,15 +423,23 @@ body {
 
 .name {
   font-family: "Anton", "Arial Narrow", Impact, sans-serif;
-  font-size: clamp(4.5rem, 13.5vw, 14rem);
+  font-size: clamp(4rem, 12vw, 13rem);
   font-weight: 400;
   line-height: 0.86;
   letter-spacing: -0.015em;
   text-transform: uppercase;
-  color: #ffffff;
   margin-bottom: 2.5rem;
 }
 
+/* Premier mot : sur la zone NOIRE → blanc */
+.name-word--top {
+  color: #ffffff;
+}
+
+/* Second mot : sur la zone BLANCHE (arche) → noir */
+.name-word--bottom {
+  color: #000000;
+}
 .name-line {
   display: block;
   overflow: hidden;
@@ -444,9 +452,33 @@ body {
 .hero-info {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  gap: 3rem;
-  align-items: start;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: end;
   opacity: 0;
+  max-width: 1400px;
+}
+
+/* Sur écran de portable (< 1100px) : on passe en 1 colonne pour les paragraphes,
+   le CTA reste à droite */
+@media (max-width: 1100px) {
+  .hero-info {
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem 2.5rem;
+  }
+  .hero-info-text:nth-child(2) {
+    display: none; /* Masque le 2e paragraphe sur écrans moyens */
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-info {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .hero-cta {
+    align-self: start;
+    margin-top: 0.5rem;
+  }
 }
 
 .hero-info-text {
@@ -697,6 +729,19 @@ body {
   z-index: 1;
 }
 
+@media (max-width: 1024px) {
+  .hero-bottom {
+    /* Arche plus large pour compenser le format plus carré */
+    clip-path: ellipse(95% 50% at 50% 100%);
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-bottom {
+    clip-path: ellipse(120% 45% at 50% 100%);
+  }
+}
+
 .hero-grid {
   position: absolute;
   inset: 0;
@@ -709,13 +754,19 @@ body {
 }
 
 /* Texte par-dessus, layer 2 */
+/* Texte par-dessus, layer 2 */
 .hero-top {
   position: absolute;
   inset: 0;
   z-index: 2;
-  padding: 9rem 3.5rem 3rem;
+  /* padding fluide qui s'adapte au viewport */
+  padding: clamp(6rem, 9vw, 9rem) clamp(1.5rem, 3.5vw, 3.5rem) 3rem;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
 .hero-top * {
   pointer-events: auto;
 }
@@ -729,17 +780,6 @@ body {
 }
 .hero-stickers .sticker {
   pointer-events: auto;
-}
-
-/* Canvas dissolve, layer 5 (le plus haut, recouvre tout pendant le scroll) */
-.hero-canvas {
-  position: fixed; /* fixed → reste à l'écran pendant le scroll */
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 5;
 }
 
 .next-section {
@@ -1030,5 +1070,127 @@ body {
     flex-direction: column;
     gap: 0.8rem;
     text-align: center;
+  }
+}
+
+/* ============================================
+   RESPONSIVE STICKERS
+   Sur écran portable (1024-1440px), on resserre les positions
+   ============================================ */
+@media (max-width: 1440px) {
+  .sticker--design-strategy {
+    top: 50%;
+    left: 4%;
+    width: 150px;
+    height: 150px;
+  }
+  .sticker--ecomm {
+    top: 72%;
+    left: 2%;
+  }
+  .sticker--ux {
+    top: 54%;
+    right: 22%;
+  }
+  .sticker--motion {
+    bottom: 8%;
+    left: 14%;
+  }
+  .sticker--branding {
+    top: 73%;
+    right: 2%;
+  }
+  .sticker--usability {
+    bottom: 4%;
+    right: 12%;
+    width: 145px;
+    height: 145px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sticker--design-strategy {
+    top: 52%;
+    left: 2%;
+    width: 130px;
+    height: 130px;
+  }
+  .sticker-title {
+    font-size: 0.95rem;
+  }
+  .sticker-sub {
+    font-size: 0.4rem;
+  }
+
+  .sticker--ecomm {
+    top: 75%;
+    left: 1%;
+  }
+  .sticker-ecomm-title {
+    font-size: 0.85rem;
+  }
+
+  .sticker--ux {
+    top: 56%;
+    right: 18%;
+    font-size: 0.9rem;
+    padding: 12px 16px;
+  }
+
+  .sticker--motion {
+    bottom: 6%;
+    left: 8%;
+    font-size: 0.82rem;
+    padding: 12px 14px;
+  }
+
+  .sticker--branding {
+    top: 76%;
+    right: 1%;
+    font-size: 0.9rem;
+    padding: 11px 16px;
+  }
+
+  .sticker--usability {
+    bottom: 3%;
+    right: 8%;
+    width: 130px;
+    height: 130px;
+  }
+  .sticker-usability-icon {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Sur mobile, la plupart des stickers sont planqués pour éviter le chaos */
+  .sticker--ecomm,
+  .sticker--ux,
+  .sticker--branding {
+    display: none;
+  }
+  .sticker--design-strategy {
+    top: 56%;
+    left: -2%;
+    width: 110px;
+    height: 110px;
+    transform: scale(1) rotate(var(--rot)) !important;
+  }
+  .sticker--motion {
+    bottom: 18%;
+    left: 4%;
+    font-size: 0.75rem;
+    padding: 10px 12px;
+  }
+  .sticker--usability {
+    bottom: 4%;
+    right: 4%;
+    width: 110px;
+    height: 110px;
+  }
+  .sticker-usability-icon {
+    width: 44px;
+    height: 44px;
   }
 }
