@@ -75,22 +75,9 @@
       </div>
     </div>
 
-    <!-- Transition Curtain -->
-    <div class="transition-curtain">
-      <div class="curtain-layer layer-1"></div>
-      <div class="curtain-layer layer-2"></div>
-      <div class="curtain-layer layer-3"></div>
-      <div class="curtain-layer layer-4"></div>
-      <div class="curtain-layer layer-5"></div>
-    </div>
-
     <!-- Navigation Bubble Menu -->
     <nav class="bubble-menu absolute" aria-label="Main navigation">
-      <div
-        class="bubble logo-bubble"
-        aria-label="Logo"
-        style="background: #fff"
-      >
+      <div class="bubble logo-bubble" aria-label="Logo">
         <span class="logo-content">TB</span>
       </div>
       <button
@@ -99,10 +86,9 @@
         id="menuToggle"
         aria-label="Toggle navigation"
         aria-pressed="false"
-        style="background: #fff"
       >
-        <span class="menu-line" style="background: #111"></span>
-        <span class="menu-line short" style="background: #111"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line short"></span>
       </button>
     </nav>
 
@@ -112,7 +98,7 @@
     </div>
 
     <!-- Main Content -->
-    <main id="home-content" class="content-hidden">
+    <main id="home-content">
       <!-- Hero Section -->
       <section class="hero">
         <div class="hero-pin">
@@ -125,36 +111,9 @@
           <div class="hero-top">
             <h1 class="name">
               <span class="name-line">
-                <span class="name-word name-word--top">Thibault</span>
-              </span>
-              <span class="name-line">
-                <span class="name-word name-word--bottom">Brebion</span>
+                <span class="name-word name-word--top">Thibault Brebion</span>
               </span>
             </h1>
-
-            <div class="hero-info">
-              <p class="hero-info-text">
-                Étudiant en développement basé à Paris, je conçois et code des
-                applications web et mobiles. Récemment focalisé sur Android
-                (Java) et le développement backend avec Symfony.
-              </p>
-              <p class="hero-info-text">
-                Passionné par le design d'interfaces et les expériences
-                interactives, je travaille à la jonction du code, de l'animation
-                et de la pensée produit pour créer des outils utiles et soignés.
-              </p>
-              <a href="#contact" class="hero-cta">
-                <span>GET IN TOUCH</span>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path
-                    d="M1 13L13 1M13 1H4M13 1V10"
-                    stroke="currentColor"
-                    stroke-width="1.4"
-                    stroke-linecap="round"
-                  />
-                </svg>
-              </a>
-            </div>
           </div>
 
           <!-- Stickers -->
@@ -211,117 +170,166 @@
               </div>
             </div>
           </div>
-
-          <!-- Canvas dissolve overlay -->
         </div>
       </section>
-
       <!-- ============================================
-     ABOUT — quelques infos pour habiter la suite
-     ============================================ -->
-      <section class="about-section next-section">
-        <div class="about-grid">
-          <div class="about-label">A&nbsp;—&nbsp;PROPOS</div>
-          <div class="about-body">
-            <p>
-              Étudiant développeur basé à Paris, je travaille principalement sur
-              des applications Android en Java et des APIs Symfony, tout en
-              explorant le développement web créatif côté front.
-            </p>
-            <p>
-              Mon approche : transformer des idées en interfaces lisibles,
-              fluides et soignées — du brief technique au pixel final.
-            </p>
-          </div>
-        </div>
+           PARCOURS — Sticky timeline avec année dynamique
+           ============================================ -->
+      <section class="journey-section">
+        <div class="journey-container">
+          <!-- LEFT : sticky panel avec titre + année active -->
+          <aside class="journey-left">
+            <div class="journey-left-inner">
+              <span class="journey-label">/ JR—001</span>
+              <h2 class="journey-title">
+                Parcours<br /><em>&amp; expériences</em>
+              </h2>
+              <div class="journey-year-display">
+                <span class="journey-year-static">→</span>
+                <span class="journey-year-active" data-year-display>2020</span>
+              </div>
+              <div class="journey-progress">
+                <div class="journey-progress-bar" data-progress-bar></div>
+              </div>
+              <p class="journey-counter">
+                <span data-counter-current>01</span>
+                <span class="journey-counter-sep">/</span>
+                <span data-counter-total>06</span>
+              </p>
+            </div>
+          </aside>
 
-        <div class="about-meta">
-          <div class="meta-item">
-            <span class="meta-num">01</span>
-            <span class="meta-label">Développement<br />Android</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-num">02</span>
-            <span class="meta-label">API &amp;<br />Backend</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-num">03</span>
-            <span class="meta-label">Web<br />Créatif</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-num">04</span>
-            <span class="meta-label">Design<br />d'Interface</span>
+          <!-- RIGHT : la liste des cartes qui défile -->
+          <div class="journey-right">
+            <article class="journey-card" data-year="2020 — 2022">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">FORMATION</span>
+                <span class="journey-card-period">2020 — 2022</span>
+              </div>
+              <h3 class="journey-card-title">Lycée</h3>
+              <p class="journey-card-place">Baccalauréat général</p>
+              <p class="journey-card-desc">
+                Spécialités Mathématiques &amp; NSI. Première découverte du code
+                et de la logique algorithmique.
+              </p>
+              <div class="journey-card-tags">
+                <span>Maths</span>
+                <span>NSI</span>
+                <span>Python</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2022 — 2024">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">FORMATION</span>
+                <span class="journey-card-period">2022 — 2024</span>
+              </div>
+              <h3 class="journey-card-title">BTS SIO</h3>
+              <p class="journey-card-place">Option SLAM</p>
+              <p class="journey-card-desc">
+                Solutions Logicielles &amp; Applications Métiers. Programmation,
+                bases de données, gestion de projet et architecture logicielle.
+              </p>
+              <div class="journey-card-tags">
+                <span>Java</span>
+                <span>PHP</span>
+                <span>SQL</span>
+                <span>Symfony</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="Mai — Juin 2023">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">EXPÉRIENCE</span>
+                <span class="journey-card-period">Mai — Juin 2023</span>
+              </div>
+              <h3 class="journey-card-title">Stage 1</h3>
+              <p class="journey-card-place">À compléter</p>
+              <p class="journey-card-desc">
+                Première immersion en milieu professionnel. Découverte des
+                méthodologies de travail en équipe.
+              </p>
+              <div class="journey-card-tags">
+                <span>Web</span>
+                <span>Équipe</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="Janv — Mars 2024">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">EXPÉRIENCE</span>
+                <span class="journey-card-period">Janv — Mars 2024</span>
+              </div>
+              <h3 class="journey-card-title">Stage 2</h3>
+              <p class="journey-card-place">À compléter</p>
+              <p class="journey-card-desc">
+                Projet technique sur applicatif métier. Conception,
+                développement et déploiement.
+              </p>
+              <div class="journey-card-tags">
+                <span>Backend</span>
+                <span>API</span>
+                <span>MySQL</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2024 — En cours">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">FORMATION</span>
+                <span class="journey-card-period">2024 — En cours</span>
+              </div>
+              <h3 class="journey-card-title">Licence Pro</h3>
+              <p class="journey-card-place">Métiers de l'informatique</p>
+              <p class="journey-card-desc">
+                Spécialisation en applications web, mobile et architecture
+                logicielle. Approfondissement de Java, Symfony et Android.
+              </p>
+              <div class="journey-card-tags">
+                <span>Android</span>
+                <span>Java</span>
+                <span>Symfony</span>
+                <span>REST</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2025+">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">À VENIR</span>
+                <span class="journey-card-period">2025+</span>
+              </div>
+              <h3 class="journey-card-title">Stage / Alternance</h3>
+              <p class="journey-card-place">Disponible</p>
+              <p class="journey-card-desc">
+                Prochaine étape du parcours — actuellement en recherche pour
+                l'année à venir.
+              </p>
+              <div class="journey-card-tags">
+                <span>Disponible</span>
+                <span>Curieux</span>
+              </div>
+            </article>
           </div>
         </div>
       </section>
-
       <!-- ============================================
-     SELECTED WORK — liste minimaliste
-     ============================================ -->
-      <section class="works-section">
-        <div class="works-header">
-          <span class="works-label">SELECTED WORK</span>
-          <span class="works-count">/ 04</span>
+           SKILLS — Circular Gallery (copié-collé)
+           ============================================ -->
+      <section class="skills-circular">
+        <nav class="cg-nav">
+          <a href="#">Compétences</a>
+          <p>Cliquez sur une carte</p>
+        </nav>
+
+        <div class="cg-container">
+          <div class="cg-gallery-container">
+            <div class="cg-gallery"></div>
+          </div>
+          <div class="cg-title-container"></div>
         </div>
 
-        <ul class="works-list">
-          <li class="work-item">
-            <a href="#" class="work-link">
-              <span class="work-num">01</span>
-              <span class="work-name">Zoucolis</span>
-              <span class="work-tag">Android · Java</span>
-              <span class="work-year">2025</span>
-            </a>
-          </li>
-          <li class="work-item">
-            <a href="#" class="work-link">
-              <span class="work-num">02</span>
-              <span class="work-name">Claude Interface</span>
-              <span class="work-tag">HTML · API</span>
-              <span class="work-year">2025</span>
-            </a>
-          </li>
-          <li class="work-item">
-            <a href="#" class="work-link">
-              <span class="work-num">03</span>
-              <span class="work-name">Brand Identity</span>
-              <span class="work-tag">Design · Motion</span>
-              <span class="work-year">2024</span>
-            </a>
-          </li>
-          <li class="work-item">
-            <a href="#" class="work-link">
-              <span class="work-num">04</span>
-              <span class="work-name">E-Commerce Redesign</span>
-              <span class="work-tag">Web · UX</span>
-              <span class="work-year">2024</span>
-            </a>
-          </li>
-        </ul>
-      </section>
-
-      <!-- ============================================
-     CONTACT FOOTER
-     ============================================ -->
-      <section class="contact-section">
-        <span class="contact-label">PROCHAIN PROJET</span>
-        <h2 class="contact-big">Travaillons<br /><em>ensemble.</em></h2>
-        <a href="mailto:hello@thibaultbrebion.fr" class="contact-mail">
-          hello@thibaultbrebion.fr
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M1 13L13 1M13 1H4M13 1V10"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-            />
-          </svg>
-        </a>
-        <div class="contact-meta">
-          <span>© 2025 Thibault Brebion</span>
-          <span>Paris, France</span>
-          <span>FR / EN</span>
-        </div>
+        <footer class="cg-footer">
+          <p>/ SK—001</p>
+        </footer>
       </section>
     </main>
   </body>

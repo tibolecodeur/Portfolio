@@ -320,6 +320,8 @@ document.addEventListener("DOMContentLoaded", () => {
       homeContent.classList.add("content-visible");
       document.body.classList.remove("no-scroll");
       initHomeAnimations();
+      initJourneySection();
+      initCircularGallery();
     },
   });
 
@@ -368,17 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "-=1.0",
       )
 
-      // 3. Paragraphes + CTA
-      .to(
-        ".hero-info",
-        {
-          opacity: 1,
-          duration: 0.9,
-          ease: "power2.out",
-        },
-        "-=0.7",
-      )
-
       // 4. Grille
       .to(
         ".hero-grid",
@@ -415,5 +406,667 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         });
       });
+  }
+
+  // ============================================
+  // 6. JOURNEY SECTION — Année dynamique + reveal cards
+  // ============================================
+  function initJourneySection() {
+    const cards = document.querySelectorAll(".journey-card");
+    const yearDisplay = document.querySelector("[data-year-display]");
+    const progressBar = document.querySelector("[data-progress-bar]");
+    const counterCurrent = document.querySelector("[data-counter-current]");
+    const counterTotal = document.querySelector("[data-counter-total]");
+    if (!cards.length || !yearDisplay) return;
+
+    // Total
+    if (counterTotal) {
+      counterTotal.textContent = String(cards.length).padStart(2, "0");
+    }
+
+    // 1. Reveal des cartes au scroll (IntersectionObserver, robuste)
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -10% 0px",
+      },
+    );
+
+    cards.forEach((card) => revealObserver.observe(card));
+
+    // 2. Suivre la carte "active" (la plus proche du centre du viewport)
+    let currentActiveIndex = -1;
+
+    function updateActiveCard() {
+      const viewportCenter = window.innerHeight / 2;
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(cardCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
+      });
+
+      if (closestIndex !== currentActiveIndex) {
+        currentActiveIndex = closestIndex;
+        const activeCard = cards[closestIndex];
+        const newYear = activeCard.dataset.year || "";
+
+        // Animation année : fade out → change texte → fade in
+        yearDisplay.classList.add("is-changing");
+        setTimeout(() => {
+          yearDisplay.textContent = newYear;
+          yearDisplay.classList.remove("is-changing");
+        }, 200);
+
+        // Compteur
+        if (counterCurrent) {
+          counterCurrent.textContent = String(closestIndex + 1).padStart(
+            2,
+            "0",
+          );
+        }
+      }
+
+      // Progression : position de la section dans le viewport
+      const section = document.querySelector(".journey-section");
+      if (section && progressBar) {
+        const sectionRect = section.getBoundingClientRect();
+        const sectionTop = sectionRect.top;
+        const sectionHeight = sectionRect.height;
+        const windowH = window.innerHeight;
+
+        // Progression : 0 quand le top arrive en bas du viewport,
+        // 1 quand le bottom remonte en haut du viewport
+        const totalScroll = sectionHeight + windowH;
+        const scrolled = windowH - sectionTop;
+        const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+
+        progressBar.style.width = `${progress * 100}%`;
+      }
+    }
+
+    // Plug sur Lenis pour avoir le scroll smooth
+    if (typeof lenis !== "undefined") {
+      lenis.on("scroll", updateActiveCard);
+    } else {
+      window.addEventListener("scroll", updateActiveCard, { passive: true });
+    }
+    window.addEventListener("resize", updateActiveCard);
+
+    // Premier appel pour initialiser
+    updateActiveCard();
+  }
+
+  // ============================================
+  // 7. CIRCULAR GALLERY — Compétences (copié-collé)
+  // ============================================
+  function initCircularGallery() {
+    if (typeof gsap === "undefined") return;
+    // Enregistrer SplitText si présent
+    if (typeof SplitText !== "undefined") {
+      gsap.registerPlugin(SplitText);
+    }
+
+    const gallery = document.querySelector(".cg-gallery");
+    const galleryContainer = document.querySelector(".cg-gallery-container");
+    const titleContainer = document.querySelector(".cg-title-container");
+    if (!gallery || !galleryContainer || !titleContainer) return;
+
+    // ─── DATA : tes compétences avec catégorie + niveau
+    const collection = [
+      // Langages
+      {
+        name: "PHP",
+        level: "80%",
+        category: "Langage",
+        desc: "Langage de prédilection backend",
+        image: "",
+      },
+      {
+        name: "JavaScript",
+        level: "75%",
+        category: "Langage",
+        desc: "Front + animations",
+        image: "",
+      },
+      {
+        name: "Python",
+        level: "90%",
+        category: "Langage",
+        desc: "Scripting & automatisation",
+        image: "",
+      },
+      {
+        name: "C++",
+        level: "70%",
+        category: "Langage",
+        desc: "Programmation système",
+        image: "",
+      },
+      {
+        name: "Java",
+        level: "65%",
+        category: "Langage",
+        desc: "Android & POO",
+        image: "",
+      },
+      {
+        name: "HTML/CSS",
+        level: "90%",
+        category: "Langage",
+        desc: "Mise en forme web",
+        image: "",
+      },
+      {
+        name: "SQL",
+        level: "65%",
+        category: "Langage",
+        desc: "Bases de données",
+        image: "",
+      },
+      // Frameworks
+      {
+        name: "Symfony",
+        level: "70%",
+        category: "Framework",
+        desc: "API REST & MVC",
+        image: "",
+      },
+      {
+        name: "Laravel",
+        level: "80%",
+        category: "Framework",
+        desc: "Framework PHP moderne",
+        image: "",
+      },
+      {
+        name: "Bootstrap",
+        level: "75%",
+        category: "Framework",
+        desc: "UI responsive rapide",
+        image: "",
+      },
+      // Outils
+      {
+        name: "Git",
+        level: "85%",
+        category: "Outil",
+        desc: "Versioning de code",
+        image: "",
+      },
+      {
+        name: "MySQL",
+        level: "75%",
+        category: "Base",
+        desc: "SGBD relationnel",
+        image: "",
+      },
+      {
+        name: "Linux",
+        level: "70%",
+        category: "OS",
+        desc: "Environnement serveur",
+        image: "",
+      },
+      {
+        name: "VS Code",
+        level: "95%",
+        category: "IDE",
+        desc: "Éditeur principal",
+        image: "g",
+      },
+      {
+        name: "Figma",
+        level: "70%",
+        category: "Design",
+        desc: "UI/UX & prototypage",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+      },
+      {
+        name: "Apache",
+        level: "65%",
+        category: "Serveur",
+        desc: "Serveur HTTP",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg",
+      },
+      {
+        name: "Agile",
+        level: "75%",
+        category: "Méthode",
+        desc: "Scrum & Kanban",
+        image: "https://via.placeholder.com/70x90/ffffff/000000?text=Agile",
+      },
+      {
+        name: "UML",
+        level: "70%",
+        category: "Modélisation",
+        desc: "Diagrammes & analyse",
+        image: "https://via.placeholder.com/70x90/ffffff/000000?text=UML",
+      },
+      // Doublons pour remplir 25 (l'original utilise 25 cartes pour 20 items via modulo)
+      {
+        name: "Android",
+        level: "75%",
+        category: "Mobile",
+        desc: "Développement natif",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg",
+      },
+      {
+        name: "REST",
+        level: "80%",
+        category: "Architecture",
+        desc: "API design",
+        image: "https://via.placeholder.com/70x90/ffffff/000000?text=REST",
+      },
+    ];
+
+    const cards = [];
+    const transformState = [];
+
+    let currentTitle = null;
+    let isPreviewActive = false;
+    let isTransitioning = false;
+
+    const config = {
+      imageCount: 25,
+      radius: 275,
+      sensitivity: 500,
+      effectFalloff: 250,
+      cardMoveAmount: 50,
+      lerpFactor: 0.15,
+      isMobile: window.innerWidth < 1000,
+    };
+
+    const parallaxState = {
+      targetX: 0,
+      targetY: 0,
+      targetZ: 0,
+      currentX: 0,
+      currentY: 0,
+      currentZ: 0,
+    };
+
+    for (let i = 0; i < config.imageCount; i++) {
+      const angle = (i / config.imageCount) * Math.PI * 2;
+      const x = config.radius * Math.cos(angle);
+      const y = config.radius * Math.sin(angle);
+      const cardIndex = i % collection.length;
+      const skill = collection[cardIndex];
+
+      const card = document.createElement("div");
+      // Alterner light/dark pour rythmer visuellement
+      card.className = i % 3 === 0 ? "cg-card cg-card--dark" : "cg-card";
+      card.dataset.index = i;
+      card.dataset.name = skill.name;
+      card.dataset.level = skill.level;
+      card.dataset.category = skill.category;
+      card.dataset.desc = skill.desc;
+
+      // Au lieu de texte, on met une image du logo
+      const imgEl = document.createElement("img");
+      imgEl.src = skill.image;
+      imgEl.alt = skill.name;
+      imgEl.style.width = "100%";
+      imgEl.style.height = "100%";
+      imgEl.style.objectFit = "contain";
+      card.appendChild(imgEl);
+
+      gsap.set(card, {
+        x,
+        y,
+        rotation: (angle * 180) / Math.PI + 90,
+        transformPerspective: 1200,
+        transformOrigin: "center center",
+      });
+
+      gallery.appendChild(card);
+      cards.push(card);
+      transformState.push({
+        currentRotation: 0,
+        targetRotation: 0,
+        currentX: 0,
+        targetX: 0,
+        currentY: 0,
+        targetY: 0,
+        currentScale: 1,
+        targetScale: 1,
+        angle,
+      });
+
+      card.addEventListener("click", (e) => {
+        if (!isPreviewActive && !isTransitioning) {
+          togglePreview(parseInt(card.dataset.index));
+          e.stopPropagation();
+        }
+      });
+    }
+
+    function togglePreview(index) {
+      isPreviewActive = true;
+      isTransitioning = true;
+
+      const angle = transformState[index].angle;
+      const targetPosition = (Math.PI * 3) / 2;
+      let rotationRadians = targetPosition - angle;
+
+      if (rotationRadians > Math.PI) rotationRadians -= Math.PI * 2;
+      else if (rotationRadians < -Math.PI) rotationRadians += Math.PI * 2;
+
+      transformState.forEach((state) => {
+        state.currentRotation = state.targetRotation = 0;
+        state.currentScale = state.targetScale = 1;
+        state.currentX = state.targetX = state.currentY = state.targetY = 0;
+      });
+
+      gsap.to(gallery, {
+        onStart: () => {
+          cards.forEach((card, i) => {
+            gsap.to(card, {
+              x: config.radius * Math.cos(transformState[i].angle),
+              y: config.radius * Math.sin(transformState[i].angle),
+              rotationY: 0,
+              scale: 1,
+              duration: 1.25,
+              ease: "power4.out",
+            });
+          });
+        },
+        scale: 5,
+        y: 1300,
+        rotation: (rotationRadians * 180) / Math.PI + 360,
+        duration: 2,
+        ease: "power4.inOut",
+        onComplete: () => (isTransitioning = false),
+      });
+
+      gsap.to(parallaxState, {
+        currentX: 0,
+        currentY: 0,
+        currentZ: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onUpdate: () => {
+          gsap.set(galleryContainer, {
+            rotateX: parallaxState.currentX,
+            rotateY: parallaxState.currentY,
+            rotation: parallaxState.currentZ,
+            transformOrigin: "center center",
+          });
+        },
+      });
+
+      // Affichage du titre + sous-titre (catégorie • niveau)
+      const card = cards[index];
+      const skillName = card.dataset.name;
+      const skillCat = card.dataset.category;
+      const skillLevel = card.dataset.level;
+      const skillDesc = card.dataset.desc;
+
+      const titleEl = document.createElement("p");
+      titleEl.className = "cg-detail";
+      titleEl.textContent = skillName;
+      titleContainer.appendChild(titleEl);
+
+      const subEl = document.createElement("p");
+      subEl.className = "cg-detail-sub";
+      subEl.textContent = `${skillCat} • ${skillLevel} • ${skillDesc}`;
+      titleContainer.appendChild(subEl);
+
+      currentTitle = { title: titleEl, sub: subEl };
+
+      // Animation des mots avec SplitText si dispo, sinon fallback simple
+      if (typeof SplitText !== "undefined") {
+        const splitText = new SplitText(titleEl, {
+          type: "words",
+          wordsClass: "cg-word",
+        });
+        const words = splitText.words;
+
+        gsap.set(words, { y: "125%" });
+        gsap.to(words, {
+          y: "0%",
+          duration: 0.75,
+          delay: 1.25,
+          stagger: 0.1,
+          ease: "power4.out",
+        });
+
+        gsap.set(subEl, { y: "125%", opacity: 0 });
+        gsap.to(subEl, {
+          y: "0%",
+          opacity: 1,
+          duration: 0.75,
+          delay: 1.5,
+          ease: "power4.out",
+        });
+      } else {
+        // Fallback sans SplitText
+        gsap.set([titleEl, subEl], { y: "125%", opacity: 0 });
+        gsap.to([titleEl, subEl], {
+          y: "0%",
+          opacity: 1,
+          duration: 0.75,
+          delay: 1.25,
+          stagger: 0.1,
+          ease: "power4.out",
+        });
+      }
+    }
+
+    function resetGallery() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+
+      if (currentTitle) {
+        const titleNodes = [currentTitle.title, currentTitle.sub];
+        const allTargets = [];
+        titleNodes.forEach((node) => {
+          if (!node) return;
+          const words = node.querySelectorAll(".cg-word");
+          if (words.length) allTargets.push(...words);
+          else allTargets.push(node);
+        });
+
+        gsap.to(allTargets, {
+          y: "-125%",
+          duration: 0.75,
+          delay: 0.5,
+          stagger: 0.1,
+          ease: "power4.out",
+          onComplete: () => {
+            titleNodes.forEach((n) => n && n.remove());
+            currentTitle = null;
+          },
+        });
+      }
+
+      const viewportWidth = window.innerWidth;
+      let galleryScale = 1;
+      if (viewportWidth < 768) galleryScale = 0.6;
+      else if (viewportWidth < 1200) galleryScale = 0.85;
+
+      gsap.to(gallery, {
+        scale: galleryScale,
+        y: 0,
+        x: 0,
+        rotation: 0,
+        duration: 2.5,
+        ease: "power4.inOut",
+        onComplete: () => {
+          isPreviewActive = isTransitioning = false;
+          Object.assign(parallaxState, {
+            targetX: 0,
+            targetY: 0,
+            targetZ: 0,
+            currentX: 0,
+            currentY: 0,
+            currentZ: 0,
+          });
+        },
+      });
+    }
+
+    function handleResize() {
+      const viewportWidth = window.innerWidth;
+      config.isMobile = viewportWidth < 1000;
+
+      let galleryScale = 1;
+      if (viewportWidth < 768) galleryScale = 0.6;
+      else if (viewportWidth < 1200) galleryScale = 0.85;
+
+      gsap.set(gallery, { scale: galleryScale });
+
+      if (!isPreviewActive) {
+        parallaxState.targetX = 0;
+        parallaxState.targetY = 0;
+        parallaxState.targetZ = 0;
+        parallaxState.currentX = 0;
+        parallaxState.currentY = 0;
+        parallaxState.currentZ = 0;
+
+        transformState.forEach((state) => {
+          state.targetRotation = 0;
+          state.currentRotation = 0;
+          state.targetScale = 1;
+          state.currentScale = 1;
+          state.targetX = 0;
+          state.currentX = 0;
+          state.targetY = 0;
+          state.currentY = 0;
+        });
+      }
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    // Click n'importe où → reset (mais uniquement dans la section)
+    const skillsSection = document.querySelector(".skills-circular");
+    skillsSection.addEventListener("click", () => {
+      if (isPreviewActive && !isTransitioning) resetGallery();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isPreviewActive && !isTransitioning)
+        resetGallery();
+    });
+
+    // Parallax + flip cards au survol — uniquement quand la souris est dans la section
+    skillsSection.addEventListener("mousemove", (e) => {
+      if (isPreviewActive || isTransitioning || config.isMobile) return;
+
+      const rect = skillsSection.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const percentX = (e.clientX - centerX) / (rect.width / 2);
+      const percentY = (e.clientY - centerY) / (rect.height / 2);
+
+      parallaxState.targetY = percentX * 15;
+      parallaxState.targetX = -percentY * 15;
+      parallaxState.targetZ = (percentX + percentY) * 5;
+
+      cards.forEach((card, index) => {
+        const rectCard = card.getBoundingClientRect();
+        const dx = e.clientX - (rectCard.left + rectCard.width / 2);
+        const dy = e.clientY - (rectCard.top + rectCard.height / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < config.sensitivity && !config.isMobile) {
+          const flipFactor = Math.max(0, 1 - distance / config.effectFalloff);
+          const angle = transformState[index].angle;
+          const moveAmount = config.cardMoveAmount * flipFactor;
+
+          transformState[index].targetRotation = 180 * flipFactor;
+          transformState[index].targetScale = 1 + 0.3 * flipFactor;
+          transformState[index].targetX = moveAmount * Math.cos(angle);
+          transformState[index].targetY = moveAmount * Math.sin(angle);
+        } else {
+          transformState[index].targetRotation = 0;
+          transformState[index].targetScale = 1;
+          transformState[index].targetX = 0;
+          transformState[index].targetY = 0;
+        }
+      });
+    });
+
+    skillsSection.addEventListener("mouseleave", () => {
+      if (!isPreviewActive && !isTransitioning) {
+        transformState.forEach((state) => {
+          state.targetRotation = 0;
+          state.targetScale = 1;
+          state.targetX = 0;
+          state.targetY = 0;
+        });
+        parallaxState.targetX = 0;
+        parallaxState.targetY = 0;
+        parallaxState.targetZ = 0;
+      }
+    });
+
+    function animate() {
+      if (!isPreviewActive && !isTransitioning) {
+        parallaxState.currentX +=
+          (parallaxState.targetX - parallaxState.currentX) * config.lerpFactor;
+        parallaxState.currentY +=
+          (parallaxState.targetY - parallaxState.currentY) * config.lerpFactor;
+        parallaxState.currentZ +=
+          (parallaxState.targetZ - parallaxState.currentZ) * config.lerpFactor;
+
+        gsap.set(galleryContainer, {
+          rotateX: parallaxState.currentX,
+          rotateY: parallaxState.currentY,
+          rotation: parallaxState.currentZ,
+          transformOrigin: "center center",
+        });
+
+        cards.forEach((card, index) => {
+          const state = transformState[index];
+
+          state.currentRotation +=
+            (state.targetRotation - state.currentRotation) * config.lerpFactor;
+          state.currentScale +=
+            (state.targetScale - state.currentScale) * config.lerpFactor;
+          state.currentX +=
+            (state.targetX - state.currentX) * config.lerpFactor;
+          state.currentY +=
+            (state.targetY - state.currentY) * config.lerpFactor;
+
+          const angle = state.angle;
+          const x = config.radius * Math.cos(angle);
+          const y = config.radius * Math.sin(angle);
+
+          gsap.set(card, {
+            x: x + state.currentX,
+            y: y + state.currentY,
+            rotationY: state.currentRotation,
+            scale: state.currentScale,
+            rotation: (angle * 180) / Math.PI + 90,
+            transformOrigin: "center center",
+            transformPerspective: 1200,
+          });
+        });
+      }
+      requestAnimationFrame(animate);
+    }
+
+    animate();
   }
 });
