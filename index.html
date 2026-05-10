@@ -15,6 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Scripts -->
     <script
@@ -331,6 +335,464 @@
           <p>/ SK—001</p>
         </footer>
       </section>
+      <!-- ============================================
+           CERTIFICATIONS & FORMATIONS — Cartes flip 3D
+           ============================================ -->
+      <section class="certs-section">
+        <!-- Header éditorial -->
+        <div class="certs-header">
+          <span class="certs-label">/ CT—001</span>
+          <h2 class="certs-title">
+            Certifications<br /><em>&amp; formations.</em>
+          </h2>
+          <p class="certs-hint">Survolez une carte pour voir les détails</p>
+          <p class="certs-counter">
+            <span>01</span>
+            <span class="certs-counter-sep">/</span>
+            <span>06</span>
+          </p>
+        </div>
+
+        <!-- Marquee défilant en arrière-plan (texte qui défile sans fin) -->
+        <div class="certs-marquee" aria-hidden="true">
+          <div class="certs-marquee-track">
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
+          </div>
+        </div>
+
+        <!-- Grille de cartes flip -->
+        <div class="certs-grid">
+          <!-- Carte 1 -->
+          <article class="cert-card" data-cert-num="01">
+            <div class="cert-card-inner">
+              <!-- Face avant -->
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath01"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath01">CERTIFIED ✦ 2024 ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">✓</div>
+                </div>
+                <div class="cert-num">01</div>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">PIX</h3>
+                <p class="cert-issuer">État Français</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <!-- Face arrière (révélée au flip) -->
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Certification officielle des compétences numériques. Niveau
+                  atteint évalué sur 5 domaines : information, communication,
+                  création, protection, environnement.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Année</span><strong>2024</strong></div>
+                  <div><span>Niveau</span><strong>Avancé</strong></div>
+                </div>
+                <div class="cert-back-link">Voir le certificat →</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 2 -->
+          <article class="cert-card cert-card--dark" data-cert-num="02">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath02"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath02">
+                        FORMATION ✦ ONLINE ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">★</div>
+                </div>
+                <div class="cert-num">02</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">JavaScript</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Apprenez à programmer avec JavaScript. ES6+, manipulation du
+                  DOM, fetch API, async/await et programmation orientée objet.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Durée</span><strong>40 h</strong></div>
+                  <div><span>Année</span><strong>2023</strong></div>
+                </div>
+                <div class="cert-back-link">Voir le certificat →</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 3 -->
+          <article class="cert-card" data-cert-num="03">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath03"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath03">DIPLÔME ✦ 2024 ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">◆</div>
+                </div>
+                <div class="cert-num">03</div>
+                <div class="cert-tag">DIPLÔME</div>
+                <h3 class="cert-name">BTS SIO</h3>
+                <p class="cert-issuer">Education Nationale</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Brevet de Technicien Supérieur — Services Informatiques aux
+                  Organisations, option SLAM. Solutions Logicielles &amp;
+                  Applications Métiers.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Année</span><strong>2024</strong></div>
+                  <div><span>Mention</span><strong>—</strong></div>
+                </div>
+                <div class="cert-back-link">Voir le diplôme →</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 4 -->
+          <article class="cert-card cert-card--dark" data-cert-num="04">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath04"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath04">
+                        FORMATION ✦ SYMFONY ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">⬢</div>
+                </div>
+                <div class="cert-num">04</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">Symfony</h3>
+                <p class="cert-issuer">SymfonyCasts</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Maîtrise du framework PHP Symfony : architecture MVC, Doctrine
+                  ORM, sécurité, API Platform et tests unitaires.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Durée</span><strong>60 h</strong></div>
+                  <div><span>Année</span><strong>2024</strong></div>
+                </div>
+                <div class="cert-back-link">Voir le certificat →</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 5 -->
+          <article class="cert-card" data-cert-num="05">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath05"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath05">ANGLAIS ✦ B2 ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">EN</div>
+                </div>
+                <div class="cert-num">05</div>
+                <div class="cert-tag">LANGUE</div>
+                <h3 class="cert-name">TOEIC</h3>
+                <p class="cert-issuer">ETS Global</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Test of English for International Communication. Certification
+                  reconnue de niveau d'anglais dans le contexte professionnel.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Score</span><strong>—/990</strong></div>
+                  <div><span>Niveau</span><strong>B2</strong></div>
+                </div>
+                <div class="cert-back-link">Voir le score →</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 6 -->
+          <article class="cert-card cert-card--dark" data-cert-num="06">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath06"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath06">EN COURS ✦ 2025 ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">⌗</div>
+                </div>
+                <div class="cert-num">06</div>
+                <div class="cert-tag">EN COURS</div>
+                <h3 class="cert-name">Licence Pro</h3>
+                <p class="cert-issuer">Université</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Licence Professionnelle Métiers de l'Informatique.
+                  Approfondissement Android, web créatif, architectures
+                  distribuées.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Année</span><strong>2024–2025</strong></div>
+                  <div><span>Statut</span><strong>En cours</strong></div>
+                </div>
+                <div class="cert-back-link">En cours →</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <!-- ============================================
+           PROJETS — Liste avec thumbnail au curseur
+           ============================================ -->
+      <section class="proj-section">
+        <!-- Header éditorial cohérent avec le reste -->
+        <div class="proj-header">
+          <span class="proj-label">/ PR—001</span>
+          <h2 class="proj-title">Projets<br /><em>&amp; réalisations.</em></h2>
+          <p class="proj-hint">Survolez pour visualiser</p>
+        </div>
+
+        <div class="proj-index">
+          <div class="proj-index__container">
+            <!-- Liste des projets -->
+            <div class="proj-projects">
+              <div class="proj-project" data-num="01">
+                <div class="proj-project-left">
+                  <span class="proj-num">01</span>
+                  <h2>Zoucolis</h2>
+                </div>
+                <p>Android · Java · 2025</p>
+              </div>
+              <div class="proj-project" data-num="02">
+                <div class="proj-project-left">
+                  <span class="proj-num">02</span>
+                  <h2>Claude Interface</h2>
+                </div>
+                <p>HTML · API · 2025</p>
+              </div>
+              <div class="proj-project" data-num="03">
+                <div class="proj-project-left">
+                  <span class="proj-num">03</span>
+                  <h2>Brand Identity</h2>
+                </div>
+                <p>Design · Motion · 2024</p>
+              </div>
+              <div class="proj-project" data-num="04">
+                <div class="proj-project-left">
+                  <span class="proj-num">04</span>
+                  <h2>E-Commerce</h2>
+                </div>
+                <p>Web · UX · 2024</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           VEILLE INFORMATIQUE — Animations WonJyou
+           ============================================ -->
+
+      <!-- Header de section (label + titre court) -->
+      <section class="watch-intro">
+        <div class="watch-intro-inner">
+          <span class="watch-label">/ VW—001</span>
+          <h2 class="watch-intro-title">Veille<br /><em>informatique.</em></h2>
+        </div>
+      </section>
+
+      <!-- 1. ABOUT-style : grande phrase qui se révèle au scroll -->
+      <section class="watch-about">
+        <h1 class="watch-animate-text">
+          Rester en veille, c'est prolonger l'apprentissage. Chaque semaine
+          j'explore les nouvelles pratiques web, les outils émergents et les
+          réflexions des designers et développeurs qui m'inspirent.
+        </h1>
+      </section>
+
+      <!-- 2. SERVICES-style : trois bandes qui se croisent puis pin + scale -->
+      <section class="watch-services">
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--top">
+            <span>FRONT-END</span>
+            <span>·</span>
+            <span>WEBGL</span>
+            <span>·</span>
+            <span>ANIMATION</span>
+            <span>·</span>
+            <span>FRONT-END</span>
+            <span>·</span>
+            <span>WEBGL</span>
+          </div>
+        </div>
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--mid">
+            <span>VEILLE</span>
+            <span>·</span>
+            <span>2025</span>
+            <span>·</span>
+            <span>WATCHLIST</span>
+            <span>·</span>
+            <span>VEILLE</span>
+            <span>·</span>
+            <span>2025</span>
+          </div>
+        </div>
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--bot">
+            <span>UX</span>
+            <span>·</span>
+            <span>SECURITY</span>
+            <span>·</span>
+            <span>AI</span>
+            <span>·</span>
+            <span>UX</span>
+            <span>·</span>
+            <span>SECURITY</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SERVICES-COPY : seconde phrase révélée -->
+      <section class="watch-services-copy">
+        <h1 class="watch-animate-text">
+          Awwwards, GSAP, Three.js, articles de fond, podcasts, conférences —
+          autant de canaux pour rester curieux et confronter mes idées à celles
+          d'une communauté en mouvement.
+        </h1>
+      </section>
+
+      <!-- 4. OUTRO : liste finale des sources de veille -->
+      <section class="watch-outro">
+        <div class="watch-outro-grid">
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">RÉFÉRENCES VISUELLES</span>
+            <ul class="watch-outro-list">
+              <li>Awwwards</li>
+              <li>SiteInspire</li>
+              <li>Codrops</li>
+              <li>Bestfolios</li>
+              <li>The FWA</li>
+            </ul>
+          </div>
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">TECH &amp; CODE</span>
+            <ul class="watch-outro-list">
+              <li>CSS-Tricks</li>
+              <li>Smashing Magazine</li>
+              <li>Hacker News</li>
+              <li>GSAP forums</li>
+              <li>Three.js journey</li>
+            </ul>
+          </div>
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">PODCASTS &amp; VIDÉOS</span>
+            <ul class="watch-outro-list">
+              <li>Syntax.fm</li>
+              <li>ShopTalk Show</li>
+              <li>Bruno Simon (YouTube)</li>
+              <li>Akella (twitch)</li>
+              <li>Hugo Barré</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </main>
+    <div class="proj-project-thumbnail">
+      <div class="proj-thumbnail">
+        <img
+          src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80"
+          alt=""
+        />
+      </div>
+      <div class="proj-thumbnail">
+        <img
+          src="https://images.unsplash.com/photo-1481487196290-c152efe083f5?w=800&q=80"
+          alt=""
+        />
+      </div>
+      <div class="proj-thumbnail">
+        <img
+          src="https://images.unsplash.com/photo-1561070791-2526d30994b8?w=800&q=80"
+          alt=""
+        />
+      </div>
+      <div class="proj-thumbnail">
+        <img
+          src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&q=80"
+          alt=""
+        />
+      </div>
+    </div>
   </body>
 </html>

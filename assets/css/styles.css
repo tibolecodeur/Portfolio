@@ -10,6 +10,10 @@
   --text-color: #ffffff;
   --bg-color: #0a0a0a;
   --blur-amount: 0px;
+  --font-body:
+    "Raleway", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Anton", sans-serif;
+  --font-italic: "Times New Roman", Georgia, serif;
 }
 
 html.no-scroll,
@@ -29,7 +33,7 @@ html {
   overflow-x: hidden;
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: "Poppins", sans-serif;
+  font-family: "Raleway", sans-serif;
   cursor: none;
 }
 
@@ -37,6 +41,7 @@ body {
   width: 100%;
   /* pas de overflow-x ici */
   cursor: none;
+  font-family: var(--font-body);
 }
 
 /* ============================================
@@ -351,7 +356,7 @@ body {
   line-height: 102px;
   clip-path: polygon(0 0, 100% 0, 100% 100px, 0 100px);
   font-weight: 400;
-  font-family: "Poppins", sans-serif;
+  font-family: "Raleway", sans-serif;
 }
 
 .counter-1,
@@ -404,9 +409,148 @@ body {
    ============================================ */
 #home-content {
   opacity: 0;
-  transform: translateY(40px) scale(0.985);
   filter: blur(20px);
-  will-change: opacity, transform, filter;
+}
+
+#home-content.content-visible {
+  opacity: 1;
+  /* IMPORTANT : on retire complètement le filter (pas blur(0px))
+     pour ne pas créer de containing block qui casserait position:fixed/sticky.
+     Pareil pour will-change qu'on n'utilise plus. */
+  filter: none;
+}
+
+/* ============================================
+   HERO SECTION - IRONHILL LANDING PAGE
+   ============================================ */
+
+.hero {
+  position: relative;
+  color: var(--accent2);
+  overflow: hidden;
+}
+
+.hero__row {
+  width: 100%;
+  height: 185vh;
+  position: relative;
+}
+
+.hero__bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__twigs {
+  position: absolute;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__twig {
+  position: absolute;
+  z-index: 5;
+}
+
+.hero__twig--left {
+  width: 700px;
+  bottom: 20%;
+  left: 0;
+}
+
+.hero__twig--right {
+  width: 800px;
+  bottom: 10%;
+  right: 0;
+}
+
+.hero__conteiner {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__top {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
+  top: 0;
+  left: 0;
+}
+
+.hero__top h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(80px, 15vw, 240px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 2px;
+  margin: 0;
+  opacity: 0;
+  color: var(--accent2);
+}
+
+.hero__top p {
+  font-family: "Raleway", sans-serif;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  margin: 0;
+  margin-top: 1rem;
+  opacity: 0;
+  color: var(--text-color);
+}
+
+.hero__content {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 125vh;
+  z-index: 10;
+}
+
+.hero__content h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(24px, 5vw, 48px);
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--bg-color);
+  max-width: 1400px;
+  margin: 0;
+  opacity: 0;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .hero__twig--left {
+    width: 350px;
+  }
+
+  .hero__twig--right {
+    width: 400px;
+  }
+
+  .hero__top h1 {
+    font-size: clamp(40px, 12vw, 100px);
+  }
+
+  .hero__content h2 {
+    font-size: clamp(18px, 4vw, 32px);
+  }
 }
 
 /* ── BACKGROUND CRÈME EN ARCHE ── */
@@ -459,7 +603,15 @@ body {
    ============================================ */
 .sticker {
   position: absolute;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSyste "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serifmFont,
+    sans-serif;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -885,7 +1037,11 @@ body {
 }
 
 .journey-label {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.25em;
   color: rgba(255, 255, 255, 0.4);
@@ -893,7 +1049,8 @@ body {
 }
 
 .journey-title {
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: clamp(2.8rem, 5.5vw, 5.5rem);
   font-weight: 400;
   line-height: 0.95;
@@ -920,13 +1077,15 @@ body {
 }
 
 .journey-year-static {
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: 2rem;
   color: rgba(255, 255, 255, 0.4);
 }
 
 .journey-year-active {
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: clamp(2.5rem, 4vw, 4rem);
   font-weight: 400;
   letter-spacing: 0.01em;
@@ -960,7 +1119,11 @@ body {
 }
 
 .journey-counter {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   color: rgba(255, 255, 255, 0.5);
@@ -1017,7 +1180,8 @@ body {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: 4rem;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.06);
@@ -1040,7 +1204,11 @@ body {
 }
 
 .journey-card-tag {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.62rem;
   letter-spacing: 0.25em;
   font-weight: 700;
@@ -1051,7 +1219,11 @@ body {
 }
 
 .journey-card-period {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   color: rgba(0, 0, 0, 0.5);
@@ -1059,7 +1231,8 @@ body {
 }
 
 .journey-card-title {
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 400;
   line-height: 0.95;
@@ -1069,7 +1242,11 @@ body {
 }
 
 .journey-card-place {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.7);
@@ -1077,7 +1254,11 @@ body {
 }
 
 .journey-card-desc {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.9rem;
   line-height: 1.6;
   color: rgba(0, 0, 0, 0.75);
@@ -1092,7 +1273,11 @@ body {
 }
 
 .journey-card-tags span {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.05em;
   font-weight: 500;
@@ -1165,7 +1350,12 @@ body {
 .skills-circular p {
   text-decoration: none;
   color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serif;
   font-size: 15px;
   font-weight: 600;
   line-height: 1;
@@ -1270,7 +1460,8 @@ body {
   position: absolute;
   width: 100%;
   text-align: center;
-  font-family: "Anton", sans-serif;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
   font-size: 36px;
   letter-spacing: -0.03rem;
   text-transform: uppercase;
@@ -1282,7 +1473,11 @@ body {
   position: absolute;
   width: 100%;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 14px;
   letter-spacing: 0.2em;
   font-weight: 500;
@@ -1322,5 +1517,971 @@ body {
   .cg-title-container .cg-detail-sub {
     font-size: 11px;
     top: 32px;
+  }
+}
+
+/* ============================================
+   CERTIFICATIONS — Section flip cards
+   ============================================ */
+.certs-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 3rem 10rem;
+  overflow: hidden;
+  z-index: 7;
+}
+
+/* Marquee de fond */
+.certs-marquee {
+  position: absolute;
+  top: 38%;
+  left: -10%;
+  right: -10%;
+  width: 120%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transform: rotate(-3deg);
+  transform-origin: center;
+}
+
+.certs-marquee-track {
+  display: flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: certs-marquee 40s linear infinite;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 8rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.04);
+  line-height: 1;
+}
+
+.certs-marquee-track span {
+  flex-shrink: 0;
+}
+
+@keyframes certs-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Header */
+.certs-header {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto 5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.certs-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  align-self: start;
+}
+
+.certs-title {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.certs-title em {
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.certs-hint {
+  grid-column: 2;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  margin: 0;
+  text-align: right;
+}
+
+.certs-counter {
+  grid-column: 3;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  margin: 0;
+}
+.certs-counter-sep {
+  margin: 0 0.4rem;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Grille de cartes en quinconce */
+.certs-grid {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+/* Décalage en quinconce — col 2 descend, col 1 et 3 s'alignent */
+.cert-card:nth-child(3n + 2) {
+  margin-top: 4rem;
+}
+
+/* La carte (perspective pour le flip 3D) */
+.cert-card {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  perspective: 1500px;
+  cursor: pointer;
+}
+
+.cert-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+/* Au survol : flip ! */
+.cert-card:hover .cert-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Faces avant et arrière */
+.cert-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.cert-face--back {
+  transform: rotateY(180deg);
+}
+
+/* Variante sombre pour rythmer la grille */
+.cert-card--dark .cert-face {
+  background: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* ─── Front ─── */
+
+/* Le sceau circulaire animé en haut à droite */
+.cert-stamp {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-stamp-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: cert-stamp-rotate 12s linear infinite;
+}
+
+.cert-card--dark .cert-stamp-text text {
+  fill: #ffffff;
+}
+.cert-stamp-text text {
+  fill: #000000;
+}
+
+.cert-stamp-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.cert-card--dark .cert-stamp-icon {
+  background: #ffffff;
+  color: #000000;
+}
+
+@keyframes cert-stamp-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Numéro géant en haut à gauche */
+.cert-num {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 2.2rem;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: auto;
+}
+
+.cert-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.cert-card--dark .cert-tag,
+.cert-card--dark .cert-issuer {
+  color: rgba(255, 255, 255, 0.7);
+}
+.cert-tag,
+.cert-issuer {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.cert-name {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.cert-issuer {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.cert-arrow {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cert-card:hover .cert-arrow {
+  transform: rotate(45deg);
+}
+
+/* ─── Back ─── */
+
+.cert-back-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.cert-back-desc {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  font-weight: 300;
+  margin: 0 0 auto;
+  flex: 1;
+}
+
+.cert-back-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  margin-bottom: 1rem;
+}
+
+.cert-back-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cert-back-meta span {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  font-weight: 600;
+}
+
+.cert-back-meta strong {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.cert-back-link {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ─── Reveal animation au scroll ─── */
+.cert-card {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cert-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .certs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  .cert-card:nth-child(3n + 2) {
+    margin-top: 0;
+  }
+  .cert-card:nth-child(2n) {
+    margin-top: 3rem;
+  }
+  .certs-marquee-track {
+    font-size: 6rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .certs-section {
+    padding: 5rem 1.25rem 6rem;
+  }
+  .certs-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .certs-hint,
+  .certs-counter {
+    grid-column: 1;
+    text-align: left;
+  }
+  .certs-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .cert-card,
+  .cert-card:nth-child(2n) {
+    margin-top: 0;
+  }
+  .cert-card {
+    height: 380px;
+  }
+  /* Sur mobile : pas de hover, on tape pour flip */
+  .cert-card.is-flipped .cert-card-inner {
+    transform: rotateY(180deg);
+  }
+  .certs-marquee-track {
+    font-size: 4rem;
+  }
+}
+
+/* ============================================
+   PROJETS — Liste avec thumbnail au curseur
+   (copié-collé adapté)
+   ============================================ */
+.proj-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 0 6rem;
+  z-index: 8;
+}
+
+/* Header */
+.proj-header {
+  max-width: 1400px;
+  margin: 0 auto 5rem;
+  padding: 0 3rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.proj-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  align-self: start;
+}
+
+.proj-title {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.proj-title em {
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.proj-hint {
+  grid-column: 2 / -1;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  margin: 0;
+  text-align: right;
+}
+
+/* === Composant projet (copié-collé exact, juste préfixé) === */
+
+.proj-index {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.proj-index__container {
+  max-width: 75rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0.9375rem;
+  position: relative;
+}
+
+.proj-projects {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 62.5rem;
+  margin: 0 auto;
+}
+
+.proj-project {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3rem 4rem;
+  border-top: 0.0625rem solid rgba(0, 0, 0, 0.2745098039);
+  cursor: pointer;
+}
+
+.proj-project-left {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.proj-num {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 500;
+}
+
+.proj-project h2 {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: 0.5s ease;
+}
+
+.proj-project p {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+  transition: 0.5s ease;
+}
+
+.proj-project:last-child {
+  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.2745098039);
+}
+
+.proj-project:hover {
+  opacity: 0.5;
+}
+
+.proj-project:hover h2 {
+  transform: translateX(-0.9375rem);
+}
+
+.proj-project:hover p {
+  transform: translateX(0.9375rem);
+}
+
+/* La pile de thumbnails — suit le curseur via GSAP */
+.proj-project-thumbnail {
+  position: fixed;
+  width: 25rem;
+  height: 15.625rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  transform-origin: center center;
+  z-index: 9999;
+  /* Petit cadre + ombre subtile pour matcher le thème N&B */
+  background: #ffffff;
+  /* Caché par défaut avant que GSAP prenne la main (évite le flash au load) */
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.proj-thumbnail {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.proj-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .proj-section {
+    padding: 5rem 0 4rem;
+  }
+  .proj-header {
+    padding: 0 1.5rem;
+    margin-bottom: 3rem;
+    grid-template-columns: 1fr;
+  }
+  .proj-hint {
+    grid-column: 1;
+    text-align: left;
+  }
+  .proj-project {
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .proj-project:hover h2,
+  .proj-project:hover p {
+    transform: none;
+  }
+  /* Sur mobile : pas de thumbnail flottante (pas de souris) */
+  .proj-project-thumbnail {
+    display: none;
+  }
+}
+
+/* ============================================
+   VEILLE INFORMATIQUE — Animations WonJyou
+   (copié-collé exact, préfixé .watch-*)
+   ============================================ */
+
+/* Reset spécifique à la section */
+.watch-intro,
+.watch-about,
+.watch-services,
+.watch-services-copy,
+.watch-outro {
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family:
+    "Manrope",
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-intro h1,
+.watch-about h1,
+.watch-services-copy h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -0.15rem;
+  line-height: 1.125;
+  text-align: center;
+  margin: 0;
+}
+
+/* ─── 0. INTRO HEADER ─── */
+.watch-intro {
+  width: 100%;
+  height: 60svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.watch-intro-inner {
+  text-align: center;
+}
+
+.watch-label {
+  display: block;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.watch-intro-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.watch-intro-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ─── 1. ABOUT (premier text-reveal) ─── */
+.watch-about,
+.watch-services-copy {
+  width: 100%;
+}
+
+.watch-about {
+  height: 100svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ─── 2. SERVICES (3 bandes qui se croisent + pin + scale) ─── */
+.watch-services {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.watch-services-header {
+  position: relative;
+  width: 100%;
+  padding: 0 2rem;
+  background-color: #1a1a1a;
+  will-change: transform;
+}
+
+/* Position initiale exactement comme l'original */
+.watch-services-header:nth-child(1),
+.watch-services-header:nth-child(3) {
+  transform: translateX(100%) translateY(0%);
+}
+
+.watch-services-header:nth-child(2) {
+  transform: translateX(-100%) translateY(0%);
+  z-index: 2;
+}
+
+/* Les bandeaux remplacent les <img src="whatido.svg"> */
+.watch-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem 0;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(3rem, 9vw, 9rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Variations N&B pour donner du contraste comme l'original */
+.watch-banner--top {
+  color: #ffffff;
+}
+
+.watch-banner--mid {
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 1.5rem 0;
+}
+
+.watch-banner--bot {
+  color: #ffffff;
+}
+
+/* ─── 3. SERVICES-COPY (deuxième text-reveal) ─── */
+/* ─── 3. SERVICES-COPY (deuxième text-reveal) ─── */
+.watch-services-copy {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* IMPORTANT : pas de margin-top, le pinSpacing s'occupe de l'espace */
+}
+
+/* ─── ANIMATE TEXT (clip-path révélé au scroll) ─── */
+.watch-animate-text {
+  position: relative;
+  width: 60%;
+  margin: 0 auto;
+  color: #4f4f4f;
+  --clip-value: 100%;
+}
+
+.watch-animate-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  clip-path: inset(0 0 var(--clip-value) 0);
+  will-change: clip-path;
+}
+
+/* ─── 4. OUTRO (sources) ─── */
+.watch-outro {
+  width: 100%;
+  padding: 8rem 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.watch-outro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.watch-outro-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.watch-outro-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.watch-outro-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.watch-outro-list li {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: #fff;
+}
+
+/* ─── Responsive (copié-collé du media query original) ─── */
+@media (max-width: 1000px) {
+  .watch-intro h1,
+  .watch-about h1,
+  .watch-services-copy h1 {
+    font-size: 2rem;
+    letter-spacing: -0.05rem;
+  }
+  .watch-animate-text {
+    width: 100%;
+  }
+  .watch-banner {
+    font-size: 4rem;
+    gap: 1rem;
+  }
+  .watch-outro-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .watch-outro {
+    padding: 5rem 1.5rem;
   }
 }

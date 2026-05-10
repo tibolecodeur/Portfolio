@@ -9,7 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     smoothWheel: true,
   });
 
+  // Connecter Lenis à ScrollTrigger pour que pin et scrub fonctionnent
+  // Lenis pilote le scroll, on synchronise ScrollTrigger sur ses updates
   lenis.on("scroll", ScrollTrigger.update);
+
+  // Ticker GSAP pour faire avancer Lenis dans la même boucle d'animation
   gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
   });
@@ -322,6 +326,15 @@ document.addEventListener("DOMContentLoaded", () => {
       initHomeAnimations();
       initJourneySection();
       initCircularGallery();
+      initCerts();
+      initProjectsThumbnail();
+      initWatchAnimations();
+
+      // Recalcul des positions ScrollTrigger après que tout soit en place
+      // (les transitions CSS ont fini, le DOM est stable)
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
     },
   });
 
@@ -348,14 +361,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const reveal = gsap.timeline();
 
     reveal
-      // 1. Le conteneur entier : translate + scale + deblur
+      // 1. Le conteneur entier : deblur + fade in
+      // À la fin, on retire complètement le filter (pas blur(0))
+      // pour ne pas casser position:fixed/sticky des sections internes
       .to(homeContent, {
         opacity: 1,
-        y: 0,
-        scale: 1,
         filter: "blur(0px)",
         duration: 1.4,
         ease: "expo.out",
+        onComplete: () => {
+          homeContent.style.filter = "none";
+        },
       })
 
       // 2. Les mots du nom slident depuis le bas (effet masque)
@@ -1068,5 +1084,188 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     animate();
+  }
+
+  // ============================================
+  // 7. CERTIFICATIONS — Reveal au scroll + tap mobile
+  // ============================================
+  function initCerts() {
+    const cards = document.querySelectorAll(".cert-card");
+    if (!cards.length) return;
+
+    // Reveal au scroll (IntersectionObserver — solide et léger)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            // Petit stagger basé sur la position dans la viewport
+            const delay = ((entry.target.dataset.certNum - 1) % 3) * 0.15;
+            setTimeout(() => {
+              entry.target.classList.add("is-visible");
+            }, delay * 1000);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -10% 0px",
+      },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    // Sur mobile (pas de hover) : tap pour flip
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    if (isTouchDevice) {
+      cards.forEach((card) => {
+        card.addEventListener("click", (e) => {
+          e.preventDefault();
+          // Fermer les autres cartes pour qu'une seule soit flip à la fois
+          cards.forEach((c) => {
+            if (c !== card) c.classList.remove("is-flipped");
+          });
+          card.classList.toggle("is-flipped");
+        });
+      });
+    }
+  }
+
+  // ============================================
+  // 8. PROJETS — Thumbnail qui suit le curseur
+  // (copié-collé exact)
+  // ============================================
+  function initProjectsThumbnail() {
+    if (typeof gsap === "undefined") return;
+    // Pas d'effet sur mobile (pas de hover)
+    if (window.innerWidth <= 900) return;
+
+    const projects = gsap.utils.toArray(".proj-project");
+    const thumbnails = gsap.utils.toArray(".proj-thumbnail");
+    const projectThumbnail = document.querySelector(".proj-project-thumbnail");
+    const projectsContainer = document.querySelector(".proj-projects");
+
+    if (
+      !projects.length ||
+      !thumbnails.length ||
+      !projectThumbnail ||
+      !projectsContainer
+    )
+      return;
+
+    gsap.set(projectThumbnail, { scale: 0, xPercent: -50, yPercent: -50 });
+
+    const xTo = gsap.quickTo(projectThumbnail, "x", {
+      duration: 0.4,
+      ease: "power3.out",
+    });
+    const yTo = gsap.quickTo(projectThumbnail, "y", {
+      duration: 0.4,
+      ease: "power3.out",
+    });
+
+    projectsContainer.addEventListener("mousemove", (e) => {
+      xTo(e.clientX);
+      yTo(e.clientY);
+    });
+
+    projectsContainer.addEventListener("mouseleave", () => {
+      gsap.to(projectThumbnail, {
+        scale: 0,
+        duration: 0.3,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    });
+
+    projects.forEach((project, index) => {
+      project.addEventListener("mouseenter", () => {
+        gsap.to(projectThumbnail, {
+          scale: 1,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+
+        gsap.to(thumbnails, {
+          yPercent: -100 * index,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+    });
+  }
+  // ============================================
+  // 9. VEILLE — Scroll animations WonJyou
+  // (copié-collé exact, sélecteurs préfixés)
+  // ============================================
+  function initWatchAnimations() {
+    if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined")
+      return;
+
+    // 1. Text reveal — clip-path animé
+    document.querySelectorAll(".watch-animate-text").forEach((textElement) => {
+      textElement.setAttribute("data-text", textElement.textContent.trim());
+
+      ScrollTrigger.create({
+        trigger: textElement,
+        start: "top 50%",
+        end: "bottom 50%",
+        scrub: 1,
+        onUpdate: (self) => {
+          const clipValue = Math.max(0, 100 - self.progress * 100);
+          textElement.style.setProperty("--clip-value", `${clipValue}%`);
+        },
+      });
+    });
+
+    // 2. Services bandes : croisement horizontal (avant pin)
+    ScrollTrigger.create({
+      trigger: ".watch-services",
+      start: "top bottom",
+      end: "top top",
+      scrub: 1,
+      onUpdate: (self) => {
+        const headers = document.querySelectorAll(".watch-services-header");
+        if (headers.length < 3) return;
+        gsap.set(headers[0], { x: `${100 - self.progress * 100}%` });
+        gsap.set(headers[1], { x: `${-100 + self.progress * 100}%` });
+        gsap.set(headers[2], { x: `${100 - self.progress * 100}%` });
+      },
+    });
+
+    // 3. Services pin : pin + écartement vertical + scale
+    ScrollTrigger.create({
+      trigger: ".watch-services",
+      start: "top top",
+      end: `+=${window.innerHeight * 2}`,
+      pin: true,
+      scrub: 1,
+      pinSpacing: true, // ← réserve l'espace
+      anticipatePin: 1, // ← évite le saut au début
+      onUpdate: (self) => {
+        const headers = document.querySelectorAll(".watch-services-header");
+        if (headers.length < 3) return;
+
+        if (self.progress <= 0.5) {
+          const yProgress = self.progress / 0.5;
+          gsap.set(headers[0], { y: `${yProgress * 100}%` });
+          gsap.set(headers[2], { y: `${yProgress * -100}%` });
+        } else {
+          gsap.set(headers[0], { y: "100%" });
+          gsap.set(headers[2], { y: "-100%" });
+
+          const scaleProgress = (self.progress - 0.5) / 0.5;
+          const minScale = window.innerWidth <= 1000 ? 0.3 : 0.1;
+          const scale = 1 - scaleProgress * (1 - minScale);
+
+          headers.forEach((header) => gsap.set(header, { scale }));
+        }
+      },
+    });
+    ScrollTrigger.refresh();
   }
 });
