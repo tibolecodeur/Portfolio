@@ -20,47 +20,51 @@ document.addEventListener("DOMContentLoaded", () => {
   gsap.ticker.lagSmoothing(0);
 
   // ============================================
-  // 2. CUSTOM CURSOR
+  // 2. CUSTOM CURSOR — desktop (pointer: fine) uniquement
   // ============================================
+  const isPointerFine = window.matchMedia("(pointer: fine)").matches;
   const cursor = document.querySelector(".cursor");
   const follower = document.querySelector(".cursor-follower");
-  let mouseX = 0,
-    mouseY = 0;
-  let followerX = 0,
-    followerY = 0;
 
-  let lastMouseMove = 0;
-  document.addEventListener(
-    "mousemove",
-    (e) => {
-      const now = Date.now();
-      if (now - lastMouseMove > 16) {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        gsap.set(cursor, { x: mouseX, y: mouseY });
-        lastMouseMove = now;
-      }
-    },
-    { passive: true },
-  );
+  if (isPointerFine && cursor && follower) {
+    let mouseX = 0,
+      mouseY = 0;
+    let followerX = 0,
+      followerY = 0;
 
-  function animateFollower() {
-    followerX += (mouseX - followerX) * 0.15;
-    followerY += (mouseY - followerY) * 0.15;
-    gsap.set(follower, { x: followerX, y: followerY });
-    requestAnimationFrame(animateFollower);
+    let lastMouseMove = 0;
+    document.addEventListener(
+      "mousemove",
+      (e) => {
+        const now = Date.now();
+        if (now - lastMouseMove > 16) {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          gsap.set(cursor, { x: mouseX, y: mouseY });
+          lastMouseMove = now;
+        }
+      },
+      { passive: true },
+    );
+
+    function animateFollower() {
+      followerX += (mouseX - followerX) * 0.15;
+      followerY += (mouseY - followerY) * 0.15;
+      gsap.set(follower, { x: followerX, y: followerY });
+      requestAnimationFrame(animateFollower);
+    }
+    animateFollower();
+
+    const hoverables = document.querySelectorAll("a, button");
+    hoverables.forEach((el) => {
+      el.addEventListener("mouseenter", () =>
+        document.body.classList.add("cursor-hover"),
+      );
+      el.addEventListener("mouseleave", () =>
+        document.body.classList.remove("cursor-hover"),
+      );
+    });
   }
-  animateFollower();
-
-  const hoverables = document.querySelectorAll("a, button");
-  hoverables.forEach((el) => {
-    el.addEventListener("mouseenter", () =>
-      document.body.classList.add("cursor-hover"),
-    );
-    el.addEventListener("mouseleave", () =>
-      document.body.classList.remove("cursor-hover"),
-    );
-  });
 
   // ============================================
   // 3. BUBBLE MENU
@@ -329,9 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
       initCerts();
       initProjectsThumbnail();
       initWatchAnimations();
-
-      // Recalcul des positions ScrollTrigger après que tout soit en place
-      // (les transitions CSS ont fini, le DOM est stable)
+      initSynthModal();
+      initContactForm();
       setTimeout(() => {
         ScrollTrigger.refresh();
       }, 100);
@@ -551,49 +554,56 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "80%",
         category: "Langage",
         desc: "Langage de prédilection backend",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
       },
       {
         name: "JavaScript",
         level: "75%",
         category: "Langage",
         desc: "Front + animations",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
       },
       {
         name: "Python",
         level: "90%",
         category: "Langage",
         desc: "Scripting & automatisation",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
       },
       {
         name: "C++",
         level: "70%",
         category: "Langage",
         desc: "Programmation système",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
       },
       {
         name: "Java",
         level: "65%",
         category: "Langage",
         desc: "Android & POO",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
       },
       {
         name: "HTML/CSS",
         level: "90%",
         category: "Langage",
         desc: "Mise en forme web",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
       },
       {
         name: "SQL",
         level: "65%",
         category: "Langage",
         desc: "Bases de données",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
       },
       // Frameworks
       {
@@ -601,21 +611,24 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "70%",
         category: "Framework",
         desc: "API REST & MVC",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg",
       },
       {
         name: "Laravel",
         level: "80%",
         category: "Framework",
         desc: "Framework PHP moderne",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg",
       },
       {
         name: "Bootstrap",
         level: "75%",
         category: "Framework",
         desc: "UI responsive rapide",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg",
       },
       // Outils
       {
@@ -623,28 +636,32 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "85%",
         category: "Outil",
         desc: "Versioning de code",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
       },
       {
         name: "MySQL",
         level: "75%",
         category: "Base",
         desc: "SGBD relationnel",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
       },
       {
         name: "Linux",
         level: "70%",
         category: "OS",
         desc: "Environnement serveur",
-        image: "",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
       },
       {
         name: "VS Code",
         level: "95%",
         category: "IDE",
         desc: "Éditeur principal",
-        image: "g",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
       },
       {
         name: "Figma",
@@ -667,14 +684,14 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "75%",
         category: "Méthode",
         desc: "Scrum & Kanban",
-        image: "https://via.placeholder.com/70x90/ffffff/000000?text=Agile",
+        image: "https://placehold.co/70x90/ffffff/000000?text=Agile",
       },
       {
         name: "UML",
         level: "70%",
         category: "Modélisation",
         desc: "Diagrammes & analyse",
-        image: "https://via.placeholder.com/70x90/ffffff/000000?text=UML",
+        image: "https://placehold.co/70x90/ffffff/000000?text=UML",
       },
       // Doublons pour remplir 25 (l'original utilise 25 cartes pour 20 items via modulo)
       {
@@ -690,7 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "80%",
         category: "Architecture",
         desc: "API design",
-        image: "https://via.placeholder.com/70x90/ffffff/000000?text=REST",
+        image: "https://placehold.co/70x90/ffffff/000000?text=REST",
       },
     ];
 
@@ -1267,5 +1284,68 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
     ScrollTrigger.refresh();
+  }
+
+  // ============================================
+  // 10. TABLEAU DE SYNTHÈSE — Modale (iframe Google Sheets)
+  // ============================================
+  function initSynthModal() {
+    const openBtn = document.getElementById("synthOpenBtn");
+    const modal = document.getElementById("synthModal");
+    const closers = document.querySelectorAll("[data-synth-close]");
+    if (!openBtn || !modal) return;
+
+    function openModal() {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("synth-modal-open");
+      if (typeof lenis !== "undefined") lenis.stop();
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("synth-modal-open");
+      if (typeof lenis !== "undefined") lenis.start();
+    }
+
+    openBtn.addEventListener("click", (e) => {
+      // Ne pas déclencher si clic sur le bouton "Télécharger" interne
+      if (e.target.closest(".synth-btn--ghost")) return;
+      openModal();
+    });
+
+    closers.forEach((el) => el.addEventListener("click", closeModal));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) {
+        closeModal();
+      }
+    });
+  }
+  // ============================================
+  // 11. CONTACT — Submit du formulaire
+  // ============================================
+  function initContactForm() {
+    const form = document.getElementById("contactForm");
+    if (!form) return;
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const name = form.querySelector("#contactName").value.trim();
+      const email = form.querySelector("#contactEmail").value.trim();
+      const message = form.querySelector("#contactMessage").value.trim();
+
+      if (!name || !email || !message) {
+        alert("Merci de remplir tous les champs.");
+        return;
+      }
+
+      // Solution simple sans backend : ouvre le client mail avec les infos
+      const subject = encodeURIComponent(`[Portfolio] Message de ${name}`);
+      const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);
+      window.location.href = `mailto:thibault@example.com?subject=${subject}&body=${body}`;
+    });
   }
 });

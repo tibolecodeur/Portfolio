@@ -22,6 +22,10 @@
 
     <!-- Scripts -->
     <script
+      src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+      defer
+    ></script>
+    <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
       defer
     ></script>
@@ -764,6 +768,318 @@
               <li>Akella (twitch)</li>
               <li>Hugo Barré</li>
             </ul>
+          </div>
+        </div>
+      </section>
+      <!-- ============================================
+           TABLEAU DE SYNTHÈSE — Visualisation in-page
+           ============================================ -->
+      <section class="synth-section">
+        <!-- Header éditorial cohérent -->
+        <div class="synth-header">
+          <span class="synth-label">/ TS—001</span>
+          <h2 class="synth-title">Tableau<br /><em>de synthèse.</em></h2>
+          <p class="synth-hint">BTS SIO — Session 2025</p>
+        </div>
+
+        <!-- Aperçu : bloc cliquable qui ouvre la modale -->
+        <div class="synth-preview">
+          <div class="synth-preview-card" id="synthOpenBtn">
+            <div class="synth-preview-meta">
+              <span class="synth-preview-tag">DOCUMENT OFFICIEL</span>
+              <span class="synth-preview-ext">.XLSX</span>
+            </div>
+            <h3 class="synth-preview-name">
+              Brebion Thibault<br />Tableau de synthèse
+            </h3>
+            <p class="synth-preview-desc">
+              Compétences professionnelles mises en œuvre — réalisations,
+              projets, stages et auto-évaluation niveau B1 / B2.
+            </p>
+
+            <!-- Footer du bloc avec actions -->
+            <div class="synth-preview-actions">
+              <button type="button" class="synth-btn synth-btn--primary">
+                <span>Visualiser</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M2 2h4M2 2v4M12 12H8M12 12V8"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+
+              <a
+                href="assets/files/Tableau_De_Synthese.xlsx"
+                download
+                class="synth-btn synth-btn--ghost"
+                onclick="event.stopPropagation()"
+              >
+                <span>Télécharger</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M7 2v8M3 7l4 4 4-4M2 13h10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Grosse balise typographique en arrière-plan -->
+          <div class="synth-bg-text" aria-hidden="true">SYNTHESIS</div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           MODALE PLEIN ÉCRAN — Visualisation du xlsx
+           ============================================ -->
+      <div class="synth-modal" id="synthModal" aria-hidden="true">
+        <div class="synth-modal-bg" data-synth-close></div>
+        <div class="synth-modal-inner">
+          <div class="synth-modal-header">
+            <div class="synth-modal-title">
+              <span class="synth-modal-tag">/ TS—001</span>
+              <h3>Tableau de synthèse — Brebion Thibault</h3>
+            </div>
+            <div class="synth-modal-actions">
+              <a
+                href="assets/files/Tableau_De_Synthese.xlsx"
+                download
+                class="synth-modal-btn"
+                aria-label="Télécharger le fichier"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M8 2v9M4 8l4 4 4-4M3 14h10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span>Télécharger</span>
+              </a>
+              <button
+                type="button"
+                class="synth-modal-close"
+                data-synth-close
+                aria-label="Fermer"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path
+                    d="M3 3l12 12M15 3L3 15"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- L'iframe Office Online qui rend le xlsx interactif -->
+          <!-- Container où SheetJS va injecter le tableau HTML -->
+          <div class="synth-modal-frame-wrap">
+            <iframe
+              id="synthFrame"
+              class="synth-modal-frame"
+              src="https://docs.google.com/spreadsheets/d/1qrParuTXo9oM5wZF_aVZGQ8szoeZ8Kgp/preview"
+              title="Tableau de synthèse"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           CONTACT — Let's talk
+           ============================================ -->
+      <section class="contact-section" id="contact">
+        <div class="contact-container">
+          <!-- COLONNE GAUCHE : titre + intro + formulaire -->
+          <div class="contact-left">
+            <h2 class="contact-title">Let's <em>talk</em></h2>
+
+            <p class="contact-intro">
+              Pour un projet, une opportunité de stage, un échange ou simplement
+              boire un café, contactez-moi directement ou remplissez le
+              formulaire — je vous répondrai rapidement.
+            </p>
+
+            <form class="contact-form" id="contactForm" novalidate>
+              <div class="contact-field">
+                <label for="contactName">Your Name</label>
+                <input
+                  type="text"
+                  id="contactName"
+                  name="name"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="contact-field">
+                <label for="contactEmail">Your Email</label>
+                <input
+                  type="email"
+                  id="contactEmail"
+                  name="email"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="contact-field">
+                <label for="contactMessage">Your Message</label>
+                <textarea
+                  id="contactMessage"
+                  name="message"
+                  rows="5"
+                  placeholder="Type your message here..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="contact-submit">SEND MESSAGE</button>
+            </form>
+          </div>
+
+          <!-- COLONNE DROITE : photo + blob -->
+          <div class="contact-right">
+            <!-- Réseaux sociaux en haut à droite -->
+            <ul class="contact-socials" aria-label="Réseaux sociaux">
+              <li>
+                <a href="#" aria-label="GitHub" target="_blank" rel="noopener">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.27-5.23-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.48 3.15-1.17 3.15-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.36.78 1.06.78 2.13v3.16c0 .31.21.66.79.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="Instagram"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 2.16c3.2 0 3.58 0 4.85.07 1.17.06 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.06 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.06-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s0-3.58.07-4.85c.06-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.16 8.8 2.16 12 2.16zM12 0C8.74 0 8.33 0 7.05.07c-1.28.05-2.16.26-2.92.55-.79.31-1.46.72-2.13 1.39A5.85 5.85 0 0 0 .62 4.13c-.3.76-.5 1.64-.55 2.92C0 8.33 0 8.74 0 12s0 3.67.07 4.95c.05 1.28.26 2.16.55 2.92.31.79.72 1.46 1.39 2.13.67.67 1.34 1.08 2.13 1.39.76.3 1.64.5 2.92.55C8.33 24 8.74 24 12 24s3.67 0 4.95-.07c1.28-.05 2.16-.26 2.92-.55.79-.31 1.46-.72 2.13-1.39.67-.67 1.08-1.34 1.39-2.13.3-.76.5-1.64.55-2.92.06-1.28.07-1.69.07-4.95s0-3.67-.07-4.95c-.05-1.28-.26-2.16-.55-2.92a5.85 5.85 0 0 0-1.39-2.13A5.85 5.85 0 0 0 19.87.62c-.76-.3-1.64-.5-2.92-.55C15.67 0 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  aria-label="Dribbble"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 .5C5.65.5.5 5.65.5 12S5.65 23.5 12 23.5 23.5 18.35 23.5 12 18.35.5 12 .5zm7.6 5.32c1.36 1.66 2.18 3.78 2.21 6.08-.32-.06-3.5-.71-6.7-.31-.07-.16-.14-.33-.21-.5-.2-.47-.42-.94-.65-1.41 3.55-1.45 5.16-3.53 5.35-3.86zm-1.5-1.36c-.16.23-1.62 2.18-5.04 3.46-1.57-2.89-3.31-5.27-3.58-5.62a9.85 9.85 0 0 1 8.62 2.16zM8.85 1.84c.26.34 1.97 2.72 3.55 5.55-4.46 1.18-8.4 1.16-8.83 1.16C4.16 5.12 6.18 2.97 8.85 1.84zM2.65 12.02c0-.1 0-.2 0-.3.42 0 5.05.07 9.81-1.36.27.53.53 1.06.77 1.6-.13.04-.25.07-.38.11-4.92 1.59-7.55 5.93-7.77 6.3a9.85 9.85 0 0 1-2.43-6.35zM12 22a9.85 9.85 0 0 1-6.06-2.07c.17-.36 2.13-4.13 7.51-6.01.02-.01.04-.01.06-.02 1.34 3.49 1.89 6.42 2.04 7.27A9.83 9.83 0 0 1 12 22zm5.43-1.39c-.09-.6-.6-3.4-1.86-6.85 3.01-.48 5.65.31 5.97.42a9.86 9.86 0 0 1-4.11 6.43z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:thibault@example.com" aria-label="Email">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                    />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+
+            <!-- Visuel : blob blanc + contour blanc + photo -->
+            <div class="contact-visual">
+              <!-- Blob blanc rempli (équivalent du jaune dans le mockup) -->
+              <div class="contact-blob" aria-hidden="true">
+                <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M421.5,318.5Q399,387,338.5,425.5Q278,464,213.5,438Q149,412,114,353.5Q79,295,108,233Q137,171,196,131.5Q255,92,323.5,107Q392,122,432.5,176Q473,230,447,290Q421,350,421.5,318.5Z"
+                    fill="#ffffff"
+                  />
+                </svg>
+              </div>
+
+              <!-- Contour blanc qui dépasse (effet double trace de la capture) -->
+              <div class="contact-blob-outline" aria-hidden="true">
+                <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M421.5,318.5Q399,387,338.5,425.5Q278,464,213.5,438Q149,412,114,353.5Q79,295,108,233Q137,171,196,131.5Q255,92,323.5,107Q392,122,432.5,176Q473,230,447,290Q421,350,421.5,318.5Z"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+
+              <!-- Container photo : remplace le placeholder par <img> quand prêt -->
+              <div class="contact-photo">
+                <img src="assets/images/me.png" alt="Thibault Brebion" />
+                <!--
+                Quand tu auras ta photo, remplace le placeholder par :
+                <img src="assets/images/photo.jpg" alt="Thibault Brebion" />
+                -->
+              </div>
+            </div>
           </div>
         </div>
       </section>
