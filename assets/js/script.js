@@ -78,36 +78,50 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuItems = [
     {
       label: "home",
-      href: "#",
-      ariaLabel: "Home",
+      href: "#home",
+      ariaLabel: "Accueil",
       rotation: -8,
       hoverStyles: { bgColor: "#ed6a5a", textColor: "#ffffff" },
     },
     {
-      label: "about",
-      href: "#",
-      ariaLabel: "About",
+      label: "parcours",
+      href: "#journey",
+      ariaLabel: "Parcours & expériences",
       rotation: 8,
       hoverStyles: { bgColor: "#f4f1bb", textColor: "#111111" },
     },
     {
-      label: "projects",
-      href: "#",
-      ariaLabel: "Projects",
-      rotation: 8,
+      label: "compétences",
+      href: "#skills",
+      ariaLabel: "Compétences",
+      rotation: -8,
       hoverStyles: { bgColor: "#9bc1bc", textColor: "#111111" },
     },
     {
-      label: "contact",
-      href: "#",
-      ariaLabel: "Contact",
-      rotation: -8,
-      hoverStyles: { bgColor: "#5d576b", textColor: "#ffffff" },
+      label: "certifications",
+      href: "#certifications",
+      ariaLabel: "Certifications & formations",
+      rotation: 8,
+      hoverStyles: { bgColor: "#e8c547", textColor: "#111111" },
     },
     {
-      label: "blog",
-      href: "#",
-      ariaLabel: "Blog",
+      label: "projets",
+      href: "#projects",
+      ariaLabel: "Projets & réalisations",
+      rotation: -8,
+      hoverStyles: { bgColor: "#b5a8d5", textColor: "#111111" },
+    },
+    {
+      label: "veille",
+      href: "#veille",
+      ariaLabel: "Veille technologique",
+      rotation: 8,
+      hoverStyles: { bgColor: "#4a4a6a", textColor: "#ffffff" },
+    },
+    {
+      label: "contact",
+      href: "#contact",
+      ariaLabel: "Me contacter",
       rotation: -8,
       hoverStyles: { bgColor: "#5d576b", textColor: "#ffffff" },
     },
@@ -117,11 +131,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const bubbleEls = [];
   const labelEls = [];
 
+  // isMenuOpen / toggleBtn / overlay déclarés ici pour être accessibles dans le click handler
+  let isMenuOpen = false;
+  const toggleBtn = document.getElementById("menuToggle");
+  const overlay = document.getElementById("menuOverlay");
+
   menuItems.forEach((item) => {
     const li = document.createElement("li");
     li.className = "pill-col";
     li.setAttribute("role", "none");
-
     const a = document.createElement("a");
     a.className = "pill-link";
     a.href = item.href;
@@ -136,6 +154,28 @@ document.addEventListener("DOMContentLoaded", () => {
       item.hoverStyles?.textColor || MENU_CONTENT_COLOR,
     );
 
+    // Scroll smooth vers la section + fermeture du menu
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // 1. Fermer le menu
+      isMenuOpen = false;
+      toggleBtn.setAttribute("aria-pressed", "false");
+      toggleBtn.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("no-scroll");
+      closeMenu();
+
+      // 3. Scroller vers la cible après l'animation de fermeture (300ms)
+      setTimeout(() => {
+        lenis.scrollTo(item.href, {
+          offset: 0,
+          duration: 1.4,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+      }, 300);
+    });
+
     const span = document.createElement("span");
     span.className = "pill-label";
     span.textContent = item.label;
@@ -148,23 +188,26 @@ document.addEventListener("DOMContentLoaded", () => {
     labelEls.push(span);
   });
 
-  let isMenuOpen = false;
-  const toggleBtn = document.getElementById("menuToggle");
-  const overlay = document.getElementById("menuOverlay");
-
-  toggleBtn.addEventListener("click", () => {
+  toggleBtn.addEventListener("click", (e) => {
+    e.preventDefault();
     isMenuOpen = !isMenuOpen;
     toggleBtn.setAttribute("aria-pressed", String(isMenuOpen));
     toggleBtn.classList.toggle("open", isMenuOpen);
     overlay.setAttribute("aria-hidden", String(!isMenuOpen));
 
     if (isMenuOpen) {
-      document.body.classList.add("no-scroll");
+      const savedScroll = lenis.scroll;
       lenis.stop();
+      document.body.classList.add("no-scroll");
+      requestAnimationFrame(() => window.scrollTo(0, savedScroll));
       openMenu();
     } else {
+      const savedScroll = lenis.scroll;
       document.body.classList.remove("no-scroll");
-      lenis.start();
+      requestAnimationFrame(() => {
+        window.scrollTo(0, savedScroll);
+        lenis.start();
+      });
       closeMenu();
     }
   });
@@ -548,113 +591,173 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ─── DATA : tes compétences avec catégorie + niveau
     const collection = [
-      // Langages
-      {
-        name: "PHP",
-        level: "80%",
-        category: "Langage",
-        desc: "Langage de prédilection backend",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
-      },
-      {
-        name: "JavaScript",
-        level: "75%",
-        category: "Langage",
-        desc: "Front + animations",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-      },
-      {
-        name: "Python",
-        level: "90%",
-        category: "Langage",
-        desc: "Scripting & automatisation",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
-      },
-      {
-        name: "C++",
-        level: "70%",
-        category: "Langage",
-        desc: "Programmation système",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
-      },
-      {
-        name: "Java",
-        level: "65%",
-        category: "Langage",
-        desc: "Android & POO",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-      },
+      // ─── DÉVELOPPEMENT WEB & LOGICIEL ───
       {
         name: "HTML/CSS",
         level: "90%",
-        category: "Langage",
+        category: "Front",
         desc: "Mise en forme web",
         image:
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
       },
       {
-        name: "SQL",
-        level: "65%",
+        name: "C#",
+        level: "75%",
         category: "Langage",
-        desc: "Bases de données",
+        desc: "Back-end .NET (stage Angular)",
         image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
       },
-      // Frameworks
+      {
+        name: "Java",
+        level: "75%",
+        category: "Langage",
+        desc: "POO & Android",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+      },
+      {
+        name: "PHP",
+        level: "80%",
+        category: "Langage",
+        desc: "Back-end web (BTS)",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
+      },
+      {
+        name: "Angular",
+        level: "75%",
+        category: "Framework",
+        desc: "App web Hygiene Expert",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angular/angular-original.svg",
+      },
+      {
+        name: "TypeScript",
+        level: "75%",
+        category: "Langage",
+        desc: "Front Angular (stage)",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+      },
       {
         name: "Symfony",
-        level: "70%",
+        level: "75%",
         category: "Framework",
-        desc: "API REST & MVC",
+        desc: "API REST &amp; MVC",
         image:
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg",
       },
       {
-        name: "Laravel",
-        level: "80%",
-        category: "Framework",
-        desc: "Framework PHP moderne",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg",
-      },
-      {
-        name: "Bootstrap",
+        name: "Android",
         level: "75%",
-        category: "Framework",
-        desc: "UI responsive rapide",
+        category: "Mobile",
+        desc: "Java + Android Studio",
         image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg",
       },
-      // Outils
+
+      // ─── SCRIPTING ───
       {
-        name: "Git",
+        name: "Python",
         level: "85%",
-        category: "Outil",
-        desc: "Versioning de code",
+        category: "Langage",
+        desc: "Scripting · Data · ML",
         image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
       },
+      {
+        name: "PowerShell",
+        level: "70%",
+        category: "Scripting",
+        desc: "Automatisation (stage BlackFox)",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/powershell/powershell-original.svg",
+      },
+      {
+        name: "Google Apps",
+        level: "70%",
+        category: "Scripting",
+        desc: "Google Apps Script",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg",
+      },
+
+      // ─── BASES DE DONNÉES ───
       {
         name: "MySQL",
-        level: "75%",
+        level: "80%",
         category: "Base",
         desc: "SGBD relationnel",
         image:
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
       },
       {
-        name: "Linux",
-        level: "70%",
-        category: "OS",
-        desc: "Environnement serveur",
+        name: "SQL Server",
+        level: "75%",
+        category: "Base",
+        desc: "Vues, ETL → A3PDM",
         image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg",
       },
+      {
+        name: "MongoDB",
+        level: "60%",
+        category: "NoSQL",
+        desc: "Base de données NoSQL",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+      },
+      {
+        name: "MCD",
+        level: "85%",
+        category: "Modélisation",
+        desc: "Conception base de données",
+        image: "https://placehold.co/70x90/ffffff/000000?text=MCD",
+      },
+
+      // ─── OUTILS & MÉTHODES ───
+      {
+        name: "Git",
+        level: "85%",
+        category: "Outil",
+        desc: "Versioning &amp; GitHub",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+      },
+      {
+        name: "GitHub",
+        level: "85%",
+        category: "Outil",
+        desc: "Collaboration de code",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+      },
+      {
+        name: "Trello",
+        level: "80%",
+        category: "Outil",
+        desc: "Gestion de projet Agile",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/trello/trello-plain.svg",
+      },
+      {
+        name: "Figma",
+        level: "75%",
+        category: "Design",
+        desc: "Maquettage UI/UX",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+      },
+      {
+        name: "Agile",
+        level: "75%",
+        category: "Méthode",
+        desc: "Scrum &amp; Kanban",
+        image: "https://placehold.co/70x90/ffffff/000000?text=Agile",
+      },
+
+      // ─── DOUBLONS pour remplir 25 cartes ───
       {
         name: "VS Code",
         level: "95%",
@@ -664,50 +767,33 @@ document.addEventListener("DOMContentLoaded", () => {
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
       },
       {
-        name: "Figma",
-        level: "70%",
-        category: "Design",
-        desc: "UI/UX & prototypage",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
-      },
-      {
-        name: "Apache",
-        level: "65%",
-        category: "Serveur",
-        desc: "Serveur HTTP",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg",
-      },
-      {
-        name: "Agile",
-        level: "75%",
-        category: "Méthode",
-        desc: "Scrum & Kanban",
-        image: "https://placehold.co/70x90/ffffff/000000?text=Agile",
-      },
-      {
-        name: "UML",
-        level: "70%",
-        category: "Modélisation",
-        desc: "Diagrammes & analyse",
-        image: "https://placehold.co/70x90/ffffff/000000?text=UML",
-      },
-      // Doublons pour remplir 25 (l'original utilise 25 cartes pour 20 items via modulo)
-      {
-        name: "Android",
-        level: "75%",
-        category: "Mobile",
-        desc: "Développement natif",
-        image:
-          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg",
-      },
-      {
-        name: "REST",
+        name: "REST API",
         level: "80%",
         category: "Architecture",
-        desc: "API design",
+        desc: "Conception API",
         image: "https://placehold.co/70x90/ffffff/000000?text=REST",
+      },
+      {
+        name: "WSO2",
+        level: "60%",
+        category: "Middleware",
+        desc: "Stage BlackFox",
+        image: "https://placehold.co/70x90/ffffff/000000?text=WSO2",
+      },
+      {
+        name: "Talend",
+        level: "60%",
+        category: "ETL",
+        desc: "Stage BlackFox",
+        image: "https://placehold.co/70x90/ffffff/000000?text=Talend",
+      },
+      {
+        name: "Linux",
+        level: "65%",
+        category: "OS",
+        desc: "Environnement serveur",
+        image:
+          "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
       },
     ];
 
@@ -1283,6 +1369,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       },
     });
+    // 4. Reveal au scroll des cartes "sources" et "risques"
+    const watchObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            watchObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -10% 0px",
+      },
+    );
+
+    document
+      .querySelectorAll(".watch-source, .watch-risk")
+      .forEach((el) => watchObserver.observe(el));
     ScrollTrigger.refresh();
   }
 
@@ -1345,7 +1450,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Solution simple sans backend : ouvre le client mail avec les infos
       const subject = encodeURIComponent(`[Portfolio] Message de ${name}`);
       const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);
-      window.location.href = `mailto:thibault@example.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:brebionthibault2006@gmail.com?subject=${subject}&body=${body}`;
     });
   }
 });

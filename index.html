@@ -108,7 +108,7 @@
     <!-- Main Content -->
     <main id="home-content">
       <!-- Hero Section -->
-      <section class="hero">
+      <section id="home" class="hero">
         <div class="hero-pin">
           <!-- Background blanc en arche -->
           <div class="hero-bottom" aria-hidden="true">
@@ -126,29 +126,41 @@
 
           <!-- Stickers -->
           <div class="hero-stickers">
+            <!-- 1. Web & logiciel (icône + titre + sous-titre) -->
             <div class="sticker sticker--design-strategy">
               <div class="sticker-icon"><span></span><span></span></div>
-              <div class="sticker-title">DESIGN<br />STRATEGY</div>
+              <div class="sticker-title">WEB &amp;<br />LOGICIEL</div>
               <div class="sticker-sub">
-                ALIGNING<br />YOUR → BUSINESS<br />&amp; USER NEEDS
+                JAVA · PHP<br />SYMFONY → ANGULAR<br />&amp; ANDROID
               </div>
             </div>
+
+            <!-- 2. Full-stack (style ecomm avec WWW.) -->
+            <!-- 2. Full-stack curieux d'IA -->
             <div class="sticker sticker--ecomm">
               <span class="sticker-www">WWW.</span>
-              <div class="sticker-ecomm-title">E—COMM.<br />⊙ EXPERIENCES</div>
+              <div class="sticker-ecomm-title">
+                FULL—STACK<br />⊙ &amp; AI—CURIOUS
+              </div>
             </div>
-            <div class="sticker sticker--ux">
-              USER<br />EXPER—IENCE<br />DESIGN©
-            </div>
+
+            <!-- 3. BTS SIO (bloc texte centré) -->
+            <div class="sticker sticker--ux">BTS<br />SIO—SLAM<br />2026©</div>
+
+            <!-- 4. Stack scripting (3 lignes type motion design) -->
             <div class="sticker sticker--motion">
-              <div class="sticker-motion-line">M ⎯⎯ TION &amp;</div>
-              <div class="sticker-motion-line">INTERACTION</div>
-              <div class="sticker-motion-line">→ DESIGN</div>
+              <div class="sticker-motion-line">PY ⎯⎯ THON &amp;</div>
+              <div class="sticker-motion-line">POWERSHELL</div>
+              <div class="sticker-motion-line">→ SCRIPTING</div>
             </div>
+
+            <!-- 5. Available (style branding avec étoile) -->
             <div class="sticker sticker--branding">
               <span class="sticker-star">✻</span>
-              BRANDING &amp;<br />IDENTITY<br />©'22
+              AVAILABLE<br />FOR ALTERNANCE<br />©'26
             </div>
+
+            <!-- 6. Bases de données (cercle rotatif) -->
             <div class="sticker sticker--usability">
               <svg viewBox="0 0 100 100" class="sticker-circle-text">
                 <defs>
@@ -159,7 +171,7 @@
                 </defs>
                 <text font-size="11" font-weight="700" letter-spacing="2.5">
                   <textPath href="#circlePath">
-                    USABILITY TESTING ✦ USABILITY TESTING ✦
+                    SQL · MYSQL · MCD ✦ SQL SERVER ✦
                   </textPath>
                 </text>
               </svg>
@@ -172,8 +184,9 @@
                   stroke="currentColor"
                   stroke-width="1.8"
                 >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 3v18M3 12h18" />
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M3 5v14a9 3 0 0 0 18 0V5" />
+                  <path d="M3 12a9 3 0 0 0 18 0" />
                 </svg>
               </div>
             </div>
@@ -183,7 +196,7 @@
       <!-- ============================================
            PARCOURS — Sticky timeline avec année dynamique
            ============================================ -->
-      <section class="journey-section">
+      <section id="journey" class="journey-section">
         <div class="journey-container">
           <!-- LEFT : sticky panel avec titre + année active -->
           <aside class="journey-left">
@@ -209,10 +222,10 @@
 
           <!-- RIGHT : la liste des cartes qui défile -->
           <div class="journey-right">
-            <article class="journey-card" data-year="2020 — 2022">
+            <article class="journey-card" data-year="2021 — 2024">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">FORMATION</span>
-                <span class="journey-card-period">2020 — 2022</span>
+                <span class="journey-card-period">2021 — 2024</span>
               </div>
               <h3 class="journey-card-title">Lycée</h3>
               <p class="journey-card-place">Baccalauréat général</p>
@@ -227,10 +240,10 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="2022 — 2024">
+            <article class="journey-card" data-year="2024 — 2026">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">FORMATION</span>
-                <span class="journey-card-period">2022 — 2024</span>
+                <span class="journey-card-period">2024 — 2026</span>
               </div>
               <h3 class="journey-card-title">BTS SIO</h3>
               <p class="journey-card-place">Option SLAM</p>
@@ -246,13 +259,13 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="Mai — Juin 2023">
+            <article class="journey-card" data-year="Mai — Juin 2025">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">EXPÉRIENCE</span>
-                <span class="journey-card-period">Mai — Juin 2023</span>
+                <span class="journey-card-period">Mai — Juin 2025</span>
               </div>
               <h3 class="journey-card-title">Stage 1</h3>
-              <p class="journey-card-place">À compléter</p>
+              <p class="journey-card-place">Hygiène Expert</p>
               <p class="journey-card-desc">
                 Première immersion en milieu professionnel. Découverte des
                 méthodologies de travail en équipe.
@@ -263,13 +276,13 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="Janv — Mars 2024">
+            <article class="journey-card" data-year="Janv — Mars 2026">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">EXPÉRIENCE</span>
-                <span class="journey-card-period">Janv — Mars 2024</span>
+                <span class="journey-card-period">Janv — Fevr 2026</span>
               </div>
               <h3 class="journey-card-title">Stage 2</h3>
-              <p class="journey-card-place">À compléter</p>
+              <p class="journey-card-place">BlackFox</p>
               <p class="journey-card-desc">
                 Projet technique sur applicatif métier. Conception,
                 développement et déploiement.
@@ -281,10 +294,10 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="2024 — En cours">
+            <article class="journey-card" data-year="2026+">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">FORMATION</span>
-                <span class="journey-card-period">2024 — En cours</span>
+                <span class="journey-card-period">2026+</span>
               </div>
               <h3 class="journey-card-title">Licence Pro</h3>
               <p class="journey-card-place">Métiers de l'informatique</p>
@@ -300,20 +313,23 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="2025+">
+            <article class="journey-card" data-year="2026 — 2027">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">À VENIR</span>
-                <span class="journey-card-period">2025+</span>
+                <span class="journey-card-period">2026 — 2027</span>
               </div>
-              <h3 class="journey-card-title">Stage / Alternance</h3>
-              <p class="journey-card-place">Disponible</p>
+              <h3 class="journey-card-title">L3 Informatique</h3>
+              <p class="journey-card-place">En alternance · Disponible</p>
               <p class="journey-card-desc">
-                Prochaine étape du parcours — actuellement en recherche pour
-                l'année à venir.
+                Recherche d'une alternance pour valider une Licence 3
+                Informatique. Profil développeur Web &amp; Logiciel, ouvert aux
+                projets autour de l'intelligence artificielle.
               </p>
               <div class="journey-card-tags">
                 <span>Disponible</span>
-                <span>Curieux</span>
+                <span>Alternance</span>
+                <span>IA</span>
+                <span>Dev</span>
               </div>
             </article>
           </div>
@@ -322,7 +338,7 @@
       <!-- ============================================
            SKILLS — Circular Gallery (copié-collé)
            ============================================ -->
-      <section class="skills-circular">
+      <section id="skills" class="skills-circular">
         <nav class="cg-nav">
           <a href="#">Compétences</a>
           <p>Cliquez sur une carte</p>
@@ -342,7 +358,7 @@
       <!-- ============================================
            CERTIFICATIONS & FORMATIONS — Cartes flip 3D
            ============================================ -->
-      <section class="certs-section">
+      <section id="certifications" class="certs-section">
         <!-- Header éditorial -->
         <div class="certs-header">
           <span class="certs-label">/ CT—001</span>
@@ -385,15 +401,17 @@
                       />
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
-                      <textPath href="#certPath01">CERTIFIED ✦ 2024 ✦</textPath>
+                      <textPath href="#certPath01">
+                        CERTIFICATION ✦ 2024 ✦
+                      </textPath>
                     </text>
                   </svg>
                   <div class="cert-stamp-icon">✓</div>
                 </div>
                 <div class="cert-num">01</div>
                 <div class="cert-tag">CERTIFICATION</div>
-                <h3 class="cert-name">PIX</h3>
-                <p class="cert-issuer">État Français</p>
+                <h3 class="cert-name">C++</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
                 <div class="cert-arrow">→</div>
               </div>
               <!-- Face arrière (révélée au flip) -->
@@ -406,9 +424,9 @@
                 </p>
                 <div class="cert-back-meta">
                   <div><span>Année</span><strong>2024</strong></div>
-                  <div><span>Niveau</span><strong>Avancé</strong></div>
+                  <div><span>Niveau</span><strong>Moyenne</strong></div>
                 </div>
-                <div class="cert-back-link">Voir le certificat →</div>
+                <div class="cert-back-link">Voir la formation →</div>
               </div>
             </div>
           </article>
@@ -427,7 +445,7 @@
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
                       <textPath href="#certPath02">
-                        FORMATION ✦ ONLINE ✦
+                        CERTIFICATION ✦ ONLINE ✦
                       </textPath>
                     </text>
                   </svg>
@@ -446,10 +464,10 @@
                   DOM, fetch API, async/await et programmation orientée objet.
                 </p>
                 <div class="cert-back-meta">
-                  <div><span>Durée</span><strong>40 h</strong></div>
-                  <div><span>Année</span><strong>2023</strong></div>
+                  <div><span>Année</span><strong>2024</strong></div>
+                  <div><span>Niveau</span><strong>Facile</strong></div>
                 </div>
-                <div class="cert-back-link">Voir le certificat →</div>
+                <div class="cert-back-link">Voir la formation →</div>
               </div>
             </div>
           </article>
@@ -467,15 +485,17 @@
                       />
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
-                      <textPath href="#certPath03">DIPLÔME ✦ 2024 ✦</textPath>
+                      <textPath href="#certPath03">
+                        CERTIFICATION ✦ ONLINE ✦
+                      </textPath>
                     </text>
                   </svg>
                   <div class="cert-stamp-icon">◆</div>
                 </div>
                 <div class="cert-num">03</div>
-                <div class="cert-tag">DIPLÔME</div>
-                <h3 class="cert-name">BTS SIO</h3>
-                <p class="cert-issuer">Education Nationale</p>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">Wordpress</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
                 <div class="cert-arrow">→</div>
               </div>
               <div class="cert-face cert-face--back">
@@ -486,10 +506,10 @@
                   Applications Métiers.
                 </p>
                 <div class="cert-back-meta">
-                  <div><span>Année</span><strong>2024</strong></div>
-                  <div><span>Mention</span><strong>—</strong></div>
+                  <div><span>Année</span><strong>2025</strong></div>
+                  <div><span>Niveau</span><strong>Facile</strong></div>
                 </div>
-                <div class="cert-back-link">Voir le diplôme →</div>
+                <div class="cert-back-link">Voir la certification →</div>
               </div>
             </div>
           </article>
@@ -508,16 +528,16 @@
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
                       <textPath href="#certPath04">
-                        FORMATION ✦ SYMFONY ✦
+                        CERTIFICATION ✦ ONLINE ✦
                       </textPath>
                     </text>
                   </svg>
                   <div class="cert-stamp-icon">⬢</div>
                 </div>
                 <div class="cert-num">04</div>
-                <div class="cert-tag">FORMATION</div>
-                <h3 class="cert-name">Symfony</h3>
-                <p class="cert-issuer">SymfonyCasts</p>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">PHP/MYSQL</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
                 <div class="cert-arrow">→</div>
               </div>
               <div class="cert-face cert-face--back">
@@ -527,10 +547,10 @@
                   ORM, sécurité, API Platform et tests unitaires.
                 </p>
                 <div class="cert-back-meta">
-                  <div><span>Durée</span><strong>60 h</strong></div>
-                  <div><span>Année</span><strong>2024</strong></div>
+                  <div><span>Année</span><strong>2025</strong></div>
+                  <div><span>Niveau</span><strong>Moyenne</strong></div>
                 </div>
-                <div class="cert-back-link">Voir le certificat →</div>
+                <div class="cert-back-link">Voir la certification →</div>
               </div>
             </div>
           </article>
@@ -548,28 +568,29 @@
                       />
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
-                      <textPath href="#certPath05">ANGLAIS ✦ B2 ✦</textPath>
+                      <textPath href="#certPath05">
+                        CERTIFICATION ✦ ONLINE ✦
+                      </textPath>
                     </text>
                   </svg>
-                  <div class="cert-stamp-icon">EN</div>
                 </div>
                 <div class="cert-num">05</div>
-                <div class="cert-tag">LANGUE</div>
-                <h3 class="cert-name">TOEIC</h3>
-                <p class="cert-issuer">ETS Global</p>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">MVC/PHP</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
                 <div class="cert-arrow">→</div>
               </div>
               <div class="cert-face cert-face--back">
                 <div class="cert-back-tag">DÉTAILS</div>
                 <p class="cert-back-desc">
-                  Test of English for International Communication. Certification
-                  reconnue de niveau d'anglais dans le contexte professionnel.
+                  Maîtrise du framework PHP Symfony : architecture MVC, Doctrine
+                  ORM, sécurité, API Platform et tests unitaires.
                 </p>
                 <div class="cert-back-meta">
-                  <div><span>Score</span><strong>—/990</strong></div>
-                  <div><span>Niveau</span><strong>B2</strong></div>
+                  <div><span>Année</span><strong>2025</strong></div>
+                  <div><span>Niveau</span><strong>Moyenne</strong></div>
                 </div>
-                <div class="cert-back-link">Voir le score →</div>
+                <div class="cert-back-link">Voir la certification →</div>
               </div>
             </div>
           </article>
@@ -587,27 +608,27 @@
                       />
                     </defs>
                     <text font-size="11" font-weight="700" letter-spacing="3">
-                      <textPath href="#certPath06">EN COURS ✦ 2025 ✦</textPath>
+                      <textPath href="#certPath06">
+                        CERTIFICATION ✦ ONLINE ✦
+                      </textPath>
                     </text>
                   </svg>
-                  <div class="cert-stamp-icon">⌗</div>
                 </div>
                 <div class="cert-num">06</div>
-                <div class="cert-tag">EN COURS</div>
-                <h3 class="cert-name">Licence Pro</h3>
-                <p class="cert-issuer">Université</p>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">React</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
                 <div class="cert-arrow">→</div>
               </div>
               <div class="cert-face cert-face--back">
                 <div class="cert-back-tag">DÉTAILS</div>
                 <p class="cert-back-desc">
-                  Licence Professionnelle Métiers de l'Informatique.
-                  Approfondissement Android, web créatif, architectures
-                  distribuées.
+                  Maîtrise du framework React : composants, gestion d'état,
+                  hooks, routing et tests unitaires.
                 </p>
                 <div class="cert-back-meta">
-                  <div><span>Année</span><strong>2024–2025</strong></div>
-                  <div><span>Statut</span><strong>En cours</strong></div>
+                  <div><span>Année</span><strong>2026</strong></div>
+                  <div><span>Niveau</span><strong>Moyenne</strong></div>
                 </div>
                 <div class="cert-back-link">En cours →</div>
               </div>
@@ -618,7 +639,7 @@
       <!-- ============================================
            PROJETS — Liste avec thumbnail au curseur
            ============================================ -->
-      <section class="proj-section">
+      <section id="projects" class="proj-section">
         <!-- Header éditorial cohérent avec le reste -->
         <div class="proj-header">
           <span class="proj-label">/ PR—001</span>
@@ -664,109 +685,257 @@
       </section>
 
       <!-- ============================================
-           VEILLE INFORMATIQUE — Animations WonJyou
+           VEILLE TECHNOLOGIQUE — IA Agents autonomes
            ============================================ -->
 
-      <!-- Header de section (label + titre court) -->
-      <section class="watch-intro">
+      <!-- 1. INTRO : titre + métadonnées de veille -->
+      <section id="veille" class="watch-intro">
         <div class="watch-intro-inner">
-          <span class="watch-label">/ VW—001</span>
-          <h2 class="watch-intro-title">Veille<br /><em>informatique.</em></h2>
+          <span class="watch-label">/ VW—001 · 2025–2026</span>
+          <h2 class="watch-intro-title">Veille<br /><em>technologique.</em></h2>
+          <div class="watch-intro-meta">
+            <div>
+              <span>Sujet</span>
+              <strong>Agents IA autonomes</strong>
+            </div>
+            <div>
+              <span>Méthode</span>
+              <strong>Google Alert · Pull</strong>
+            </div>
+            <div>
+              <span>Période</span>
+              <strong>2024 → 2026</strong>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- 1. ABOUT-style : grande phrase qui se révèle au scroll -->
+      <!-- 2. NEW : ticker/marquee horizontal des mots-clés -->
+      <section class="watch-ticker">
+        <div class="watch-ticker-track">
+          <span>AGENTIC AI</span><span class="dot">●</span>
+          <span>AI ALIGNMENT</span><span class="dot">●</span>
+          <span>DÉSALIGNEMENT</span><span class="dot">●</span>
+          <span>AUTONOMIE</span><span class="dot">●</span>
+          <span>OPENAI AGENT</span><span class="dot">●</span>
+          <span>GPT-5.4</span><span class="dot">●</span> <span>AGENTIC AI</span
+          ><span class="dot">●</span> <span>AI ALIGNMENT</span
+          ><span class="dot">●</span> <span>DÉSALIGNEMENT</span
+          ><span class="dot">●</span> <span>AUTONOMIE</span
+          ><span class="dot">●</span> <span>OPENAI AGENT</span
+          ><span class="dot">●</span> <span>GPT-5.4</span
+          ><span class="dot">●</span>
+        </div>
+      </section>
+
+      <!-- 3. ABOUT : 1ère phrase clé qui se révèle au scroll -->
       <section class="watch-about">
         <h1 class="watch-animate-text">
-          Rester en veille, c'est prolonger l'apprentissage. Chaque semaine
-          j'explore les nouvelles pratiques web, les outils émergents et les
-          réflexions des designers et développeurs qui m'inspirent.
+          Le tournant de 2026 : les modèles d'IA quittent leur rôle de chatbots
+          passifs pour devenir des agents autonomes, capables d'agir, de décider
+          et d'exécuter des tâches sur un système informatique réel.
         </h1>
       </section>
 
-      <!-- 2. SERVICES-style : trois bandes qui se croisent puis pin + scale -->
+      <!-- 4. ARTICLES : grille de sources avec reveal au scroll -->
+      <section class="watch-sources">
+        <div class="watch-sources-header">
+          <span class="watch-sources-tag">/ ARTICLES</span>
+          <h3 class="watch-sources-title">Sources analysées</h3>
+        </div>
+
+        <div class="watch-sources-grid">
+          <article class="watch-source" data-num="01">
+            <div class="watch-source-num">01</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">The Verge</span>
+              <span class="watch-source-date">Mar 5, 2026</span>
+            </div>
+            <h4 class="watch-source-title">
+              OpenAI's new GPT-5.4 model is a big step toward autonomous agents
+            </h4>
+            <p class="watch-source-desc">
+              OpenAI change de stratégie : au lieu d'augmenter la puissance
+              brute des modèles, l'entreprise mise sur des agents capables
+              d'agir de manière autonome — exécuter des tâches, utiliser des
+              logiciels. La transition s'appuie sur le raisonnement de la série
+              "o1".
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </article>
+
+          <article class="watch-source" data-num="02">
+            <div class="watch-source-num">02</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">MIT Technology Review</span>
+              <span class="watch-source-date">Aug 6, 2025</span>
+            </div>
+            <h4 class="watch-source-title">
+              Five ways that AI is learning to improve itself
+            </h4>
+            <p class="watch-source-desc">
+              Face à la pénurie de données humaines, les chercheurs développent
+              cinq techniques d'auto-amélioration : données synthétiques,
+              boucles de raisonnement interne, auto-correction, apprentissage
+              par renforcement amélioré et IA optimisant ses propres
+              architectures.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </article>
+
+          <article class="watch-source" data-num="03">
+            <div class="watch-source-num">03</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">Anthropic</span>
+              <span class="watch-source-date">Jun 20, 2025</span>
+            </div>
+            <h4 class="watch-source-title">
+              Agentic Misalignment: How LLMs could be insider threats
+            </h4>
+            <p class="watch-source-desc">
+              Sur 16 modèles testés en simulation d'entreprise, des IA ont
+              recouru au chantage ou à l'espionnage industriel pour éviter
+              d'être désactivées. Le désalignement agentique apparaît comme un
+              calcul stratégique de contournement des filtres éthiques.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </article>
+
+          <article class="watch-source" data-num="04">
+            <div class="watch-source-num">04</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">Future of Life</span>
+              <span class="watch-source-date">Mar 22, 2023</span>
+            </div>
+            <h4 class="watch-source-title">
+              Pause Giant AI Experiments: An Open Letter
+            </h4>
+            <p class="watch-source-desc">
+              Lettre ouverte signée par Elon Musk et Yoshua Bengio appelant à
+              une pause de 6 mois dans l'entraînement des modèles plus puissants
+              que GPT-4. Risques évoqués : désinformation de masse,
+              automatisation des emplois, perte de contrôle sur la civilisation.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 5. SERVICES : 3 bandes qui se croisent puis pin + scale -->
       <section class="watch-services">
         <div class="watch-services-header">
           <div class="watch-banner watch-banner--top">
-            <span>FRONT-END</span>
+            <span>AUTONOMIE</span>
             <span>·</span>
-            <span>WEBGL</span>
+            <span>RAISONNEMENT</span>
             <span>·</span>
-            <span>ANIMATION</span>
+            <span>AGENTS</span>
             <span>·</span>
-            <span>FRONT-END</span>
+            <span>AUTONOMIE</span>
             <span>·</span>
-            <span>WEBGL</span>
+            <span>RAISONNEMENT</span>
           </div>
         </div>
         <div class="watch-services-header">
           <div class="watch-banner watch-banner--mid">
-            <span>VEILLE</span>
+            <span>DÉSALIGNEMENT</span>
             <span>·</span>
-            <span>2025</span>
+            <span>AGENTIC IA</span>
             <span>·</span>
-            <span>WATCHLIST</span>
+            <span>RISQUES</span>
             <span>·</span>
-            <span>VEILLE</span>
-            <span>·</span>
-            <span>2025</span>
+            <span>DÉSALIGNEMENT</span>
           </div>
         </div>
         <div class="watch-services-header">
           <div class="watch-banner watch-banner--bot">
-            <span>UX</span>
+            <span>SÉCURITÉ</span>
             <span>·</span>
-            <span>SECURITY</span>
+            <span>ALIGNMENT</span>
             <span>·</span>
-            <span>AI</span>
+            <span>CONTRÔLE</span>
             <span>·</span>
-            <span>UX</span>
+            <span>SÉCURITÉ</span>
             <span>·</span>
-            <span>SECURITY</span>
+            <span>ALIGNMENT</span>
           </div>
         </div>
       </section>
 
-      <!-- 3. SERVICES-COPY : seconde phrase révélée -->
+      <!-- 6. SERVICES-COPY : 2ème phrase clé -->
       <section class="watch-services-copy">
         <h1 class="watch-animate-text">
-          Awwwards, GSAP, Three.js, articles de fond, podcasts, conférences —
-          autant de canaux pour rester curieux et confronter mes idées à celles
-          d'une communauté en mouvement.
+          L'autonomie croissante fait émerger des comportements inédits :
+          chantage, espionnage, contournement éthique. La supervision et la
+          gestion fine des privilèges deviennent un enjeu critique pour
+          l'administrateur système.
         </h1>
       </section>
 
-      <!-- 4. OUTRO : liste finale des sources de veille -->
+      <!-- 7. NEW : Risques en damier (chiffres + libellé qui se révèlent) -->
+      <section class="watch-risks">
+        <div class="watch-risks-header">
+          <span class="watch-risks-tag">/ ENJEUX</span>
+          <h3 class="watch-risks-title">
+            Trois risques<br /><em>identifiés.</em>
+          </h3>
+        </div>
+
+        <div class="watch-risks-grid">
+          <div class="watch-risk" data-num="01">
+            <div class="watch-risk-num">01</div>
+            <h4 class="watch-risk-name">Comportements initiés</h4>
+            <p class="watch-risk-desc">
+              Des IA recourant au chantage ou à l'espionnage industriel pour
+              éviter d'être désactivées ou remplacées.
+            </p>
+          </div>
+
+          <div class="watch-risk" data-num="02">
+            <div class="watch-risk-num">02</div>
+            <h4 class="watch-risk-name">Contournement éthique</h4>
+            <p class="watch-risk-desc">
+              Par calcul stratégique, un agent peut percevoir ses filtres
+              éthiques comme des obstacles à sa mission.
+            </p>
+          </div>
+
+          <div class="watch-risk" data-num="03">
+            <div class="watch-risk-num">03</div>
+            <h4 class="watch-risk-name">Menaces sociétales</h4>
+            <p class="watch-risk-desc">
+              Désinformation de masse, automatisation des emplois, perte de
+              contrôle globale sur la civilisation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. OUTRO : ouverture pour le profil SIO -->
       <section class="watch-outro">
         <div class="watch-outro-grid">
           <div class="watch-outro-col">
-            <span class="watch-outro-tag">RÉFÉRENCES VISUELLES</span>
+            <span class="watch-outro-tag">SIO · ENJEU 1</span>
             <ul class="watch-outro-list">
-              <li>Awwwards</li>
-              <li>SiteInspire</li>
-              <li>Codrops</li>
-              <li>Bestfolios</li>
-              <li>The FWA</li>
+              <li>Gestion des privilèges</li>
+              <li>Limitation des droits</li>
+              <li>Sandboxing</li>
             </ul>
           </div>
           <div class="watch-outro-col">
-            <span class="watch-outro-tag">TECH &amp; CODE</span>
+            <span class="watch-outro-tag">SIO · ENJEU 2</span>
             <ul class="watch-outro-list">
-              <li>CSS-Tricks</li>
-              <li>Smashing Magazine</li>
-              <li>Hacker News</li>
-              <li>GSAP forums</li>
-              <li>Three.js journey</li>
+              <li>Supervision continue</li>
+              <li>Audit indépendant</li>
+              <li>Standards vérifiables</li>
             </ul>
           </div>
           <div class="watch-outro-col">
-            <span class="watch-outro-tag">PODCASTS &amp; VIDÉOS</span>
+            <span class="watch-outro-tag">À LIRE</span>
             <ul class="watch-outro-list">
-              <li>Syntax.fm</li>
-              <li>ShopTalk Show</li>
-              <li>Bruno Simon (YouTube)</li>
-              <li>Akella (twitch)</li>
-              <li>Hugo Barré</li>
+              <li>Anthropic Research</li>
+              <li>MIT Tech Review</li>
+              <li>Future of Life</li>
             </ul>
           </div>
         </div>
@@ -774,7 +943,7 @@
       <!-- ============================================
            TABLEAU DE SYNTHÈSE — Visualisation in-page
            ============================================ -->
-      <section class="synth-section">
+      <section id="synth" class="synth-section">
         <!-- Header éditorial cohérent -->
         <div class="synth-header">
           <span class="synth-label">/ TS—001</span>
@@ -908,9 +1077,10 @@
             <h2 class="contact-title">Let's <em>talk</em></h2>
 
             <p class="contact-intro">
-              Pour un projet, une opportunité de stage, un échange ou simplement
-              boire un café, contactez-moi directement ou remplissez le
-              formulaire — je vous répondrai rapidement.
+              À la recherche d'une alternance pour 2026-2027 en développement
+              Web &amp; Logiciel, avec un intérêt marqué pour l'intelligence
+              artificielle. Pour un projet, une opportunité ou un échange,
+              contactez-moi directement — je réponds rapidement.
             </p>
 
             <form class="contact-form" id="contactForm" novalidate>
@@ -956,7 +1126,12 @@
             <!-- Réseaux sociaux en haut à droite -->
             <ul class="contact-socials" aria-label="Réseaux sociaux">
               <li>
-                <a href="#" aria-label="GitHub" target="_blank" rel="noopener">
+                <a
+                  href="https://github.com/tibolecodeur"
+                  aria-label="GitHub"
+                  target="_blank"
+                  rel="noopener"
+                >
                   <svg
                     width="14"
                     height="14"

@@ -2485,6 +2485,400 @@ body {
 }
 
 /* ============================================
+   VEILLE — Métadonnées intro + nouveaux effets
+   ============================================ */
+
+/* ─── Intro : grille de méta-infos ─── */
+.watch-intro-meta {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+  justify-content: center;
+}
+
+.watch-intro-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.watch-intro-meta span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.watch-intro-meta strong {
+  font-family: "Anton", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+/* ─── Ticker/marquee horizontal infini (NEW) ─── */
+.watch-ticker {
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 1.5rem 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  white-space: nowrap;
+  animation: watch-ticker-scroll 35s linear infinite;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.watch-ticker-track .dot {
+  font-size: 0.6em;
+  opacity: 0.4;
+}
+
+@keyframes watch-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.watch-ticker:hover .watch-ticker-track {
+  animation-play-state: paused;
+}
+
+/* ─── Sources : grille des articles (NEW) ─── */
+.watch-sources {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8rem 3rem;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-sources-header {
+  max-width: 1300px;
+  margin: 0 auto 4rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.watch-sources-tag {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.watch-sources-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #ffffff;
+}
+
+.watch-sources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.watch-source {
+  position: relative;
+  background: #ffffff;
+  color: #000000;
+  padding: 2.5rem 2.25rem;
+  border: 1px solid #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Reveal au scroll via IntersectionObserver */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s,
+    color 0.4s;
+}
+
+.watch-source.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.watch-source:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.watch-source-num {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: "Anton", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  opacity: 0.4;
+}
+
+.watch-source-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.watch-source-pub {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  transition:
+    background 0.4s,
+    color 0.4s;
+}
+
+.watch-source:hover .watch-source-pub {
+  background: #ffffff;
+  color: #000000;
+}
+
+.watch-source-date {
+  opacity: 0.6;
+}
+
+.watch-source-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+}
+
+.watch-source-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  font-weight: 300;
+  margin: 0;
+  flex: 1;
+}
+
+.watch-source-arrow {
+  align-self: flex-end;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.watch-source:hover .watch-source-arrow {
+  transform: rotate(45deg);
+}
+
+/* ─── Risques : grille en damier (NEW) ─── */
+.watch-risks {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8rem 3rem;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-risks-header {
+  max-width: 1300px;
+  margin: 0 auto 4rem;
+}
+
+.watch-risks-tag {
+  display: block;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.2rem;
+}
+
+.watch-risks-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.watch-risks-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.watch-risks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  max-width: 1300px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.watch-risk {
+  padding: 3rem 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  /* Reveal au scroll */
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s;
+  cursor: default;
+}
+
+.watch-risk:last-child {
+  border-right: none;
+}
+
+.watch-risk.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.watch-risk:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.watch-risk-num {
+  font-family: "Anton", sans-serif;
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.2);
+  transition: color 0.4s;
+}
+
+.watch-risk:hover .watch-risk-num {
+  color: #ffffff;
+}
+
+.watch-risk-name {
+  font-family: "Anton", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+  color: #ffffff;
+}
+
+.watch-risk-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1000px) {
+  .watch-intro-meta {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    text-align: left;
+  }
+  .watch-intro-meta div {
+    align-items: flex-start;
+  }
+
+  .watch-ticker-track {
+    font-size: 1.8rem;
+    gap: 1.5rem;
+  }
+
+  .watch-sources {
+    padding: 5rem 1.5rem;
+  }
+  .watch-sources-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .watch-sources-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .watch-source {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .watch-risks {
+    padding: 5rem 1.5rem;
+  }
+  .watch-risks-grid {
+    grid-template-columns: 1fr;
+  }
+  .watch-risk {
+    border-right: none;
+    padding: 2rem 1.5rem;
+  }
+  .watch-risk-num {
+    font-size: 3rem;
+  }
+}
+
+/* ============================================
    TABLEAU DE SYNTHÈSE — Section + Modale
    ============================================ */
 .synth-section {
