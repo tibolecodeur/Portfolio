@@ -10,19 +10,20 @@
   --text-color: #ffffff;
   --bg-color: #0a0a0a;
   --blur-amount: 0px;
+  --font-body:
+    "Raleway", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Anton", sans-serif;
+  --font-italic: "Times New Roman", Georgia, serif;
 }
 
-html.no-scroll,
-body.no-scroll {
-  overflow: hidden !important;
-  height: 100vh !important;
+html {
+  scrollbar-gutter: stable;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cursor: none;
 }
 
 html {
@@ -30,12 +31,25 @@ html {
   overflow-x: hidden;
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: "Poppins", sans-serif;
+  font-family: "Raleway", sans-serif;
 }
 
 body {
   width: 100%;
   /* pas de overflow-x ici */
+  font-family: var(--font-body);
+}
+
+body.stage-modal-open {
+  overflow: hidden;
+}
+
+/* Curseur custom uniquement sur les vrais pointeurs souris */
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: none;
+  }
 }
 
 /* ============================================
@@ -117,7 +131,8 @@ body {
   padding: 0;
 }
 
-.bubble-menu .menu-line {
+.bubble-menu .menu-line,
+.bubble-menu .menu-line.short {
   width: 26px;
   height: 2px;
   background: #111;
@@ -128,6 +143,10 @@ body {
     transform 0.3s ease,
     opacity 0.3s ease;
   transform-origin: center;
+}
+
+.bubble-menu .menu-line.short {
+  width: 16px;
 }
 
 .bubble-menu .menu-line + .menu-line {
@@ -154,13 +173,33 @@ body {
    BUBBLE MENU ITEMS & OVERLAY
    ============================================ */
 .bubble-menu-items {
-  position: fixed; /* Couvre toujours le viewport, même après scroll */
+  position: fixed;
   inset: 0;
   display: none;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   z-index: 98;
+}
+
+.menu-blur-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 97;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition:
+    backdrop-filter 0.5s ease,
+    background 0.5s ease;
+}
+
+.menu-blur-overlay.active {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
 }
 
 /* Conserver les classes pour la compatibilité JS */
@@ -231,7 +270,6 @@ body {
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
-  height: 10px;
 }
 
 @media (min-width: 900px) {
@@ -284,445 +322,4414 @@ body {
 }
 
 /* ============================================
-   CUSTOM CURSOR
+   CUSTOM CURSOR — desktop pointer uniquement
    ============================================ */
-.cursor {
-  position: fixed;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  z-index: 9999;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: transform;
-  mix-blend-mode: difference;
-}
+@media (pointer: fine) {
+  .cursor {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    mix-blend-mode: difference;
+  }
 
-.cursor-follower {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  border: 1px solid #fff;
-  border-radius: 50%;
-  z-index: 9998;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: transform;
-  mix-blend-mode: difference;
-}
+  .cursor-follower {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    z-index: 9998;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    mix-blend-mode: difference;
+  }
 
-.cursor-hover .cursor-follower {
-  transform: translate(-50%, -50%) scale(1.5);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: transparent;
-  transition:
-    width 0.3s,
-    height 0.3s;
+  .cursor-hover .cursor-follower {
+    transform: translate(-50%, -50%) scale(1.5);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: transparent;
+    transition:
+      width 0.3s,
+      height 0.3s;
+  }
 }
-
 /* ============================================
-   LOADING SCREEN
+   LOADING SCREEN (Insane Preloader)
    ============================================ */
-#loading-screen {
+.loading-screen {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: var(--accent4);
-  z-index: 200000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.5s ease;
-}
-
-#loading-screen.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading-container {
-  filter: url("#gooey");
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.loading-text {
-  letter-spacing: 10px;
-  font-size: 8rem;
-  color: var(--accent2);
-}
-
-.drop {
-  position: absolute;
-  background: var(--accent2);
-  width: 22px;
-  height: 22px;
-  border-radius: 60% 70% 50% 60% / 65% 66% 60% 65%;
-  animation: move 3s ease infinite;
-}
-
-.drop::after {
-  width: 17px;
-  height: 17px;
-  content: "";
-  position: absolute;
-  background: var(--accent2);
-  border-radius: 50% 60% 60% 70% / 60% 65% 65% 65%;
-  left: 25px;
-  top: 3px;
-  animation: drop_effect 3s ease infinite;
-}
-
-@keyframes move {
-  0%,
-  100% {
-    transform: translateX(370px);
-  }
-  50% {
-    transform: translateX(-370px);
-  }
-}
-
-@keyframes drop_effect {
-  0% {
-    left: 0px;
-  }
-  5% {
-    left: 35px;
-  }
-  45% {
-    left: 0px;
-  }
-  50% {
-    left: 0px;
-  }
-  55% {
-    left: -30px;
-  }
-  95% {
-    left: 0px;
-  }
-  100% {
-    left: 0;
-  }
-}
-
-/* ============================================
-   TRANSITION CURTAIN
-   ============================================ */
-.transition-curtain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 100000;
-  pointer-events: none;
-  isolation: isolate;
-}
-
-.curtain-layer {
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  transform: scaleY(1);
-  transform-origin: top;
-  contain: layout style;
+  background: #000;
+  color: #fff;
+  pointer-events: none;
+  z-index: 200000;
 }
-.curtain-layer.layer-1 {
-  background-color: var(--fg-loading);
+
+.counter {
+  position: fixed;
+  left: 50px;
+  bottom: 50px;
+  display: flex;
+  height: 100px;
+  font-size: 100px;
+  line-height: 102px;
+  clip-path: polygon(0 0, 100% 0, 100% 100px, 0 100px);
+  font-weight: 400;
+  font-family: "Raleway", sans-serif;
 }
-.curtain-layer.layer-2 {
-  background-color: var(--accent1);
+
+.counter-1,
+.counter-2,
+.counter-3 {
+  position: relative;
+  top: -15px;
 }
-.curtain-layer.layer-3 {
-  background-color: var(--accent2);
+
+.num1offset1 {
+  position: relative;
+  right: -25px;
 }
-.curtain-layer.layer-4 {
-  background-color: var(--accent3);
+
+.num1offset2 {
+  position: relative;
+  right: -10px;
 }
-.curtain-layer.layer-5 {
-  background-color: var(--accent4);
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  background: rgb(80, 80, 80);
+  z-index: 200001;
+}
+
+.loader-1 {
+  position: relative;
+  background: #fff;
+  width: 200px;
+}
+
+.loader-2 {
+  position: relative;
+  width: 100px;
+  background: #fff;
+}
+
+.bar {
+  height: 50px;
 }
 
 /* ============================================
-   HOME CONTENT
+   HOME CONTENT — état initial pour révélation smooth
    ============================================ */
 #home-content {
   opacity: 0;
-  filter: blur(var(--blur-amount));
-  will-change: filter;
+  filter: blur(20px);
 }
+
 #home-content.content-visible {
   opacity: 1;
+  /* IMPORTANT : on retire complètement le filter (pas blur(0px))
+     pour ne pas créer de containing block qui casserait position:fixed/sticky.
+     Pareil pour will-change qu'on n'utilise plus. */
+  filter: none;
 }
 
 /* ============================================
-   HERO SECTION
+   HERO SECTION - IRONHILL LANDING PAGE
    ============================================ */
+
 .hero {
   position: relative;
-  height: 100vh;
-  width: 100%;
+  color: var(--accent2);
   overflow: hidden;
+}
+
+.hero__row {
+  width: 100%;
+  height: 185vh;
+  position: relative;
+}
+
+.hero__bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__twigs {
+  position: absolute;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__twig {
+  position: absolute;
+  z-index: 5;
+}
+
+.hero__twig--left {
+  width: 700px;
+  bottom: 20%;
+  left: 0;
+}
+
+.hero__twig--right {
+  width: 800px;
+  bottom: 10%;
+  right: 0;
+}
+
+.hero__conteiner {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__top {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  z-index: 10;
+  top: 0;
+  left: 0;
+}
+
+.hero__top h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(80px, 15vw, 240px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 2px;
+  margin: 0;
+  opacity: 0;
+  color: var(--accent2);
+}
+
+.hero__top p {
+  font-family: "Raleway", sans-serif;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  margin: 0;
+  margin-top: 1rem;
+  opacity: 0;
+  color: var(--text-color);
+}
+
+.hero__content {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 125vh;
+  z-index: 10;
+}
+
+.hero__content h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(24px, 5vw, 48px);
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--bg-color);
+  max-width: 1400px;
+  margin: 0;
+  opacity: 0;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .hero__twig--left {
+    width: 350px;
+  }
+
+  .hero__twig--right {
+    width: 400px;
+  }
+
+  .hero__top h1 {
+    font-size: clamp(40px, 12vw, 100px);
+  }
+
+  .hero__content h2 {
+    font-size: clamp(18px, 4vw, 32px);
+  }
+}
+
+/* ── BACKGROUND CRÈME EN ARCHE ── */
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.hero-top * {
+  pointer-events: auto;
+}
+
+.name {
+  font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+  font-size: clamp(4rem, 12vw, 13rem);
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+/* Premier mot : sur la zone NOIRE → blanc */
+.name-word--top {
+  color: #ffffff;
+}
+
+/* Second mot : sur la zone BLANCHE (arche) → noir */
+.name-word--bottom {
+  color: #000000;
+}
+.name-line {
+  display: block;
+  overflow: hidden;
+}
+.name-word {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+/* ============================================
+   STICKERS — STRICTEMENT NOIR & BLANC
+   ============================================ */
+.sticker {
+  position: absolute;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  /* Visible par défaut, c'est le JS qui anime */
+  opacity: 1;
+  z-index: 4;
+}
+
+/* 1. DESIGN STRATEGY — cercle noir, texte blanc */
+.sticker--design-strategy {
+  top: 48%;
+  left: 12%;
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  --rot: -8deg;
+}
+.sticker-icon {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.sticker-icon span {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+.sticker-title {
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+.sticker-sub {
+  font-size: 0.45rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+}
+
+/* 2. E-COMM — fond blanc, contour noir */
+.sticker--ecomm {
+  top: 67%;
+  left: 7%;
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  padding: 10px 14px 12px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  --rot: -7deg;
+}
+.sticker-www {
+  background: #000000;
+  color: #ffffff;
+  font-size: 0.6rem;
+  padding: 2px 9px;
+  align-self: flex-end;
+  border-radius: 2px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.sticker-ecomm-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* 3. UX — bloc plein noir */
+.sticker--ux {
+  top: 52%;
+  right: 26%;
+  background: #000000;
+  color: #ffffff;
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+  border-radius: 3px;
+  --rot: 5deg;
+}
+
+/* 4. MOTION — fond blanc, contour noir */
+.sticker--motion {
+  bottom: 12%;
+  left: 18%;
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-weight: 900;
+  line-height: 1.25;
+  font-size: 0.92rem;
+  --rot: -6deg;
+}
+.sticker-motion-line {
+  white-space: nowrap;
+}
+
+/* 5. BRANDING — fond noir */
+.sticker--branding {
+  top: 70%;
+  right: 4%;
+  background: #000000;
+  color: #ffffff;
+  padding: 13px 19px;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.15;
+  --rot: 8deg;
+}
+.sticker-star {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ffffff;
+  color: #000000;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transform: rotate(-8deg);
+  border: 2px solid #000000;
+}
+
+/* 6. USABILITY — cercle blanc, contour noir */
+.sticker--usability {
+  bottom: 8%;
+  right: 18%;
+  width: 170px;
+  height: 170px;
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --rot: -3deg;
+}
+.sticker-circle-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: rotate-circle 14s linear infinite;
+}
+.sticker-circle-text text {
+  fill: #000000;
+}
+.sticker-usability-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes rotate-circle {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   HERO — STRUCTURE STICKY POUR L'EFFET DISSOLVE
+   ============================================ */
+
+/* La section a une grande hauteur pour donner de la course au scroll */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* hauteur normale, scroll naturel */
+  background: #000000;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Plus de sticky — le pin n'est qu'un wrapper de positionnement */
+.hero-pin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Background blanc en arche, layer 1 */
+.hero-bottom {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  clip-path: ellipse(75% 55% at 50% 100%);
+  z-index: 1;
+}
+
+@media (max-width: 1024px) {
+  .hero-bottom {
+    /* Arche plus large pour compenser le format plus carré */
+    clip-path: ellipse(95% 50% at 50% 100%);
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-bottom {
+    clip-path: ellipse(120% 45% at 50% 100%);
+  }
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Texte par-dessus, layer 2 */
+/* Texte par-dessus, layer 2 */
+.hero-top {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* padding fluide qui s'adapte au viewport */
+  padding: clamp(6rem, 9vw, 9rem) clamp(1.5rem, 3.5vw, 3.5rem) 3rem;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero-top * {
+  pointer-events: auto;
+}
+
+/* Stickers, layer 4 */
+.hero-stickers {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.hero-stickers .sticker {
+  pointer-events: auto;
+}
+
+/* ============================================
+   RESPONSIVE STICKERS
+   Sur écran portable (1024-1440px), on resserre les positions
+   ============================================ */
+@media (max-width: 1440px) {
+  .sticker--design-strategy {
+    top: 50%;
+    left: 4%;
+    width: 150px;
+    height: 150px;
+  }
+  .sticker--ecomm {
+    top: 72%;
+    left: 2%;
+  }
+  .sticker--ux {
+    top: 54%;
+    right: 22%;
+  }
+  .sticker--motion {
+    bottom: 8%;
+    left: 14%;
+  }
+  .sticker--branding {
+    top: 73%;
+    right: 2%;
+  }
+  .sticker--usability {
+    bottom: 4%;
+    right: 12%;
+    width: 145px;
+    height: 145px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sticker--design-strategy {
+    top: 52%;
+    left: 2%;
+    width: 130px;
+    height: 130px;
+  }
+  .sticker-title {
+    font-size: 0.95rem;
+  }
+  .sticker-sub {
+    font-size: 0.4rem;
+  }
+
+  .sticker--ecomm {
+    top: 75%;
+    left: 1%;
+  }
+  .sticker-ecomm-title {
+    font-size: 0.85rem;
+  }
+
+  .sticker--ux {
+    top: 56%;
+    right: 18%;
+    font-size: 0.9rem;
+    padding: 12px 16px;
+  }
+
+  .sticker--motion {
+    bottom: 6%;
+    left: 8%;
+    font-size: 0.82rem;
+    padding: 12px 14px;
+  }
+
+  .sticker--branding {
+    top: 76%;
+    right: 1%;
+    font-size: 0.9rem;
+    padding: 11px 16px;
+  }
+  .sticker--usability {
+    bottom: 3%;
+    right: 8%;
+    width: 130px;
+    height: 130px;
+  }
+  .sticker-usability-icon {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Sur mobile, la plupart des stickers sont planqués pour éviter le chaos */
+  .sticker--ecomm,
+  .sticker--ux,
+  .sticker--branding {
+    display: none;
+  }
+  .sticker--design-strategy {
+    top: 56%;
+    left: 2%;
+    width: 110px;
+    height: 110px;
+    transform: scale(1) rotate(var(--rot)) !important;
+  }
+  .sticker--motion {
+    bottom: 18%;
+    left: 4%;
+    font-size: 0.75rem;
+    padding: 10px 12px;
+  }
+  .sticker--usability {
+    bottom: 4%;
+    right: 4%;
+    width: 110px;
+    height: 110px;
+  }
+  .sticker-usability-icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ============================================
+   JOURNEY SECTION — Timeline sticky originale
+   ============================================ */
+.journey-section {
+  position: relative;
+  width: 100%;
+  background: #000000;
+  color: #ffffff;
+  z-index: 5;
+}
+
+.journey-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  max-width: 100%;
+  position: relative;
+}
+
+/* ───────── LEFT (sticky) ───────── */
+.journey-left {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 4rem 3rem 4rem 4rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.journey-left-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.journey-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+.journey-title {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+.journey-title em {
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* L'année qui change au scroll — c'est l'élément "wow" */
+.journey-year-display {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.journey-year-static {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.journey-year-active {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  line-height: 1;
+  /* Transition smooth quand l'année change */
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.journey-year-active.is-changing {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Barre de progression de la timeline */
+.journey-progress {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.journey-progress-bar {
+  height: 100%;
+  background: #ffffff;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.journey-counter {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin: 0;
+}
+
+.journey-counter-sep {
+  margin: 0 0.4rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+[data-counter-current] {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ───────── RIGHT (cards qui défilent) ───────── */
+.journey-right {
+  padding: 6rem 4rem 6rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.journey-card {
+  display: block;
+  position: relative;
+  background: #ffffff;
+  color: #000000;
+  padding: 2.5rem 2.25rem;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background-clip: padding-box;
+  box-shadow: 0 0 0 0 transparent;
+  /* État initial : en bas + transparent, animé au scroll via observer */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.journey-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Numéro géant en filigrane à droite */
+.journey-card::before {
+  content: counter(journey-counter, decimal-leading-zero);
+  counter-increment: journey-counter;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 4rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.06);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.journey-right {
+  counter-reset: journey-counter;
+}
+
+.journey-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.journey-card-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  color: #000000;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.journey-card-period {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+}
+
+.journey-card-title {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.journey-card-place {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+  margin: 0 0 1.2rem;
+}
+
+.journey-card-desc {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.75);
+  margin: 0 0 1.5rem;
+  font-weight: 300;
+}
+
+.journey-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.journey-card-tags span {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* ───────── RESPONSIVE — Tablette / petit PC ───────── */
+@media (max-width: 1100px) {
+  .journey-container {
+    grid-template-columns: 1fr;
+  }
+  .journey-left {
+    position: relative;
+    height: auto;
+    padding: 5rem 2rem 3rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .journey-right {
+    padding: 4rem 2rem 5rem;
+  }
+}
+
+/* ───────── RESPONSIVE — Mobile ───────── */
+@media (max-width: 700px) {
+  .journey-left {
+    padding: 4rem 1.25rem 2.5rem;
+  }
+  .journey-right {
+    padding: 3rem 1.25rem 4rem;
+    gap: 2rem;
+  }
+  .journey-card {
+    padding: 1.75rem 1.5rem;
+  }
+  .journey-card::before {
+    font-size: 2.5rem;
+    top: 1rem;
+    right: 1rem;
+  }
+  .journey-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .journey-year-display {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+/* ============================================
+   CIRCULAR GALLERY — copié-collé Silhouette Stock
+   adapté en noir/blanc pour les compétences
+   ============================================ */
+.skills-circular {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  color: #ffffff;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.skills-circular a,
+.skills-circular p {
+  text-decoration: none;
+  color: #ffffff;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02rem;
+}
+
+.cg-nav,
+.cg-footer {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.cg-nav {
+  top: 0;
+}
+.cg-footer {
+  bottom: 0;
+}
+
+.cg-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cg-gallery-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  perspective: 2000px;
+  will-change: transform;
+}
+
+.cg-gallery {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-origin: center;
+}
+
+.cg-card {
+  position: absolute;
+  width: 45px; /* ← revenir aux dimensions originales */
+  height: 60px;
+  padding: 8px;
+  border-radius: 4px;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  overflow: hidden;
+  cursor: pointer;
+  background: #ffffff;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  text-align: center;
+}
+
+/* Variation pour rythmer visuellement (cartes inversées) */
+.cg-card.cg-card--dark {
+  background: #000000;
+  color: #ffffff;
+}
+
+.cg-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ← cover comme l'original, pas contain */
+  backface-visibility: hidden;
+}
+
+/* ── Texte centre du cercle ── */
+.cg-center-text {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.cg-center-label {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.4;
+}
+
+.cg-center-label--big {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cg-center-label--sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Textes latéraux ── */
+.cg-side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cg-side--left {
+  left: 3rem;
+  align-items: flex-start;
+}
+.cg-side--right {
+  right: 3rem;
+  align-items: flex-end;
+}
+
+.cg-side-label {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.cg-side--left .cg-side-label {
+  transform: rotate(180deg);
+}
+
+/* Responsive : masquer les côtés sur mobile */
+@media (max-width: 768px) {
+  .cg-side {
+    display: none;
+  }
+  .cg-center-label--big {
+    font-size: 1.2rem;
+  }
+}
+
+/* Title container quand on clique sur une carte */
+.cg-title-container {
+  position: fixed;
+  bottom: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 80px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.cg-title-container .cg-detail {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 36px;
+  letter-spacing: -0.03rem;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+.cg-title-container .cg-detail-sub {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  top: 48px;
+  margin: 0;
+}
+
+.cg-word {
+  position: relative;
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ───────── RESPONSIVE ───────── */
+@media (max-width: 1200px) {
+  .cg-gallery {
+    transform: scale(0.85);
+  }
+}
+
+@media (max-width: 768px) {
+  .cg-gallery {
+    transform: scale(0.6);
+  }
+  .cg-nav,
+  .cg-footer {
+    padding: 1.25em;
+  }
+  .cg-title-container {
+    bottom: 18%;
+  }
+  .cg-title-container .cg-detail {
+    font-size: 24px;
+  }
+  .cg-title-container .cg-detail-sub {
+    font-size: 11px;
+    top: 32px;
+  }
+}
+
+/* ============================================
+   CERTIFICATIONS — Section flip cards
+   ============================================ */
+.certs-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 3rem 10rem;
+  overflow: hidden;
+  z-index: 7;
+}
+
+/* Marquee de fond */
+.certs-marquee {
+  position: absolute;
+  top: 38%;
+  left: -10%;
+  right: -10%;
+  width: 120%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transform: rotate(-3deg);
+  transform-origin: center;
+}
+
+.certs-marquee-track {
+  display: flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: certs-marquee 40s linear infinite;
+  font-family: "Raleway", sans-serif;
+  font-size: 8rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.04);
+  line-height: 1;
+}
+
+.certs-marquee-track span {
+  flex-shrink: 0;
+}
+
+@keyframes certs-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Header */
+.certs-header {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto 5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.certs-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  align-self: start;
+}
+
+.certs-title {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.certs-title em {
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.certs-hint {
+  grid-column: 2;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  margin: 0;
+  text-align: right;
+}
+
+.certs-counter {
+  grid-column: 3;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  margin: 0;
+}
+.certs-counter-sep {
+  margin: 0 0.4rem;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Grille de cartes en quinconce */
+.certs-grid {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+/* Décalage en quinconce — col 2 descend, col 1 et 3 s'alignent */
+.cert-card:nth-child(3n + 2) {
+  margin-top: 4rem;
+}
+
+/* La carte (perspective pour le flip 3D) */
+.cert-card {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  perspective: 1500px;
+  cursor: pointer;
+}
+
+.cert-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+/* Au survol : flip ! — uniquement sur les vrais pointeurs souris */
+@media (hover: hover) and (pointer: fine) {
+  .cert-card:hover .cert-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Faces avant et arrière */
+.cert-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #000000;
+  background: #ffffff;
+  color: #000000;
+}
+
+.cert-face--back {
+  transform: rotateY(180deg);
+}
+
+/* Variante sombre pour rythmer la grille */
+.cert-card--dark .cert-face {
+  background: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* ─── Front ─── */
+
+/* Le sceau circulaire animé en haut à droite */
+.cert-stamp {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cert-stamp-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: cert-stamp-rotate 12s linear infinite;
+}
+
+.cert-card--dark .cert-stamp-text text {
+  fill: #ffffff;
+}
+.cert-stamp-text text {
+  fill: #000000;
+}
+
+.cert-stamp-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.cert-card--dark .cert-stamp-icon {
+  background: #ffffff;
+  color: #000000;
+}
+
+@keyframes cert-stamp-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Numéro géant en haut à gauche */
+.cert-num {
+  font-family: "Raleway", sans-serif;
+  font-size: 2.2rem;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: auto;
+}
+
+.cert-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.cert-card--dark .cert-tag,
+.cert-card--dark .cert-issuer {
+  color: rgba(255, 255, 255, 0.7);
+}
+.cert-tag,
+.cert-issuer {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.cert-name {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.cert-issuer {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.cert-arrow {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cert-card:hover .cert-arrow {
+    transform: rotate(45deg);
+  }
+}
+
+/* ─── Back ─── */
+
+.cert-back-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.cert-back-desc {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  font-weight: 300;
+  margin: 0 0 auto;
+  flex: 1;
+}
+
+.cert-back-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  margin-bottom: 1rem;
+}
+
+.cert-back-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cert-back-meta span {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  font-weight: 600;
+}
+
+.cert-back-meta strong {
+  font-family: "Raleway", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.cert-back-link {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: inherit; /* reprend la couleur de la carte (noir ou blanc) */
+  text-decoration: none; /* enlève le soulignement par défaut des <a> */
+  transition: opacity 0.3s;
+  display: inline-block;
+}
+
+.cert-back-link:hover,
+.cert-back-link:visited,
+.cert-back-link:active {
+  color: inherit; /* garde la couleur de la carte même après visite */
+  opacity: 0.7; /* léger effet au hover */
+}
+
+/* ─── Reveal animation au scroll ─── */
+.cert-card {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cert-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .certs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  .cert-card:nth-child(3n + 2) {
+    margin-top: 0;
+  }
+  .cert-card:nth-child(2n) {
+    margin-top: 3rem;
+  }
+  .certs-marquee-track {
+    font-size: 6rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .certs-section {
+    padding: 5rem 1.25rem 6rem;
+  }
+  .certs-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .certs-hint,
+  .certs-counter {
+    grid-column: 1;
+    text-align: left;
+  }
+  .certs-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .cert-card,
+  .cert-card:nth-child(2n) {
+    margin-top: 0;
+  }
+  .cert-card {
+    height: 380px;
+  }
+  /* Sur mobile : pas de hover, on tape pour flip */
+  .cert-card.is-flipped .cert-card-inner {
+    transform: rotateY(180deg);
+  }
+  .certs-marquee-track {
+    font-size: 4rem;
+  }
+}
+
+/* ============================================
+   PROJETS — Liste avec thumbnail au curseur
+   (copié-collé adapté)
+   ============================================ */
+.proj-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 0 6rem;
+  z-index: 8;
+}
+
+/* Header */
+.proj-header {
+  max-width: 1400px;
+  margin: 0 auto 5rem;
+  padding: 0 3rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.proj-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  align-self: start;
+}
+
+.proj-title {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.proj-title em {
+  font-style: italic;
+  font-family: -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.proj-hint {
+  grid-column: 2 / -1;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  margin: 0;
+  text-align: right;
+}
+
+/* === Composant projet (copié-collé exact, juste préfixé) === */
+
+.proj-index {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.proj-index__container {
+  max-width: 75rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0.9375rem;
+  position: relative;
+}
+
+.proj-projects {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 62.5rem;
+  margin: 0 auto;
+}
+
+.proj-project {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3rem 4rem;
+  border-top: 0.0625rem solid rgba(0, 0, 0, 0.2745098039);
+  cursor: pointer;
+}
+
+.proj-project-left {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.proj-num {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 500;
+}
+
+.proj-project h2 {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: 0.5s ease;
+}
+
+.proj-project p {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+  transition: 0.5s ease;
+}
+
+.proj-project:last-child {
+  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.2745098039);
+}
+
+.proj-project:hover {
+  opacity: 0.5;
+}
+
+.proj-project:hover h2 {
+  transform: translateX(-0.9375rem);
+}
+
+.proj-project:hover p {
+  transform: translateX(0.9375rem);
+}
+
+/* La pile de thumbnails — suit le curseur via GSAP */
+.proj-project-thumbnail {
+  position: fixed;
+  width: 25rem;
+  height: 15.625rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  transform-origin: center center;
+  z-index: 9999;
+  /* Petit cadre + ombre subtile pour matcher le thème N&B */
+  background: #ffffff;
+  /* Caché par défaut avant que GSAP prenne la main (évite le flash au load) */
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.proj-thumbnail {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.proj-thumbnail img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .proj-section {
+    padding: 5rem 0 4rem;
+  }
+  .proj-header {
+    padding: 0 1.5rem;
+    margin-bottom: 3rem;
+    grid-template-columns: 1fr;
+  }
+  .proj-hint {
+    grid-column: 1;
+    text-align: left;
+  }
+  .proj-project {
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .proj-project:hover h2,
+  .proj-project:hover p {
+    transform: none;
+  }
+  /* Sur mobile : pas de thumbnail flottante (pas de souris) */
+  .proj-project-thumbnail {
+    display: none;
+  }
+}
+
+/* ============================================
+   VEILLE INFORMATIQUE — Animations WonJyou
+   (copié-collé exact, préfixé .watch-*)
+   ============================================ */
+
+/* Reset spécifique à la section */
+.watch-intro,
+.watch-about,
+.watch-services,
+.watch-services-copy,
+.watch-outro {
+  background-color: #1a1a1a;
+  color: #fff;
+  font-family:
+    "Manrope",
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-intro h1,
+.watch-about h1,
+.watch-services-copy h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -0.15rem;
+  line-height: 1.125;
+  text-align: center;
+  margin: 0;
+}
+
+/* ─── 0. INTRO HEADER ─── */
+.watch-intro {
+  width: 100%;
+  height: 60svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.watch-intro-inner {
+  text-align: center;
+}
+
+.watch-label {
+  display: block;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.watch-intro-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.watch-intro-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ─── 1. ABOUT (premier text-reveal) ─── */
+.watch-about,
+.watch-services-copy {
+  width: 100%;
+}
+
+.watch-about {
+  height: 100svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ─── 2. SERVICES (3 bandes qui se croisent + pin + scale) ─── */
+.watch-services {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.watch-services-header {
+  position: relative;
+  width: 100%;
+  padding: 0 2rem;
+  background-color: #1a1a1a;
+  will-change: transform;
+}
+
+/* Position initiale exactement comme l'original */
+.watch-services-header:nth-child(1),
+.watch-services-header:nth-child(3) {
+  transform: translateX(100%) translateY(0%);
+}
+
+.watch-services-header:nth-child(2) {
+  transform: translateX(-100%) translateY(0%);
+  z-index: 2;
+}
+
+/* Les bandeaux remplacent les <img src="whatido.svg"> */
+.watch-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem 0;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(3rem, 9vw, 9rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Variations N&B pour donner du contraste comme l'original */
+.watch-banner--top {
+  color: #ffffff;
+}
+
+.watch-banner--mid {
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 1.5rem 0;
+}
+
+.watch-banner--bot {
+  color: #ffffff;
+}
+
+/* ─── 3. SERVICES-COPY (deuxième text-reveal) ─── */
+/* ─── 3. SERVICES-COPY (deuxième text-reveal) ─── */
+.watch-services-copy {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* IMPORTANT : pas de margin-top, le pinSpacing s'occupe de l'espace */
+}
+
+/* ─── ANIMATE TEXT (clip-path révélé au scroll) ─── */
+.watch-animate-text {
+  position: relative;
+  width: 60%;
+  margin: 0 auto;
+  color: #4f4f4f;
+  --clip-value: 100%;
+}
+
+.watch-animate-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  clip-path: inset(0 0 var(--clip-value) 0);
+  will-change: clip-path;
+}
+
+/* ─── 4. OUTRO (sources) ─── */
+.watch-outro {
+  width: 100%;
+  padding: 8rem 3rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.hero-bg-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
+.watch-outro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
+  max-width: 1200px;
   width: 100%;
-  height: 100%;
-  z-index: 0;
 }
 
-.hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
-  will-change: transform;
-}
-
-.hero-text-container {
-  text-align: center;
-  z-index: 2;
-  mix-blend-mode: overlay;
-}
-
-.name {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 10vw;
-  font-weight: 900;
-  line-height: 0.9;
-  text-transform: uppercase;
-  color: #fff;
-  opacity: 0;
-  transform: translateY(50px);
-}
-
-.subtitle {
-  font-size: 1.5rem;
-  font-weight: 300;
-  margin-top: 20px;
-  letter-spacing: 2px;
-  opacity: 0;
-}
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+.watch-outro-col {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  opacity: 0.7;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.scroll-indicator span {
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
-}
-
-.scroll-indicator .line {
-  width: 1px;
-  height: 40px;
-  background: #fff;
-  animation: scrollLine 2s infinite;
-  transform-origin: top;
-  will-change: transform;
-}
-
-@keyframes scrollLine {
-  0% {
-    transform: scaleY(0);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
-}
-
-@media (max-width: 768px) {
-  .loading-text {
-    font-size: 4rem;
-    letter-spacing: 5px;
-  }
-  .name {
-    font-size: 14vw;
-  }
-}
-
-/* ─────────────────────────────────────────
-   HERO ENRICHMENTS
-───────────────────────────────────────── */
-
-/* Badge disponibilité */
-.hero-badge {
-  position: absolute;
-  top: 7rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.watch-outro-tag {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 0.7rem;
-  font-family: monospace;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.watch-outro-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.watch-outro-list li {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 999px;
-  padding: 6px 16px;
+  line-height: 1.1;
+  color: #fff;
+}
+
+/* ─── Responsive (copié-collé du media query original) ─── */
+@media (max-width: 1000px) {
+  .watch-intro h1,
+  .watch-about h1,
+  .watch-services-copy h1 {
+    font-size: 2rem;
+    letter-spacing: -0.05rem;
+  }
+  .watch-animate-text {
+    width: 100%;
+  }
+  .watch-banner {
+    font-size: 4rem;
+    gap: 1rem;
+  }
+  .watch-outro-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .watch-outro {
+    padding: 5rem 1.5rem;
+  }
+}
+
+/* ============================================
+   VEILLE — Métadonnées intro + nouveaux effets
+   ============================================ */
+
+/* ─── Intro : grille de méta-infos ─── */
+.watch-intro-meta {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+  justify-content: center;
+}
+
+.watch-intro-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.watch-intro-meta span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.watch-intro-meta strong {
+  font-family: "Anton", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+/* ─── Ticker/marquee horizontal infini (NEW) ─── */
+.watch-ticker {
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 1.5rem 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
   white-space: nowrap;
-  z-index: 3;
-  opacity: 0;
-  animation: fadeInBadge 0.8s ease forwards 3.2s;
+  animation: watch-ticker-scroll 35s linear infinite;
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
-.hero-badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 8px #4ade80;
-  animation: pulse-dot 2s ease-in-out infinite;
+.watch-ticker-track .dot {
+  font-size: 0.6em;
+  opacity: 0.4;
 }
 
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.8);
-  }
-}
-
-@keyframes fadeInBadge {
+@keyframes watch-ticker-scroll {
   from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(8px);
+    transform: translateX(0);
   }
   to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%);
   }
 }
 
-/* Méta-infos flottantes gauche / droite */
-.hero-meta {
-  position: absolute;
-  bottom: 12vh;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
-  z-index: 3;
-  opacity: 0;
-  animation: fadeInMeta 1s ease forwards 3.5s;
+.watch-ticker:hover .watch-ticker-track {
+  animation-play-state: paused;
 }
 
-.hero-meta--left {
-  left: 2.5rem;
-  align-items: flex-start;
+/* ─── Sources : grille des articles (NEW) ─── */
+.watch-sources {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8rem 3rem;
+  position: relative;
+  z-index: 9;
 }
-.hero-meta--right {
-  right: 2.5rem;
-  align-items: flex-end;
+
+.watch-sources-header {
+  max-width: 1300px;
+  margin: 0 auto 4rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.watch-sources-tag {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.watch-sources-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #ffffff;
+}
+
+.watch-sources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.watch-source {
+  position: relative;
+  background: #ffffff;
+  color: #000000;
+  padding: 2.5rem 2.25rem;
+  border: 1px solid #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Reveal au scroll via IntersectionObserver */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s,
+    color 0.4s;
+}
+
+.watch-source.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.watch-source:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.watch-source-num {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-family: "Anton", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  opacity: 0.4;
+}
+
+.watch-source-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.watch-source-pub {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  transition:
+    background 0.4s,
+    color 0.4s;
+}
+
+.watch-source:hover .watch-source-pub {
+  background: #ffffff;
+  color: #000000;
+}
+
+.watch-source-date {
+  opacity: 0.6;
+}
+
+.watch-source-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+}
+
+.watch-source-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  font-weight: 300;
+  margin: 0;
+  flex: 1;
+}
+
+.watch-source-arrow {
+  align-self: flex-end;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.watch-source:hover .watch-source-arrow {
+  transform: rotate(45deg);
+}
+
+/* ─── Risques : grille en damier (NEW) ─── */
+.watch-risks {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 8rem 3rem;
+  position: relative;
+  z-index: 9;
+}
+
+.watch-risks-header {
+  max-width: 1300px;
+  margin: 0 auto 4rem;
+}
+
+.watch-risks-tag {
+  display: block;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1.2rem;
+}
+
+.watch-risks-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.watch-risks-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.watch-risks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  max-width: 1300px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.watch-risk {
+  padding: 3rem 2rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  /* Reveal au scroll */
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s;
+  cursor: default;
+}
+
+.watch-risk:last-child {
+  border-right: none;
+}
+
+.watch-risk.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.watch-risk:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.watch-risk-num {
+  font-family: "Anton", sans-serif;
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.2);
+  transition: color 0.4s;
+}
+
+.watch-risk:hover .watch-risk-num {
+  color: #ffffff;
+}
+
+.watch-risk-name {
+  font-family: "Anton", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+  color: #ffffff;
+}
+
+.watch-risk-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1000px) {
+  .watch-intro-meta {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    text-align: left;
+  }
+  .watch-intro-meta div {
+    align-items: flex-start;
+  }
+
+  .watch-ticker-track {
+    font-size: 1.8rem;
+    gap: 1.5rem;
+  }
+
+  .watch-sources {
+    padding: 5rem 1.5rem;
+  }
+  .watch-sources-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .watch-sources-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .watch-source {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .watch-risks {
+    padding: 5rem 1.5rem;
+  }
+  .watch-risks-grid {
+    grid-template-columns: 1fr;
+  }
+  .watch-risk {
+    border-right: none;
+    padding: 2rem 1.5rem;
+  }
+  .watch-risk-num {
+    font-size: 3rem;
+  }
+}
+
+/* ============================================
+   TABLEAU DE SYNTHÈSE — Section + Modale
+   ============================================ */
+.synth-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 3rem 8rem;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Header */
+.synth-header {
+  max-width: 1400px;
+  margin: 0 auto 5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.synth-label {
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  align-self: start;
+}
+
+.synth-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.synth-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.synth-hint {
+  grid-column: 2 / -1;
+  font-family:
+    "Raleway",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  margin: 0;
   text-align: right;
 }
 
-.hero-meta-item {
+/* Preview */
+.synth-preview {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: center;
 }
 
-.hero-meta-value {
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
-  font-weight: 900;
+.synth-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: "Anton", sans-serif;
+  font-size: clamp(8rem, 18vw, 18rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: rgba(0, 0, 0, 0.04);
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
   line-height: 1;
+}
+
+.synth-preview-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  cursor: pointer;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.synth-preview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.25);
+}
+
+.synth-preview-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: uppercase;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.synth-preview-ext {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.2em;
+}
+
+.synth-preview-name {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0;
+}
+
+.synth-preview-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.75);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.synth-preview-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Boutons */
+.synth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.4rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1.5px solid #000000;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+  text-decoration: none;
+  background: transparent;
+  color: #000000;
+}
+.synth-btn:hover {
+  transform: translateY(-2px);
+}
+.synth-btn--primary {
+  background: #000000;
+  color: #ffffff;
+}
+.synth-btn--primary:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+.synth-btn--ghost:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* ============================================
+   MODALE PLEIN ÉCRAN
+   ============================================ */
+.synth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.synth-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.synth-modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.synth-modal-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  height: 100%;
+  max-height: 90vh;
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.synth-modal.is-open .synth-modal-inner {
+  transform: translateY(0) scale(1);
+}
+
+.synth-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1.5px solid #000000;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.synth-modal-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.synth-modal-tag {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+}
+
+.synth-modal-title h3 {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1rem, 1.6vw, 1.4rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.synth-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.synth-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1.5px solid #000000;
+  border-radius: 999px;
+  background: transparent;
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+.synth-modal-btn:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.synth-modal-close {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid #000000;
+  border-radius: 50%;
+  background: transparent;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+}
+.synth-modal-close:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+/* L'iframe : zone de visualisation principale */
+.synth-modal-frame-wrap {
+  position: relative;
+  flex: 1;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
+.synth-modal-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.synth-modal-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  z-index: 0;
+  text-align: center;
+  padding: 2rem;
+}
+.synth-modal-fallback p {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.7);
+  max-width: 40ch;
+}
+.synth-modal-fallback a {
+  color: #000;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Quand la modale est ouverte, on bloque le scroll de la page */
+body.synth-modal-open {
+  overflow: hidden;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .synth-section {
+    padding: 5rem 1.25rem;
+  }
+  .synth-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .synth-hint {
+    grid-column: 1;
+    text-align: left;
+  }
+  .synth-preview-card {
+    padding: 2rem 1.5rem;
+  }
+  .synth-preview-actions {
+    flex-direction: column;
+  }
+  .synth-btn {
+    justify-content: center;
+  }
+  .synth-modal {
+    padding: 0;
+  }
+  .synth-modal-inner {
+    max-height: 100vh;
+    height: 100vh;
+    border: none;
+  }
+  .synth-modal-actions .synth-modal-btn span {
+    display: none;
+  }
+}
+
+/* ============================================
+   CONTACT — Let's talk (N&B)
+   ============================================ */
+.contact-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #000000;
+  color: #ffffff;
+  padding: 4rem;
+  overflow: hidden;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bordure intérieure fine (équivalent du cadre jaune dans la capture) */
+.contact-section::before {
+  content: "";
+  position: absolute;
+  inset: 1.5rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 1300px;
+  width: 100%;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  padding: 3rem 2rem;
+}
+
+/* ─── COLONNE GAUCHE ─── */
+.contact-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.contact-title {
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #ffffff;
+}
+.contact-title em {
+  font-style: normal;
+  font-weight: 800;
+  /* Effet outline pour respecter le N&B (au lieu du jaune dans le mockup) */
+  -webkit-text-stroke: 1.5px #ffffff;
+  color: transparent;
+}
+
+.contact-intro {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 1.5rem;
+  max-width: 35ch;
+}
+
+/* ─── FORMULAIRE ─── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-field label {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.contact-field input,
+.contact-field textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  padding: 0.95rem 1.1rem;
+  border-radius: 12px;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  outline: none;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
+  resize: none;
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  font-style: italic;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.contact-field textarea {
+  min-height: 130px;
+  line-height: 1.5;
+}
+
+/* ─── BOUTON SEND MESSAGE ─── */
+.contact-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 2.2rem;
+  background: #ffffff;
+  color: #000000;
+  border: 1.5px solid #ffffff;
+  border-radius: 999px;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-top: 1rem;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+}
+.contact-submit:hover {
+  background: transparent;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* ─── COLONNE DROITE ─── */
+.contact-right {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Réseaux sociaux en haut à droite */
+.contact-socials {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 0.7rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 5;
+}
+
+.contact-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+  text-decoration: none;
+  transition:
+    transform 0.3s,
+    background 0.3s,
+    color 0.3s;
+}
+.contact-socials a:hover {
+  background: transparent;
+  color: #ffffff;
+  border: 1.5px solid #ffffff;
+  transform: translateY(-3px);
+}
+
+/* ─── VISUEL : blob + photo ─── */
+.contact-visual {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+}
+
+/* Blob blanc rempli derrière */
+.contact-blob {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.contact-blob svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: contact-blob-float 8s ease-in-out infinite;
+}
+
+/* Contour blanc qui dépasse (effet double trace décalé) */
+.contact-blob-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  transform: translate(-18px, -12px);
+  pointer-events: none;
+}
+.contact-blob-outline svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: contact-blob-float 9s ease-in-out infinite reverse;
+}
+
+@keyframes contact-blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(8px, -10px);
+  }
+  66% {
+    transform: translate(-6px, 8px);
+  }
+}
+
+/* Container photo (par-dessus le blob) */
+.contact-photo {
+  position: absolute;
+  inset: 5% 5% 0 5%;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Si <img> mise dedans : N&B + plein cadre */
+.contact-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(100%) contrast(1.05);
+}
+
+/* Placeholder en attendant ta photo */
+.contact-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px dashed rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .contact-section {
+    padding: 2rem;
+  }
+  .contact-section::before {
+    inset: 1rem;
+  }
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 2rem 1rem;
+  }
+  .contact-left {
+    margin: 0;
+    max-width: 100%;
+  }
+  .contact-right {
+    min-height: 480px;
+    order: -1;
+  }
+  .contact-visual {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 700px) {
+  .contact-section {
+    padding: 1rem;
+  }
+  .contact-socials {
+    position: relative;
+    top: auto;
+    right: auto;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  .contact-right {
+    min-height: 360px;
+  }
+  .contact-visual {
+    max-width: 280px;
+  }
+  .contact-submit {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   PROJETS — Modale détaillée
+   ============================================ */
+.proj-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.proj-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.proj-modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.proj-modal-inner {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: #ffffff;
+  color: #000000;
+  border: 1.5px solid #000000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(30px) scale(0.97);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.proj-modal.is-open .proj-modal-inner {
+  transform: translateY(0) scale(1);
+}
+
+.proj-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 2rem;
+  border-bottom: 1.5px solid #000000;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.proj-modal-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.proj-modal-tag {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+}
+
+.proj-modal-title-block h3 {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+.proj-modal-close {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid #000000;
+  border-radius: 50%;
+  background: transparent;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+  flex-shrink: 0;
+}
+.proj-modal-close:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+/* Contenu scrollable de la modale */
+.proj-modal-content {
+  overflow-y: auto;
+  padding: 2rem;
+  flex: 1;
+  font-family: "Raleway", sans-serif;
+}
+
+/* Styles du contenu injecté */
+.proj-modal-content h4 {
+  font-family: "Anton", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 1.8rem 0 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.proj-modal-content h4:first-child {
+  margin-top: 0;
+}
+
+.proj-modal-content p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0 0 1rem;
+}
+
+.proj-modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.proj-modal-content ul li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.proj-modal-content ul li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+  color: #000;
+}
+
+.proj-modal-content strong {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Bloc "Infos clés" */
+.proj-modal-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0 0 1.5rem;
+}
+
+.proj-modal-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.proj-modal-meta-item span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.proj-modal-meta-item strong {
+  font-family: "Anton", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #000;
+}
+
+/* Tags techno */
+.proj-modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.proj-modal-tags span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+/* Bloc journal de bord (AP 1.1) */
+.proj-modal-log {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin: 0 0 1.5rem;
+}
+
+.proj-modal-log-entry {
+  padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+}
+
+.proj-modal-log-date {
+  font-family: "Anton", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
+  color: #000;
+}
+
+.proj-modal-log-entry p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.proj-modal-log-entry p:last-child {
+  margin-bottom: 0;
+}
+
+/* Quand la modale est ouverte */
+body.proj-modal-open {
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .proj-modal {
+    padding: 0;
+  }
+  .proj-modal-inner {
+    max-height: 100vh;
+    height: 100vh;
+    border: none;
+  }
+  .proj-modal-header {
+    padding: 1rem 1.25rem;
+  }
+  .proj-modal-content {
+    padding: 1.5rem 1.25rem;
+  }
+  .proj-modal-meta {
+    grid-template-columns: 1fr 1fr;
+    padding: 1rem;
+  }
+}
+
+/* Le curseur custom est caché par html/body avec cursor:none.
+   Dans la modale, on remet un curseur visible pour pouvoir interagir. */
+.proj-modal,
+.proj-modal * {
+  cursor: auto;
+}
+
+.proj-modal-close,
+.proj-modal-bg,
+.proj-modal a {
+  cursor: pointer;
+}
+
+/* Le scroll doit fonctionner dans le content malgré Lenis.
+   On force le pointer-events et on autorise le scroll natif. */
+.proj-modal-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+/* Les watch-source sont des <a> cliquables — on force la couleur noire
+   pour le contenu, comme c'était le cas avant en <article> */
+a.watch-source,
+a.watch-source:visited {
+  color: #000000;
+  text-decoration: none;
+}
+
+a.watch-source:hover,
+a.watch-source:active {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+a.watch-source {
+  cursor: pointer;
+  /* Garder le display:flex du bloc original */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================================
+   STAGES — Liste des cartes
+   ============================================ */
+.stages-section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  padding: 8rem 3rem;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.stages-header {
+  max-width: 1300px;
+  margin: 0 auto 5rem;
+  position: relative;
+}
+
+.stages-label {
+  display: block;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 1rem;
+}
+
+.stages-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+}
+.stages-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.stages-hint {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.stages-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* ─── Carte stage ─── */
+.stage-card {
+  position: relative;
+  background: #ffffff;
+  color: #000000;
+  border: 1.5px solid #000000;
+  padding: 2.5rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  cursor: pointer;
+  transition:
+    background 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.stage-card--dark {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.stage-card:hover {
+  background: #000000;
+  color: #ffffff;
+  transform: translateY(-4px);
+}
+.stage-card--dark:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.stage-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.stage-num {
+  font-family: "Anton", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.stage-period {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.stage-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.stage-card-tag {
+  display: inline-block;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+.stage-card-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.75rem, 2.5vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.stage-card-loc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.stage-card-desc {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.55;
+  opacity: 0.85;
+  margin: 0.4rem 0 0;
+}
+
+.stage-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.stage-card-tags span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  border: 1px solid currentColor;
+  padding: 4px 10px;
+  border-radius: 999px;
+  opacity: 0.8;
+}
+
+.stage-card-arrow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid currentColor;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.stage-card-arrow svg {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stage-card:hover .stage-card-arrow svg {
+  transform: translateX(5px);
+}
+
+/* ============================================
+   MODALE STAGE — Plein écran
+   ============================================ */
+.stage-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stage-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stage-modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.stage-modal-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 1100px;
+  height: 100vh;
+  background: #ffffff;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: -20px 0 80px rgba(0, 0, 0, 0.3);
+}
+
+.stage-modal.is-open .stage-modal-panel {
+  transform: translateX(0);
+}
+
+/* Header sticky */
+.stage-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 2.5rem;
+  border-bottom: 1.5px solid #000000;
+  background: #ffffff;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.stage-modal-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: "Anton", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.stage-modal-breadcrumb-sep {
+  opacity: 0.3;
+}
+
+.stage-modal-nav {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.stage-modal-nav a {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.stage-modal-nav a:hover,
+.stage-modal-nav a.is-active {
+  color: #000;
+}
+
+.stage-modal-nav a.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: #000;
+}
+
+.stage-modal-close {
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid #000;
+  border-radius: 50%;
+  background: transparent;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+}
+.stage-modal-close:hover {
+  background: #000;
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Contenu scrollable */
+.stage-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  cursor: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ─── Hero du stage dans la modale ─── */
+.stage-hero {
+  padding: 4rem 4rem 3rem;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.stage-hero-meta {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.stage-hero-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+}
+.stage-hero-title em {
+  font-style: italic;
+  font-family: "Times New Roman", serif;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.stage-hero-subtitle {
+  font-family: "Raleway", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.75);
+  max-width: 50ch;
+  margin: 0;
+}
+
+/* Bloc d'infos clés (grille) */
+.stage-overview {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: #000;
   color: #fff;
 }
 
-.hero-meta-label {
-  font-size: 0.6rem;
-  font-family: monospace;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-@keyframes fadeInMeta {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Ligne de séparation décorative en bas du hero */
-.hero-divider {
-  position: absolute;
-  bottom: 6vh;
-  left: 50%;
-  transform: translateX(-50%);
+.stage-overview-item {
+  padding: 2rem 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  z-index: 3;
-  opacity: 0;
-  animation: fadeInBadge 0.8s ease forwards 3.8s;
-  white-space: nowrap;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.hero-divider-line {
-  display: block;
-  width: 80px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+.stage-overview-item:last-child {
+  border-right: none;
 }
 
-.hero-divider-text {
-  font-size: 0.6rem;
-  font-family: monospace;
+.stage-overview-item span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.58rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
 }
 
+.stage-overview-item strong {
+  font-family: "Anton", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+/* ─── Section bloc générique ─── */
+.stage-block {
+  padding: 4rem;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.stage-block:last-child {
+  border-bottom: none;
+}
+
+.stage-block-tag {
+  display: inline-block;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 1rem;
+}
+
+.stage-block-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0 0 2.5rem;
+}
+
+.stage-block p {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0 0 1rem;
+  max-width: 65ch;
+}
+
+.stage-block strong {
+  font-weight: 600;
+  color: #000;
+}
+
+/* ─── Timeline des semaines ─── */
+/* ─── Activités (remplace l'ancien journal jour par jour) ─── */
+.stage-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stage-activity {
+  border-top: 1.5px solid rgba(0, 0, 0, 0.1);
+  padding: 3rem 0;
+}
+
+.stage-activity:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.stage-activity:last-child {
+  padding-bottom: 0;
+}
+
+.stage-activity-header {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+.stage-activity-num {
+  font-family: "Anton", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.stage-activity-titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.stage-activity-title {
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #000;
+}
+
+.stage-activity-period {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.stage-activity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.5rem;
+  padding-left: 112px; /* aligné avec le titre */
+}
+
+.stage-activity-tags span {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.stage-activity-description {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0 0 1.25rem;
+  padding-left: 112px;
+  max-width: 75ch;
+}
+
+.stage-activity-description code,
+.stage-activity-bullets code,
+.stage-activity-difficulty code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: "Menlo", "Courier New", monospace;
+  font-size: 0.82em;
+  font-weight: 500;
+}
+
+.stage-activity-bullets {
+  list-style: none;
+  padding: 0 0 0 112px;
+  margin: 0 0 1.5rem;
+}
+
+.stage-activity-bullets li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0.55rem;
+}
+
+.stage-activity-bullets li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 700;
+  color: #000;
+}
+
+.stage-activity-difficulty {
+  margin-left: 112px;
+  padding: 1.25rem 1.5rem;
+  background: rgba(0, 0, 0, 0.025);
+  border-left: 3px solid #000;
+}
+
+.stage-activity-difficulty h6 {
+  font-family: "Anton", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  color: #000;
+}
+
+.stage-activity-difficulty p {
+  font-family: "Raleway", sans-serif;
+  font-size: 0.85rem !important;
+  line-height: 1.6;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0;
+  max-width: none;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .hero-meta {
-    display: none;
+  .stage-activity-header {
+    grid-template-columns: 50px 1fr;
+    gap: 1rem;
   }
-  .hero-badge {
-    top: 5.5rem;
+  .stage-activity-num {
+    font-size: 2.2rem;
   }
-  /* hero-divider (bottom: 6vh) et scroll-indicator (bottom: 40px) se superposent sur petit écran */
-  .hero-divider {
-    display: none;
-  }
-  .scroll-indicator {
-    bottom: 24px;
+  .stage-activity-tags,
+  .stage-activity-description,
+  .stage-activity-bullets,
+  .stage-activity-difficulty {
+    padding-left: 0;
+    margin-left: 0;
   }
 }

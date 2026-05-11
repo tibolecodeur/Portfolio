@@ -11,8 +11,20 @@
       href="https://fonts.googleapis.com/css?family=Poppins:900&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Scripts -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+      defer
+    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
       defer
@@ -27,48 +39,53 @@
     ></script>
     <script src="./assets/js/script.js" defer></script>
   </head>
-  <body class="no-scroll">
+  <body>
     <!-- Custom Cursor -->
     <div class="cursor"></div>
     <div class="cursor-follower"></div>
 
     <!-- Loading Screen -->
-    <div id="loading-screen">
-      <div class="loading-container">
-        <span class="loading-text">LOADING</span>
-        <span class="drop"></span>
+    <div class="loading-screen">
+      <div class="loader">
+        <div class="loader-1 bar"></div>
+        <div class="loader-2 bar"></div>
       </div>
-      <svg style="position: absolute; pointer-events: none">
-        <defs>
-          <filter id="gooey">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-            <feColorMatrix
-              in="blur"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -20"
-              result="gooey"
-            />
-            <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-    </div>
-
-    <!-- Transition Curtain -->
-    <div class="transition-curtain">
-      <div class="curtain-layer layer-1"></div>
-      <div class="curtain-layer layer-2"></div>
-      <div class="curtain-layer layer-3"></div>
-      <div class="curtain-layer layer-4"></div>
-      <div class="curtain-layer layer-5"></div>
+      <div class="counter">
+        <div class="counter-1 digit">
+          <div class="num">0</div>
+          <div class="num num1offset1">1</div>
+        </div>
+        <div class="counter-2 digit">
+          <div class="num">0</div>
+          <div class="num num1offset2">1</div>
+          <div class="num">2</div>
+          <div class="num">3</div>
+          <div class="num">4</div>
+          <div class="num">5</div>
+          <div class="num">6</div>
+          <div class="num">7</div>
+          <div class="num">8</div>
+          <div class="num">9</div>
+          <div class="num">0</div>
+        </div>
+        <div class="counter-3 digit">
+          <div class="num">0</div>
+          <div class="num">1</div>
+          <div class="num">2</div>
+          <div class="num">3</div>
+          <div class="num">4</div>
+          <div class="num">5</div>
+          <div class="num">6</div>
+          <div class="num">7</div>
+          <div class="num">8</div>
+          <div class="num">9</div>
+        </div>
+      </div>
     </div>
 
     <!-- Navigation Bubble Menu -->
     <nav class="bubble-menu absolute" aria-label="Main navigation">
-      <div
-        class="bubble logo-bubble"
-        aria-label="Logo"
-        style="background: #fff"
-      >
+      <div class="bubble logo-bubble" aria-label="Logo">
         <span class="logo-content">TB</span>
       </div>
       <button
@@ -77,68 +94,1488 @@
         id="menuToggle"
         aria-label="Toggle navigation"
         aria-pressed="false"
-        style="background: #fff"
       >
-        <span class="menu-line" style="background: #111"></span>
-        <span class="menu-line short" style="background: #111"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line short"></span>
       </button>
     </nav>
 
     <!-- Menu Overlay -->
+    <!-- Blur overlay derrière le menu -->
+    <div class="menu-blur-overlay" id="menuBlurOverlay"></div>
     <div class="bubble-menu-items absolute" id="menuOverlay" aria-hidden="true">
       <ul class="pill-list" role="menu" aria-label="Menu links"></ul>
     </div>
 
     <!-- Main Content -->
-    <main id="home-content" class="content-hidden">
+    <main id="home-content">
       <!-- Hero Section -->
-      <section class="hero">
-        <!-- Badge disponibilité — à remplacer selon ton statut -->
-        <div class="hero-badge">
-          <span class="hero-badge-dot"></span>
-          Available for freelance
-        </div>
-
-        <div class="hero-text-container">
-          <h1 class="name">THIBAULT<br />BREBION</h1>
-          <p class="subtitle">Creative Developer & Designer</p>
-        </div>
-
-        <!-- Méta-infos flottantes — à remplacer par tes vraies données -->
-        <div class="hero-meta hero-meta--left">
-          <div class="hero-meta-item">
-            <span class="hero-meta-value">3+</span>
-            <span class="hero-meta-label">Années d'expérience</span>
+      <section id="home" class="hero">
+        <div class="hero-pin">
+          <!-- Background blanc en arche -->
+          <div class="hero-bottom" aria-hidden="true">
+            <div class="hero-grid"></div>
           </div>
-          <div class="hero-meta-item">
-            <span class="hero-meta-value">20+</span>
-            <span class="hero-meta-label">Projets livrés</span>
+
+          <!-- Texte -->
+          <div class="hero-top">
+            <h1 class="name">
+              <span class="name-line">
+                <span class="name-word name-word--top">Thibault Brebion</span>
+              </span>
+            </h1>
+          </div>
+
+          <!-- Stickers -->
+          <div class="hero-stickers">
+            <!-- 1. Web & logiciel (icône + titre + sous-titre) -->
+            <div class="sticker sticker--design-strategy">
+              <div class="sticker-icon"><span></span><span></span></div>
+              <div class="sticker-title">WEB &amp;<br />LOGICIEL</div>
+              <div class="sticker-sub">
+                JAVA · PHP<br />SYMFONY → ANGULAR<br />&amp; ANDROID
+              </div>
+            </div>
+
+            <!-- 2. Full-stack (style ecomm avec WWW.) -->
+            <!-- 2. Full-stack curieux d'IA -->
+            <div class="sticker sticker--ecomm">
+              <span class="sticker-www">WWW.</span>
+              <div class="sticker-ecomm-title">
+                FULL—STACK<br />⊙ &amp; AI—CURIOUS
+              </div>
+            </div>
+
+            <!-- 3. BTS SIO (bloc texte centré) -->
+            <div class="sticker sticker--ux">BTS<br />SIO—SLAM<br />2026©</div>
+
+            <!-- 4. Stack scripting (3 lignes type motion design) -->
+            <div class="sticker sticker--motion">
+              <div class="sticker-motion-line">PY ⎯⎯ THON &amp;</div>
+              <div class="sticker-motion-line">POWERSHELL</div>
+              <div class="sticker-motion-line">→ SCRIPTING</div>
+            </div>
+
+            <!-- 5. Available (style branding avec étoile) -->
+            <div class="sticker sticker--branding">
+              <span class="sticker-star">✻</span>
+              AVAILABLE<br />FOR ALTERNANCE<br />©'26
+            </div>
+
+            <!-- 6. Bases de données (cercle rotatif) -->
+            <div class="sticker sticker--usability">
+              <svg viewBox="0 0 100 100" class="sticker-circle-text">
+                <defs>
+                  <path
+                    id="circlePath"
+                    d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                  />
+                </defs>
+                <text font-size="11" font-weight="700" letter-spacing="2.5">
+                  <textPath href="#circlePath">
+                    SQL · MYSQL · MCD ✦ SQL SERVER ✦
+                  </textPath>
+                </text>
+              </svg>
+              <div class="sticker-usability-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="22"
+                  height="22"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M3 5v14a9 3 0 0 0 18 0V5" />
+                  <path d="M3 12a9 3 0 0 0 18 0" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ============================================
+           PARCOURS — Sticky timeline avec année dynamique
+           ============================================ -->
+      <section id="journey" class="journey-section">
+        <div class="journey-container">
+          <!-- LEFT : sticky panel avec titre + année active -->
+          <aside class="journey-left">
+            <div class="journey-left-inner">
+              <span class="journey-label">/ JR—001</span>
+              <h2 class="journey-title">
+                Parcours<br /><em>&amp; expériences</em>
+              </h2>
+              <div class="journey-year-display">
+                <span class="journey-year-static">→</span>
+                <span class="journey-year-active" data-year-display>2020</span>
+              </div>
+              <div class="journey-progress">
+                <div class="journey-progress-bar" data-progress-bar></div>
+              </div>
+              <p class="journey-counter">
+                <span data-counter-current>01</span>
+                <span class="journey-counter-sep">/</span>
+                <span data-counter-total>06</span>
+              </p>
+            </div>
+          </aside>
+
+          <!-- RIGHT : la liste des cartes qui défile -->
+          <div class="journey-right">
+            <article class="journey-card" data-year="2021 — 2024">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">FORMATION</span>
+                <span class="journey-card-period">2021 — 2024</span>
+              </div>
+              <h3 class="journey-card-title">Lycée</h3>
+              <p class="journey-card-place">Baccalauréat général</p>
+              <p class="journey-card-desc">
+                Spécialités Mathématiques &amp; NSI. Première découverte du code
+                et de la logique algorithmique.
+              </p>
+              <div class="journey-card-tags">
+                <span>Maths</span>
+                <span>NSI</span>
+                <span>Python</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2024 — 2026">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">FORMATION</span>
+                <span class="journey-card-period">2024 — 2026</span>
+              </div>
+              <h3 class="journey-card-title">BTS SIO</h3>
+              <p class="journey-card-place">Option SLAM</p>
+              <p class="journey-card-desc">
+                Solutions Logicielles &amp; Applications Métiers. Programmation,
+                bases de données, gestion de projet et architecture logicielle.
+              </p>
+              <div class="journey-card-tags">
+                <span>Java</span>
+                <span>PHP</span>
+                <span>SQL</span>
+                <span>Symfony</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="Mai — Juin 2025">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">EXPÉRIENCE</span>
+                <span class="journey-card-period">Mai — Juin 2025</span>
+              </div>
+              <h3 class="journey-card-title">Stage 1</h3>
+              <p class="journey-card-place">Hygiène Expert</p>
+              <p class="journey-card-desc">
+                Première immersion en milieu professionnel. Découverte des
+                méthodologies de travail en équipe.
+              </p>
+              <div class="journey-card-tags">
+                <span>Web</span>
+                <span>Équipe</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="Janv — Mars 2026">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">EXPÉRIENCE</span>
+                <span class="journey-card-period">Janv — Fevr 2026</span>
+              </div>
+              <h3 class="journey-card-title">Stage 2</h3>
+              <p class="journey-card-place">BlackFox</p>
+              <p class="journey-card-desc">
+                Projet technique sur applicatif métier. Conception,
+                développement et déploiement.
+              </p>
+              <div class="journey-card-tags">
+                <span>Backend</span>
+                <span>API</span>
+                <span>MySQL</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2026+">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">À VENIR</span>
+                <span class="journey-card-period">2026+</span>
+              </div>
+              <h3 class="journey-card-title">
+                Licence Pro - Développement Web & Applications Mobiles
+              </h3>
+              <p class="journey-card-place">ESUPEC</p>
+              <p class="journey-card-desc">
+                Spécialisation en applications web, mobile et architecture
+                logicielle. Approfondissement de Java, Symfony et Android.
+              </p>
+              <div class="journey-card-tags">
+                <span>Android</span>
+                <span>Java</span>
+                <span>Symfony</span>
+                <span>REST</span>
+              </div>
+            </article>
+
+            <article class="journey-card" data-year="2026 — 2027">
+              <div class="journey-card-meta">
+                <span class="journey-card-tag">À VENIR</span>
+                <span class="journey-card-period">2026 — 2027</span>
+              </div>
+              <h3 class="journey-card-title">Alternance</h3>
+              <p class="journey-card-place">En alternance · Disponible</p>
+              <p class="journey-card-desc">
+                Recherche d'une alternance pour valider une Licence 3
+                Informatique. Profil développeur Web &amp; Logiciel, ouvert aux
+                projets autour de l'intelligence artificielle.
+              </p>
+              <div class="journey-card-tags">
+                <span>Disponible</span>
+                <span>Alternance</span>
+                <span>IA</span>
+                <span>Dev</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <!-- ============================================
+           SKILLS — Circular Gallery (copié-collé)
+           ============================================ -->
+      <section id="skills" class="skills-circular">
+        <nav class="cg-nav">
+          <a href="#"></a>
+        </nav>
+
+        <div class="cg-container">
+          <!-- Texte côté gauche -->
+          <div class="cg-side cg-side--left">
+            <span class="cg-side-label">Stack</span>
+            <span class="cg-side-label">Technique</span>
+          </div>
+
+          <div class="cg-gallery-container">
+            <!-- Texte au centre du cercle -->
+            <div class="cg-center-text">
+              <span class="cg-center-label">Mes</span>
+              <span class="cg-center-label cg-center-label--big">Skills</span>
+              <span class="cg-center-label cg-center-label--sub"
+                >× 20 compétences</span
+              >
+            </div>
+            <div class="cg-gallery"></div>
+          </div>
+
+          <!-- Texte côté droit -->
+          <div class="cg-side cg-side--right">
+            <span class="cg-side-label">Cliquez</span>
+            <span class="cg-side-label">→ Détail</span>
+          </div>
+
+          <div class="cg-title-container"></div>
+        </div>
+
+        <footer class="cg-footer">
+          <p>/ SK—001</p>
+        </footer>
+      </section>
+      <!-- ============================================
+           CERTIFICATIONS & FORMATIONS — Cartes flip 3D
+           ============================================ -->
+      <section id="certifications" class="certs-section">
+        <!-- Header éditorial -->
+        <div class="certs-header">
+          <span class="certs-label">/ CT—001</span>
+          <h2 class="certs-title">
+            Certifications<br /><em>&amp; formations.</em>
+          </h2>
+          <p class="certs-hint">Survolez une carte pour voir les détails</p>
+          <p class="certs-counter">
+            <span>01</span>
+            <span class="certs-counter-sep">/</span>
+            <span>07</span>
+          </p>
+        </div>
+
+        <!-- Marquee défilant en arrière-plan (texte qui défile sans fin) -->
+        <div class="certs-marquee" aria-hidden="true">
+          <div class="certs-marquee-track">
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
+            <span>CERTIFIED</span><span>✦</span> <span>FORMED</span
+            ><span>✦</span> <span>SKILLED</span><span>✦</span>
           </div>
         </div>
 
-        <div class="hero-meta hero-meta--right">
-          <div class="hero-meta-item">
-            <span class="hero-meta-value">Paris</span>
-            <span class="hero-meta-label">Basé à — [Ville]</span>
-          </div>
-          <div class="hero-meta-item">
-            <span class="hero-meta-value">FR / EN</span>
-            <span class="hero-meta-label">Langues</span>
-          </div>
+        <!-- Grille de cartes flip -->
+        <!-- Grille de cartes flip -->
+        <div class="certs-grid">
+          <!-- Carte 1 — C++ -->
+          <article class="cert-card" data-cert-num="01">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath01"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath01">
+                        CERTIFICATION ✦ C++ ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">+</div>
+                </div>
+                <div class="cert-num">01</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">C++</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Initiation aux fondamentaux du C++, langage performant et
+                  largement utilisé. Maîtrise des notions de base et avancées de
+                  la syntaxe, puis approche de la programmation orientée objet
+                  pour des programmes structurés et évolutifs.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/1894236-apprenez-a-programmer-en-c"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 2 — JavaScript -->
+          <article class="cert-card cert-card--dark" data-cert-num="02">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath02"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath02">
+                        FRONTEND ✦ JAVASCRIPT ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">JS</div>
+                </div>
+                <div class="cert-num">02</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">JavaScript</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Maîtrise de la syntaxe et de la logique fondamentale de
+                  JavaScript : variables, structures de contrôle, fonctions.
+                  Manipulation du DOM, gestion des événements et validation de
+                  formulaire côté client pour des sites web dynamiques.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/7696886-apprenez-a-programmer-avec-javascript"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 3 — Wordpress -->
+          <article class="cert-card" data-cert-num="03">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath03"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath03">CMS ✦ WORDPRESS ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">W</div>
+                </div>
+                <div class="cert-num">03</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">Wordpress</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Création et administration d'un site WordPress, de
+                  l'installation à la mise en ligne. Personnalisation via thèmes
+                  et plugins, gestion des utilisateurs, intégration de contenus
+                  et optimisation pour le référencement.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/8266636-creez-votre-premier-site-avec-wordpress-6"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 4 — PHP/MySQL -->
+          <article class="cert-card cert-card--dark" data-cert-num="04">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath04"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath04">
+                        BACKEND ✦ PHP · MYSQL ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">⬢</div>
+                </div>
+                <div class="cert-num">04</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">PHP / MySQL</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Fondamentaux du développement web back-end avec PHP et MySQL :
+                  structures, fonctions, manipulation de formulaires, sessions.
+                  Conception d'une base de données relationnelle et exécution de
+                  requêtes SQL pour des sites dynamiques.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/918836-concevez-votre-site-web-avec-php-et-mysql"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 5 — MVC/PHP -->
+          <article class="cert-card" data-cert-num="05">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath05"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath05">
+                        ARCHITECTURE ✦ MVC ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">◆</div>
+                </div>
+                <div class="cert-num">05</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">MVC / PHP</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Découverte du pattern Modèle-Vue-Contrôleur en PHP pour
+                  structurer une application web maintenable. Séparation des
+                  responsabilités, organisation du code en couches et mise en
+                  place d'une architecture évolutive et testable.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/4670706-adoptez-une-architecture-mvc-en-php"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 6 — React -->
+          <article class="cert-card cert-card--dark" data-cert-num="06">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath06"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath06">FRONTEND ✦ REACT ✦</textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">⚛</div>
+                </div>
+                <div class="cert-num">06</div>
+                <div class="cert-tag">FORMATION</div>
+                <h3 class="cert-name">React</h3>
+                <p class="cert-issuer">OpenClassrooms</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Développement d'applications web modernes avec React :
+                  composants fonctionnels, gestion de l'état avec les Hooks,
+                  liaison de données, routing et architecture en composants
+                  réutilisables pour des interfaces dynamiques.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Type</span><strong>Cours</strong></div>
+                  <div><span>Source</span><strong>OpenClassrooms</strong></div>
+                </div>
+                <a
+                  href="https://openclassrooms.com/fr/courses/7008001-debutez-avec-react"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le cours →</a
+                >
+              </div>
+            </div>
+          </article>
+
+          <!-- Carte 7 — Projet Voltaire (NOUVELLE) -->
+          <article class="cert-card" data-cert-num="07">
+            <div class="cert-card-inner">
+              <div class="cert-face cert-face--front">
+                <div class="cert-stamp" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" class="cert-stamp-text">
+                    <defs>
+                      <path
+                        id="certPath07"
+                        d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                      />
+                    </defs>
+                    <text font-size="11" font-weight="700" letter-spacing="3">
+                      <textPath href="#certPath07">
+                        CERTIFIÉ ✦ SCORE 615 ✦
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div class="cert-stamp-icon">✓</div>
+                </div>
+                <div class="cert-num">07</div>
+                <div class="cert-tag">CERTIFICATION</div>
+                <h3 class="cert-name">Voltaire</h3>
+                <p class="cert-issuer">Projet Voltaire</p>
+                <div class="cert-arrow">→</div>
+              </div>
+              <div class="cert-face cert-face--back">
+                <div class="cert-back-tag">DÉTAILS</div>
+                <p class="cert-back-desc">
+                  Certification officielle en orthographe et expression écrite
+                  en français. Référence reconnue par les recruteurs, elle
+                  atteste d'un niveau professionnel en maîtrise de la langue
+                  écrite. Attestation valable 4 ans.
+                </p>
+                <div class="cert-back-meta">
+                  <div><span>Score</span><strong>615/1000</strong></div>
+                  <div><span>Code</span><strong>LDWDXU3</strong></div>
+                </div>
+                <a
+                  href="https://mon.certificat-voltaire.fr/verification-certificat"
+                  target="_blank"
+                  rel="noopener"
+                  class="cert-back-link"
+                  >Voir le site →</a
+                >
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <!-- ============================================
+           PROJETS — Liste avec thumbnail au curseur
+           ============================================ -->
+      <section class="proj-section" id="projets">
+        <div class="proj-header">
+          <span class="proj-label">/ PR—001</span>
+          <h2 class="proj-title">Projets<br /><em>&amp; réalisations.</em></h2>
+          <p class="proj-hint">Cliquez sur un projet pour voir les détails</p>
         </div>
 
-        <!-- Ligne de séparation décorative -->
-        <div class="hero-divider">
-          <span class="hero-divider-line"></span>
-          <span class="hero-divider-text">EST. 2022</span>
-          <span class="hero-divider-line"></span>
+        <div class="proj-index">
+          <div class="proj-index__container">
+            <div class="proj-projects">
+              <!-- AP 1.1 — Infrastructure réseau -->
+              <div class="proj-project" data-project="ap11">
+                <div class="proj-project-left">
+                  <span class="proj-num">AP 1.1</span>
+                  <h2>Infrastructure réseau</h2>
+                </div>
+                <p>SISR · 2024 · Server 2019 + Debian</p>
+              </div>
+
+              <!-- AP 1.2 — Service à la personne -->
+              <div class="proj-project" data-project="ap12">
+                <div class="proj-project-left">
+                  <span class="proj-num">AP 1.2</span>
+                  <h2>Service à la personne</h2>
+                </div>
+                <p>SLAM · 2025 · PHP · Bootstrap · MySQL</p>
+              </div>
+
+              <!-- AP 2 — TELLIS Collecte des déchets -->
+              <div class="proj-project" data-project="ap2">
+                <div class="proj-project-left">
+                  <span class="proj-num">AP 2</span>
+                  <h2>Collecte des déchets</h2>
+                </div>
+                <p>SLAM · 2025 · PHP · MySQL · IONOS</p>
+              </div>
+
+              <!-- AP 3 — OXAM Port de La Rochelle -->
+              <div class="proj-project" data-project="ap3">
+                <div class="proj-project-left">
+                  <span class="proj-num">AP 3</span>
+                  <h2>Gestion d'escales portuaires</h2>
+                </div>
+                <p>SLAM · 2025 · PHP MVC · MySQL · Agile</p>
+              </div>
+
+              <!-- AP 4 — Zoucolis Mondial Relay -->
+              <div class="proj-project" data-project="ap4">
+                <div class="proj-project-left">
+                  <span class="proj-num">AP 4</span>
+                  <h2>Zoucolis · Mondial Relay</h2>
+                </div>
+                <p>SLAM · 2026 · Symfony 7 · Android · API REST</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           STAGES — Expériences professionnelles
+           ============================================ -->
+      <section class="stages-section" id="stages">
+        <div class="stages-header">
+          <span class="stages-label">/ ST—001</span>
+          <h2 class="stages-title">
+            Expériences<br /><em>professionnelles.</em>
+          </h2>
+          <p class="stages-hint">
+            Cliquez sur un stage pour découvrir le rapport complet
+          </p>
         </div>
 
-        <div class="scroll-indicator">
-          <span>SCROLL</span>
-          <div class="line"></div>
+        <div class="stages-grid">
+          <!-- Stage 1 — Hygiène Expert -->
+          <article class="stage-card" data-stage="hygiene-expert">
+            <div class="stage-card-meta">
+              <span class="stage-num">01</span>
+              <span class="stage-period">Mai — Juin 2025</span>
+            </div>
+            <div class="stage-card-body">
+              <span class="stage-card-tag">DÉVELOPPEMENT WEB</span>
+              <h3 class="stage-card-title">Hygiène Expert</h3>
+              <p class="stage-card-loc">Les Herbiers (85500) · 6 semaines</p>
+              <p class="stage-card-desc">
+                Éditeur d'applications web pour la gestion de l'hygiène.
+                Implémentation de A à Z de fonctionnalités sur une application
+                Angular — MCD, BDD, tickets, back-end, front-end.
+              </p>
+              <div class="stage-card-tags">
+                <span>Angular</span>
+                <span>C#</span>
+                <span>TypeScript</span>
+                <span>PostgreSQL</span>
+                <span>Scrum</span>
+              </div>
+            </div>
+            <div class="stage-card-arrow">
+              <span>Voir le rapport</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </article>
+
+          <!-- Stage 2 — BlackFox -->
+          <article class="stage-card stage-card--dark" data-stage="blackfox">
+            <div class="stage-card-meta">
+              <span class="stage-num">02</span>
+              <span class="stage-period">Janvier 2026</span>
+            </div>
+            <div class="stage-card-body">
+              <span class="stage-card-tag">DATA &amp; AUTOMATISATION</span>
+              <h3 class="stage-card-title">BlackFox</h3>
+              <p class="stage-card-loc">Sèvremoine (49230) · 6 semaines</p>
+              <p class="stage-card-desc">
+                Grossiste en bottes caoutchouc. Automatisation des flux de
+                données entre ERP et plateforme PDM, middleware WSO2/Talend,
+                scripts ETL Python, requêtage SQL Server, déploiement.
+              </p>
+              <div class="stage-card-tags">
+                <span>Python</span>
+                <span>SQL Server</span>
+                <span>PowerShell</span>
+                <span>ETL</span>
+                <span>WSO2</span>
+              </div>
+            </div>
+            <div class="stage-card-arrow">
+              <span>Voir le rapport</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============================================
+           MODALE STAGE — Détail complet plein écran
+           ============================================ -->
+      <div class="stage-modal" id="stageModal" aria-hidden="true">
+        <div class="stage-modal-bg" data-stage-close></div>
+        <div class="stage-modal-panel">
+          <!-- Header sticky : navigation interne + fermeture -->
+          <div class="stage-modal-header">
+            <div class="stage-modal-breadcrumb">
+              <span data-stage-breadcrumb-num>01</span>
+              <span class="stage-modal-breadcrumb-sep">/</span>
+              <span data-stage-breadcrumb-name>Hygiène Expert</span>
+            </div>
+            <nav class="stage-modal-nav" data-stage-nav>
+              <!-- Liens d'ancre injectés par JS -->
+            </nav>
+            <button
+              type="button"
+              class="stage-modal-close"
+              data-stage-close
+              aria-label="Fermer"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M3 3l12 12M15 3L3 15"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Contenu scrollable injecté par JS -->
+          <div class="stage-modal-content" data-stage-content></div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           MODALE PROJETS — Détail au clic
+           ============================================ -->
+      <div class="proj-modal" id="projModal" aria-hidden="true">
+        <div class="proj-modal-bg" data-proj-close></div>
+        <div class="proj-modal-inner">
+          <div class="proj-modal-header">
+            <div class="proj-modal-title-block">
+              <span class="proj-modal-tag" data-proj-tag>/ AP — 1.1</span>
+              <h3 data-proj-title>Infrastructure réseau</h3>
+            </div>
+            <button
+              type="button"
+              class="proj-modal-close"
+              data-proj-close
+              aria-label="Fermer"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path
+                  d="M3 3l12 12M15 3L3 15"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="proj-modal-content" data-proj-content>
+            <!-- Le contenu est injecté ici par le JS selon le projet cliqué -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           VEILLE TECHNOLOGIQUE — IA Agents autonomes
+           ============================================ -->
+
+      <!-- 1. INTRO : titre + métadonnées de veille -->
+      <section id="veille" class="watch-intro">
+        <div class="watch-intro-inner">
+          <span class="watch-label">/ VW—001 · 2025–2026</span>
+          <h2 class="watch-intro-title">Veille<br /><em>technologique.</em></h2>
+          <div class="watch-intro-meta">
+            <div>
+              <span>Sujet</span>
+              <strong>Agents IA autonomes</strong>
+            </div>
+            <div>
+              <span>Méthode</span>
+              <strong>Google Alert · Pull</strong>
+            </div>
+            <div>
+              <span>Période</span>
+              <strong>2024 → 2026</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. NEW : ticker/marquee horizontal des mots-clés -->
+      <section class="watch-ticker">
+        <div class="watch-ticker-track">
+          <span>AGENTIC AI</span><span class="dot">●</span>
+          <span>AI ALIGNMENT</span><span class="dot">●</span>
+          <span>DÉSALIGNEMENT</span><span class="dot">●</span>
+          <span>AUTONOMIE</span><span class="dot">●</span>
+          <span>OPENAI AGENT</span><span class="dot">●</span>
+          <span>GPT-5.4</span><span class="dot">●</span> <span>AGENTIC AI</span
+          ><span class="dot">●</span> <span>AI ALIGNMENT</span
+          ><span class="dot">●</span> <span>DÉSALIGNEMENT</span
+          ><span class="dot">●</span> <span>AUTONOMIE</span
+          ><span class="dot">●</span> <span>OPENAI AGENT</span
+          ><span class="dot">●</span> <span>GPT-5.4</span
+          ><span class="dot">●</span>
+        </div>
+      </section>
+
+      <!-- 3. ABOUT : 1ère phrase clé qui se révèle au scroll -->
+      <section class="watch-about">
+        <h1 class="watch-animate-text">
+          Le tournant de 2026 : les modèles d'IA quittent leur rôle de chatbots
+          passifs pour devenir des agents autonomes, capables d'agir, de décider
+          et d'exécuter des tâches sur un système informatique réel.
+        </h1>
+      </section>
+
+      <!-- 4. ARTICLES : grille de sources avec reveal au scroll -->
+      <section class="watch-sources">
+        <div class="watch-sources-header">
+          <span class="watch-sources-tag">/ ARTICLES</span>
+          <h3 class="watch-sources-title">Sources analysées</h3>
+        </div>
+
+        <div class="watch-sources-grid">
+          <a
+            class="watch-source"
+            href="https://www.theverge.com/ai-artificial-intelligence/889926/openai-gpt-5-4-model-release-ai-agents"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-num="01"
+          >
+            <div class="watch-source-num">01</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">The Verge</span>
+              <span class="watch-source-date">Mar 5, 2026</span>
+            </div>
+            <h4 class="watch-source-title">
+              OpenAI's new GPT-5.4 model is a big step toward autonomous agents
+            </h4>
+            <p class="watch-source-desc">
+              OpenAI change de stratégie : au lieu d'augmenter la puissance
+              brute des modèles, l'entreprise mise sur des agents capables
+              d'agir de manière autonome — exécuter des tâches, utiliser des
+              logiciels. La transition s'appuie sur le raisonnement de la série
+              "o1".
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </a>
+
+          <a
+            class="watch-source"
+            href="https://www.technologyreview.com/2025/08/06/1121193/five-ways-that-ai-is-learning-to-improve-itself/"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-num="02"
+          >
+            <div class="watch-source-num">02</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">MIT Technology Review</span>
+              <span class="watch-source-date">Aug 6, 2025</span>
+            </div>
+            <h4 class="watch-source-title">
+              Five ways that AI is learning to improve itself
+            </h4>
+            <p class="watch-source-desc">
+              Face à la pénurie de données humaines, les chercheurs développent
+              cinq techniques d'auto-amélioration : données synthétiques,
+              boucles de raisonnement interne, auto-correction, apprentissage
+              par renforcement amélioré et IA optimisant ses propres
+              architectures.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </a>
+
+          <a
+            class="watch-source"
+            href="https://www.anthropic.com/research/agentic-misalignment"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-num="03"
+          >
+            <div class="watch-source-num">03</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">Anthropic</span>
+              <span class="watch-source-date">Jun 20, 2025</span>
+            </div>
+            <h4 class="watch-source-title">
+              Agentic Misalignment: How LLMs could be insider threats
+            </h4>
+            <p class="watch-source-desc">
+              Sur 16 modèles testés en simulation d'entreprise, des IA ont
+              recouru au chantage ou à l'espionnage industriel pour éviter
+              d'être désactivées. Le désalignement agentique apparaît comme un
+              calcul stratégique de contournement des filtres éthiques.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </a>
+
+          <a
+            class="watch-source"
+            href="https://futureoflife.org/open-letter/pause-giant-ai-experiments/"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-num="04"
+          >
+            <div class="watch-source-num">04</div>
+            <div class="watch-source-meta">
+              <span class="watch-source-pub">Future of Life</span>
+              <span class="watch-source-date">Mar 22, 2023</span>
+            </div>
+            <h4 class="watch-source-title">
+              Pause Giant AI Experiments: An Open Letter
+            </h4>
+            <p class="watch-source-desc">
+              Lettre ouverte signée par Elon Musk et Yoshua Bengio appelant à
+              une pause de 6 mois dans l'entraînement des modèles plus puissants
+              que GPT-4. Risques évoqués : désinformation de masse,
+              automatisation des emplois, perte de contrôle sur la civilisation.
+            </p>
+            <div class="watch-source-arrow">→</div>
+          </a>
+        </div>
+      </section>
+
+      <!-- 5. SERVICES : 3 bandes qui se croisent puis pin + scale -->
+      <section class="watch-services">
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--top">
+            <span>AUTONOMIE</span>
+            <span>·</span>
+            <span>RAISONNEMENT</span>
+            <span>·</span>
+            <span>AGENTS</span>
+            <span>·</span>
+            <span>AUTONOMIE</span>
+            <span>·</span>
+            <span>RAISONNEMENT</span>
+          </div>
+        </div>
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--mid">
+            <span>DÉSALIGNEMENT</span>
+            <span>·</span>
+            <span>AGENTIC IA</span>
+            <span>·</span>
+            <span>RISQUES</span>
+            <span>·</span>
+            <span>DÉSALIGNEMENT</span>
+          </div>
+        </div>
+        <div class="watch-services-header">
+          <div class="watch-banner watch-banner--bot">
+            <span>SÉCURITÉ</span>
+            <span>·</span>
+            <span>ALIGNMENT</span>
+            <span>·</span>
+            <span>CONTRÔLE</span>
+            <span>·</span>
+            <span>SÉCURITÉ</span>
+            <span>·</span>
+            <span>ALIGNMENT</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. SERVICES-COPY : 2ème phrase clé -->
+      <section class="watch-services-copy">
+        <h1 class="watch-animate-text">
+          L'autonomie croissante fait émerger des comportements inédits :
+          chantage, espionnage, contournement éthique. La supervision et la
+          gestion fine des privilèges deviennent un enjeu critique pour
+          l'administrateur système.
+        </h1>
+      </section>
+
+      <!-- 7. NEW : Risques en damier (chiffres + libellé qui se révèlent) -->
+      <section class="watch-risks">
+        <div class="watch-risks-header">
+          <span class="watch-risks-tag">/ ENJEUX</span>
+          <h3 class="watch-risks-title">
+            Trois risques<br /><em>identifiés.</em>
+          </h3>
+        </div>
+
+        <div class="watch-risks-grid">
+          <div class="watch-risk" data-num="01">
+            <div class="watch-risk-num">01</div>
+            <h4 class="watch-risk-name">Comportements initiés</h4>
+            <p class="watch-risk-desc">
+              Des IA recourant au chantage ou à l'espionnage industriel pour
+              éviter d'être désactivées ou remplacées.
+            </p>
+          </div>
+
+          <div class="watch-risk" data-num="02">
+            <div class="watch-risk-num">02</div>
+            <h4 class="watch-risk-name">Contournement éthique</h4>
+            <p class="watch-risk-desc">
+              Par calcul stratégique, un agent peut percevoir ses filtres
+              éthiques comme des obstacles à sa mission.
+            </p>
+          </div>
+
+          <div class="watch-risk" data-num="03">
+            <div class="watch-risk-num">03</div>
+            <h4 class="watch-risk-name">Menaces sociétales</h4>
+            <p class="watch-risk-desc">
+              Désinformation de masse, automatisation des emplois, perte de
+              contrôle globale sur la civilisation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. OUTRO : ouverture pour le profil SIO -->
+      <section class="watch-outro">
+        <div class="watch-outro-grid">
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">SIO · ENJEU 1</span>
+            <ul class="watch-outro-list">
+              <li>Gestion des privilèges</li>
+              <li>Limitation des droits</li>
+              <li>Sandboxing</li>
+            </ul>
+          </div>
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">SIO · ENJEU 2</span>
+            <ul class="watch-outro-list">
+              <li>Supervision continue</li>
+              <li>Audit indépendant</li>
+              <li>Standards vérifiables</li>
+            </ul>
+          </div>
+          <div class="watch-outro-col">
+            <span class="watch-outro-tag">À LIRE</span>
+            <ul class="watch-outro-list">
+              <li>Anthropic Research</li>
+              <li>MIT Tech Review</li>
+              <li>Future of Life</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <!-- ============================================
+           TABLEAU DE SYNTHÈSE — Visualisation in-page
+           ============================================ -->
+      <section id="synth" class="synth-section">
+        <!-- Header éditorial cohérent -->
+        <div class="synth-header">
+          <span class="synth-label">/ TS—001</span>
+          <h2 class="synth-title">Tableau<br /><em>de synthèse.</em></h2>
+          <p class="synth-hint">BTS SIO — Session 2025</p>
+        </div>
+
+        <!-- Aperçu : bloc cliquable qui ouvre la modale -->
+        <div class="synth-preview">
+          <div class="synth-preview-card" id="synthOpenBtn">
+            <div class="synth-preview-meta">
+              <span class="synth-preview-tag">DOCUMENT OFFICIEL</span>
+              <span class="synth-preview-ext">.XLSX</span>
+            </div>
+            <h3 class="synth-preview-name">
+              Brebion Thibault<br />Tableau de synthèse
+            </h3>
+            <p class="synth-preview-desc">
+              Compétences professionnelles mises en œuvre — réalisations,
+              projets, stages et auto-évaluation niveau B1 / B2.
+            </p>
+
+            <!-- Footer du bloc avec actions -->
+            <div class="synth-preview-actions">
+              <button type="button" class="synth-btn synth-btn--primary">
+                <span>Visualiser</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M2 2h4M2 2v4M12 12H8M12 12V8"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+
+              <a
+                href="assets/files/Tableau_De_Synthese.xlsx"
+                download
+                class="synth-btn synth-btn--ghost"
+                onclick="event.stopPropagation()"
+              >
+                <span>Télécharger</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M7 2v8M3 7l4 4 4-4M2 13h10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Grosse balise typographique en arrière-plan -->
+          <div class="synth-bg-text" aria-hidden="true">SYNTHESIS</div>
+        </div>
+      </section>
+
+      <!-- ============================================
+           MODALE PLEIN ÉCRAN — Visualisation du xlsx
+           ============================================ -->
+      <div class="synth-modal" id="synthModal" aria-hidden="true">
+        <div class="synth-modal-bg" data-synth-close></div>
+        <div class="synth-modal-inner">
+          <div class="synth-modal-header">
+            <div class="synth-modal-title">
+              <span class="synth-modal-tag">/ TS—001</span>
+              <h3>Tableau de synthèse — Brebion Thibault</h3>
+            </div>
+            <div class="synth-modal-actions">
+              <a
+                href="assets/files/Tableau_De_Synthese.xlsx"
+                download
+                class="synth-modal-btn"
+                aria-label="Télécharger le fichier"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M8 2v9M4 8l4 4 4-4M3 14h10"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span>Télécharger</span>
+              </a>
+              <button
+                type="button"
+                class="synth-modal-close"
+                data-synth-close
+                aria-label="Fermer"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path
+                    d="M3 3l12 12M15 3L3 15"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- L'iframe Office Online qui rend le xlsx interactif -->
+          <!-- Container où SheetJS va injecter le tableau HTML -->
+          <div class="synth-modal-frame-wrap">
+            <iframe
+              id="synthFrame"
+              class="synth-modal-frame"
+              src="https://docs.google.com/spreadsheets/d/1qrParuTXo9oM5wZF_aVZGQ8szoeZ8Kgp/preview"
+              title="Tableau de synthèse"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================
+           CONTACT — Let's talk
+           ============================================ -->
+      <section class="contact-section" id="contact">
+        <div class="contact-container">
+          <!-- COLONNE GAUCHE : titre + intro + formulaire -->
+          <div class="contact-left">
+            <h2 class="contact-title">Let's <em>talk</em></h2>
+
+            <p class="contact-intro">
+              À la recherche d'une alternance pour 2026-2027 en développement
+              Web &amp; Logiciel, avec un intérêt marqué pour l'intelligence
+              artificielle. Pour un projet, une opportunité ou un échange,
+              contactez-moi directement — je réponds rapidement.
+            </p>
+
+            <form class="contact-form" id="contactForm" novalidate>
+              <div class="contact-field">
+                <label for="contactName">Your Name</label>
+                <input
+                  type="text"
+                  id="contactName"
+                  name="name"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="contact-field">
+                <label for="contactEmail">Your Email</label>
+                <input
+                  type="email"
+                  id="contactEmail"
+                  name="email"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="contact-field">
+                <label for="contactMessage">Your Message</label>
+                <textarea
+                  id="contactMessage"
+                  name="message"
+                  rows="5"
+                  placeholder="Type your message here..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="contact-submit">SEND MESSAGE</button>
+            </form>
+          </div>
+
+          <!-- COLONNE DROITE : photo + blob -->
+          <div class="contact-right">
+            <!-- Réseaux sociaux en haut à droite -->
+            <ul class="contact-socials" aria-label="Réseaux sociaux">
+              <li>
+                <a
+                  href="https://github.com/tibolecodeur"
+                  aria-label="GitHub"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.27-5.23-5.66 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.17.91-.25 1.89-.38 2.86-.38.97 0 1.95.13 2.86.38 2.18-1.48 3.15-1.17 3.15-1.17.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.4-2.69 5.36-5.25 5.65.41.36.78 1.06.78 2.13v3.16c0 .31.21.66.79.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/in/thibaultbrebion2103/"
+                  aria-label="LinkedIn"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.instagram.com/tibo_brb/"
+                  aria-label="Instagram"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 2.16c3.2 0 3.58 0 4.85.07 1.17.06 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.06 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.06-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s0-3.58.07-4.85c.06-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.16 8.8 2.16 12 2.16zM12 0C8.74 0 8.33 0 7.05.07c-1.28.05-2.16.26-2.92.55-.79.31-1.46.72-2.13 1.39A5.85 5.85 0 0 0 .62 4.13c-.3.76-.5 1.64-.55 2.92C0 8.33 0 8.74 0 12s0 3.67.07 4.95c.05 1.28.26 2.16.55 2.92.31.79.72 1.46 1.39 2.13.67.67 1.34 1.08 2.13 1.39.76.3 1.64.5 2.92.55C8.33 24 8.74 24 12 24s3.67 0 4.95-.07c1.28-.05 2.16-.26 2.92-.55.79-.31 1.46-.72 2.13-1.39.67-.67 1.08-1.34 1.39-2.13.3-.76.5-1.64.55-2.92.06-1.28.07-1.69.07-4.95s0-3.67-.07-4.95c-.05-1.28-.26-2.16-.55-2.92a5.85 5.85 0 0 0-1.39-2.13A5.85 5.85 0 0 0 19.87.62c-.76-.3-1.64-.5-2.92-.55C15.67 0 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"
+                    />
+                  </svg>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:brebionthibault2006@gmail.com"
+                  aria-label="Email"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                    />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+
+            <!-- Visuel : blob blanc + contour blanc + photo -->
+            <div class="contact-visual">
+              <!-- Blob blanc rempli (équivalent du jaune dans le mockup) -->
+              <div class="contact-blob" aria-hidden="true">
+                <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M421.5,318.5Q399,387,338.5,425.5Q278,464,213.5,438Q149,412,114,353.5Q79,295,108,233Q137,171,196,131.5Q255,92,323.5,107Q392,122,432.5,176Q473,230,447,290Q421,350,421.5,318.5Z"
+                    fill="#ffffff"
+                  />
+                </svg>
+              </div>
+
+              <!-- Contour blanc qui dépasse (effet double trace de la capture) -->
+              <div class="contact-blob-outline" aria-hidden="true">
+                <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M421.5,318.5Q399,387,338.5,425.5Q278,464,213.5,438Q149,412,114,353.5Q79,295,108,233Q137,171,196,131.5Q255,92,323.5,107Q392,122,432.5,176Q473,230,447,290Q421,350,421.5,318.5Z"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+
+              <!-- Container photo : remplace le placeholder par <img> quand prêt -->
+              <div class="contact-photo">
+                <img src="assets/images/me.png" alt="Thibault Brebion" />
+                <!--
+                Quand tu auras ta photo, remplace le placeholder par :
+                <img src="assets/images/photo.jpg" alt="Thibault Brebion" />
+                -->
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
+    <div class="proj-project-thumbnail">
+      <div class="proj-thumbnail">
+        <img src="./assets/images/projects/AP11.png" alt="" />
+      </div>
+      <div class="proj-thumbnail">
+        <img src="./assets/images/projects/AP12.png" alt="" />
+      </div>
+      <div class="proj-thumbnail">
+        <img src="./assets/images/projects/AP2.png" alt="" />
+      </div>
+      <div class="proj-thumbnail">
+        <img src="./assets/images/projects/AP3.png" alt="" />
+      </div>
+      <div class="proj-thumbnail">
+        <img src="./assets/images/projects/AP4.png" alt="" />
+      </div>
+    </div>
   </body>
 </html>
