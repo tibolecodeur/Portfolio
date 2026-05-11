@@ -14,6 +14,8 @@
     "Raleway", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: "Anton", sans-serif;
   --font-italic: "Times New Roman", Georgia, serif;
+  --vh-full: 100vh;
+  --vh-screen: 100vh;
 }
 
 html {
@@ -24,6 +26,18 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+:root {
+  --vh-full: 100vh;
+  --vh-screen: 100vh;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --vh-full: 100dvh;
+    --vh-screen: 100svh;
+  }
 }
 
 html {
@@ -2291,6 +2305,7 @@ body.stage-modal-open {
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: contain;
 }
 
 /* ─── Responsive ─── */
@@ -4731,5 +4746,39 @@ a.watch-source {
   .stage-activity-difficulty {
     padding-left: 0;
     margin-left: 0;
+  }
+}
+
+/* ============================================
+   iOS / MOBILE — Fix viewport units
+   ============================================ */
+@supports (height: 100dvh) {
+  @media (max-width: 768px) {
+    .hero__top,
+    .stages-section,
+    .contact-section {
+      min-height: 100dvh;
+    }
+    .proj-modal-inner,
+    .stage-modal-panel {
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .stages-section {
+    padding: 5rem 1.25rem;
+  }
+  .stages-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .stages-header {
+    margin-bottom: 3rem;
+  }
+  .stage-card {
+    padding: 1.75rem 1.5rem;
   }
 }

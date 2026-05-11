@@ -4,9 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   // 1. SMOOTH SCROLL SETUP (Lenis)
   // ============================================
+  // Désactivation de Lenis sur mobile/tactile (iOS Safari le gère mieux nativement)
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
   const lenis = new Lenis({
     lerp: 0.1,
     smoothWheel: true,
+    // Désactivé sur touch (iOS) — le scroll natif est plus fluide
+    smoothTouch: false,
+    touchMultiplier: 1.5,
+    // Sur iOS, on laisse Lenis exister mais on n'intercepte pas le touchmove
+    syncTouch: false,
   });
 
   // Connecter Lenis à ScrollTrigger pour que pin et scrub fonctionnent
@@ -1319,9 +1326,15 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+    // Désactivation complète de la thumbnail sur mobile (pas de hover)
+    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouchDevice) {
+      projectThumbnail.style.display = "none";
+      return;
+    }
+
     projects.forEach((project, index) => {
       project.addEventListener("mouseenter", () => {
-        // Ne pas afficher la thumbnail si la modale projet est ouverte
         if (document.body.classList.contains("proj-modal-open")) return;
 
         gsap.to(projectThumbnail, {
@@ -1380,34 +1393,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 3. Services pin : pin + écartement vertical + scale
-    ScrollTrigger.create({
-      trigger: ".watch-services",
-      start: "top top",
-      end: `+=${window.innerHeight * 2}`,
-      pin: true,
-      scrub: 1,
-      pinSpacing: true, // ← réserve l'espace
-      anticipatePin: 1, // ← évite le saut au début
-      onUpdate: (self) => {
-        const headers = document.querySelectorAll(".watch-services-header");
-        if (headers.length < 3) return;
+    // Désactivé sur mobile car cause des saccades sur iOS Safari
+    const isMobile = window.matchMedia("(max-width: 900px)").matches;
+    if (!isMobile) {
+      ScrollTrigger.create({
+        trigger: ".watch-services",
+        start: "top top",
+        end: `+=${window.innerHeight * 2}`,
+        pin: true,
+        scrub: 1,
+        pinSpacing: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const headers = document.querySelectorAll(".watch-services-header");
+          if (headers.length < 3) return;
 
-        if (self.progress <= 0.5) {
-          const yProgress = self.progress / 0.5;
-          gsap.set(headers[0], { y: `${yProgress * 100}%` });
-          gsap.set(headers[2], { y: `${yProgress * -100}%` });
-        } else {
-          gsap.set(headers[0], { y: "100%" });
-          gsap.set(headers[2], { y: "-100%" });
+          if (self.progress <= 0.5) {
+            const yProgress = self.progress / 0.5;
+            gsap.set(headers[0], { y: `${yProgress * 100}%` });
+            gsap.set(headers[2], { y: `${yProgress * -100}%` });
+          } else {
+            gsap.set(headers[0], { y: "100%" });
+            gsap.set(headers[2], { y: "-100%" });
 
-          const scaleProgress = (self.progress - 0.5) / 0.5;
-          const minScale = window.innerWidth <= 1000 ? 0.3 : 0.1;
-          const scale = 1 - scaleProgress * (1 - minScale);
+            const scaleProgress = (self.progress - 0.5) / 0.5;
+            const minScale = 0.1;
+            const scale = 1 - scaleProgress * (1 - minScale);
 
-          headers.forEach((header) => gsap.set(header, { scale }));
-        }
-      },
-    });
+            headers.forEach((header) => gsap.set(header, { scale }));
+          }
+        },
+      });
+    }
     // 4. Reveal au scroll des cartes "sources" et "risques"
     const watchObserver = new IntersectionObserver(
       (entries) => {
@@ -2036,23 +2053,12 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       // Pour le touch (mobile / trackpad)
-      let touchStartY = 0;
-      contentEl.addEventListener(
-        "touchstart",
-        (e) => {
-          touchStartY = e.touches[0].clientY;
-        },
-        { passive: true },
-      );
-
+      // Sur touch (iOS/Android), laisser le scroll natif gérer
+      // car le scrollTop manuel cause des bugs de momentum
       contentEl.addEventListener(
         "touchmove",
         (e) => {
           e.stopPropagation();
-          const touchY = e.touches[0].clientY;
-          const deltaY = touchStartY - touchY;
-          contentEl.scrollTop += deltaY;
-          touchStartY = touchY;
         },
         { passive: true },
       );
