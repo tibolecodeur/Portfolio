@@ -4,27 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thibault Brebion | Portfolio</title>
+    <meta
+      name="description"
+      content="Portfolio de Thibault Brebion, étudiant BTS SIO option SLAM : développement web et logiciel (Java, PHP, Symfony, Angular, Android), à la recherche d'une alternance."
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Thibault Brebion | Portfolio" />
+    <meta
+      property="og:description"
+      content="Développeur Web & Logiciel (BTS SIO SLAM) — projets, stages, veille technologique et tableau de synthèse."
+    />
+    <meta property="og:image" content="assets/images/me.webp" />
+    <meta name="twitter:card" content="summary" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0a0a'/%3E%3Ctext x='50' y='66' font-size='46' font-weight='900' text-anchor='middle' fill='%23ffffff' font-family='Arial,sans-serif'%3ETB%3C/text%3E%3C/svg%3E"
+    />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css?family=Poppins:900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@900&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
     <!-- Scripts -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
-      defer
-    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
       defer
@@ -104,7 +112,7 @@
     <!-- Blur overlay derrière le menu -->
     <div class="menu-blur-overlay" id="menuBlurOverlay"></div>
     <div class="bubble-menu-items absolute" id="menuOverlay" aria-hidden="true">
-      <ul class="pill-list" role="menu" aria-label="Menu links"></ul>
+      <ul class="pill-list" aria-label="Menu links"></ul>
     </div>
 
     <!-- Main Content -->
@@ -209,7 +217,7 @@
               </h2>
               <div class="journey-year-display">
                 <span class="journey-year-static">→</span>
-                <span class="journey-year-active" data-year-display>2020</span>
+                <span class="journey-year-active" data-year-display>2021 — 2024</span>
               </div>
               <div class="journey-progress">
                 <div class="journey-progress-bar" data-progress-bar></div>
@@ -278,10 +286,10 @@
               </div>
             </article>
 
-            <article class="journey-card" data-year="Janv — Mars 2026">
+            <article class="journey-card" data-year="Janv — Fév 2026">
               <div class="journey-card-meta">
                 <span class="journey-card-tag">EXPÉRIENCE</span>
-                <span class="journey-card-period">Janv — Fevr 2026</span>
+                <span class="journey-card-period">Janv — Fév 2026</span>
               </div>
               <h3 class="journey-card-title">Stage 2</h3>
               <p class="journey-card-place">BlackFox</p>
@@ -302,7 +310,7 @@
                 <span class="journey-card-period">2026+</span>
               </div>
               <h3 class="journey-card-title">
-                Licence Pro - Développement Web & Applications Mobiles
+                Licence Pro - Développement Web &amp; Applications Mobiles
               </h3>
               <p class="journey-card-place">ESUPEC</p>
               <p class="journey-card-desc">
@@ -360,7 +368,7 @@
               <span class="cg-center-label">Mes</span>
               <span class="cg-center-label cg-center-label--big">Skills</span>
               <span class="cg-center-label cg-center-label--sub"
-                >× 20 compétences</span
+                >× 25 compétences</span
               >
             </div>
             <div class="cg-gallery"></div>
@@ -413,7 +421,11 @@
         <!-- Grille de cartes flip -->
         <div class="certs-grid">
           <!-- Carte 1 — C++ -->
-          <article class="cert-card" data-cert-num="01">
+          <article
+            class="cert-card"
+            data-cert-num="01"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -462,7 +474,11 @@
           </article>
 
           <!-- Carte 2 — JavaScript -->
-          <article class="cert-card cert-card--dark" data-cert-num="02">
+          <article
+            class="cert-card cert-card--dark"
+            data-cert-num="02"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -511,7 +527,11 @@
           </article>
 
           <!-- Carte 3 — Wordpress -->
-          <article class="cert-card" data-cert-num="03">
+          <article
+            class="cert-card"
+            data-cert-num="03"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -558,7 +578,11 @@
           </article>
 
           <!-- Carte 4 — PHP/MySQL -->
-          <article class="cert-card cert-card--dark" data-cert-num="04">
+          <article
+            class="cert-card cert-card--dark"
+            data-cert-num="04"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -607,7 +631,11 @@
           </article>
 
           <!-- Carte 5 — MVC/PHP -->
-          <article class="cert-card" data-cert-num="05">
+          <article
+            class="cert-card"
+            data-cert-num="05"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -656,7 +684,11 @@
           </article>
 
           <!-- Carte 6 — React -->
-          <article class="cert-card cert-card--dark" data-cert-num="06">
+          <article
+            class="cert-card cert-card--dark"
+            data-cert-num="06"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -703,7 +735,11 @@
           </article>
 
           <!-- Carte 7 — Projet Voltaire (NOUVELLE) -->
-          <article class="cert-card" data-cert-num="07">
+          <article
+            class="cert-card"
+            data-cert-num="07"
+            tabindex="0"
+          >
             <div class="cert-card-inner">
               <div class="cert-face cert-face--front">
                 <div class="cert-stamp" aria-hidden="true">
@@ -738,7 +774,7 @@
                 </p>
                 <div class="cert-back-meta">
                   <div><span>Score</span><strong>615/1000</strong></div>
-                  <div><span>Code</span><strong>LDWDXU3</strong></div>
+                  <div><span>Validité</span><strong>4 ans</strong></div>
                 </div>
                 <a
                   href="https://mon.certificat-voltaire.fr/verification-certificat"
@@ -766,7 +802,12 @@
           <div class="proj-index__container">
             <div class="proj-projects">
               <!-- AP 1.1 — Infrastructure réseau -->
-              <div class="proj-project" data-project="ap11">
+              <div
+                class="proj-project"
+                data-project="ap11"
+                role="button"
+                tabindex="0"
+              >
                 <div class="proj-project-left">
                   <span class="proj-num">AP 1.1</span>
                   <h2>Infrastructure réseau</h2>
@@ -775,7 +816,12 @@
               </div>
 
               <!-- AP 1.2 — Service à la personne -->
-              <div class="proj-project" data-project="ap12">
+              <div
+                class="proj-project"
+                data-project="ap12"
+                role="button"
+                tabindex="0"
+              >
                 <div class="proj-project-left">
                   <span class="proj-num">AP 1.2</span>
                   <h2>Service à la personne</h2>
@@ -784,7 +830,12 @@
               </div>
 
               <!-- AP 2 — TELLIS Collecte des déchets -->
-              <div class="proj-project" data-project="ap2">
+              <div
+                class="proj-project"
+                data-project="ap2"
+                role="button"
+                tabindex="0"
+              >
                 <div class="proj-project-left">
                   <span class="proj-num">AP 2</span>
                   <h2>Collecte des déchets</h2>
@@ -793,7 +844,12 @@
               </div>
 
               <!-- AP 3 — OXAM Port de La Rochelle -->
-              <div class="proj-project" data-project="ap3">
+              <div
+                class="proj-project"
+                data-project="ap3"
+                role="button"
+                tabindex="0"
+              >
                 <div class="proj-project-left">
                   <span class="proj-num">AP 3</span>
                   <h2>Gestion d'escales portuaires</h2>
@@ -802,7 +858,12 @@
               </div>
 
               <!-- AP 4 — Zoucolis Mondial Relay -->
-              <div class="proj-project" data-project="ap4">
+              <div
+                class="proj-project"
+                data-project="ap4"
+                role="button"
+                tabindex="0"
+              >
                 <div class="proj-project-left">
                   <span class="proj-num">AP 4</span>
                   <h2>Zoucolis · Mondial Relay</h2>
@@ -830,7 +891,12 @@
 
         <div class="stages-grid">
           <!-- Stage 1 — Hygiène Expert -->
-          <article class="stage-card" data-stage="hygiene-expert">
+          <article
+            class="stage-card"
+            data-stage="hygiene-expert"
+            role="button"
+            tabindex="0"
+          >
             <div class="stage-card-meta">
               <span class="stage-num">01</span>
               <span class="stage-period">Mai — Juin 2025</span>
@@ -867,10 +933,15 @@
           </article>
 
           <!-- Stage 2 — BlackFox -->
-          <article class="stage-card stage-card--dark" data-stage="blackfox">
+          <article
+            class="stage-card stage-card--dark"
+            data-stage="blackfox"
+            role="button"
+            tabindex="0"
+          >
             <div class="stage-card-meta">
               <span class="stage-num">02</span>
-              <span class="stage-period">Janvier 2026</span>
+              <span class="stage-period">Janv — Fév 2026</span>
             </div>
             <div class="stage-card-body">
               <span class="stage-card-tag">DATA &amp; AUTOMATISATION</span>
@@ -908,7 +979,14 @@
       <!-- ============================================
            MODALE STAGE — Détail complet plein écran
            ============================================ -->
-      <div class="stage-modal" id="stageModal" aria-hidden="true">
+      <div
+        class="stage-modal"
+        id="stageModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Détail du stage"
+        aria-hidden="true"
+      >
         <div class="stage-modal-bg" data-stage-close></div>
         <div class="stage-modal-panel">
           <!-- Header sticky : navigation interne + fermeture -->
@@ -946,7 +1024,14 @@
       <!-- ============================================
            MODALE PROJETS — Détail au clic
            ============================================ -->
-      <div class="proj-modal" id="projModal" aria-hidden="true">
+      <div
+        class="proj-modal"
+        id="projModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Détail du projet"
+        aria-hidden="true"
+      >
         <div class="proj-modal-bg" data-proj-close></div>
         <div class="proj-modal-inner">
           <div class="proj-modal-header">
@@ -1270,7 +1355,12 @@
 
         <!-- Aperçu : bloc cliquable qui ouvre la modale -->
         <div class="synth-preview">
-          <div class="synth-preview-card" id="synthOpenBtn">
+          <div
+            class="synth-preview-card"
+            id="synthOpenBtn"
+            role="button"
+            tabindex="0"
+          >
             <div class="synth-preview-meta">
               <span class="synth-preview-tag">DOCUMENT OFFICIEL</span>
               <span class="synth-preview-ext">.XLSX</span>
@@ -1325,7 +1415,14 @@
       <!-- ============================================
            MODALE PLEIN ÉCRAN — Visualisation du xlsx
            ============================================ -->
-      <div class="synth-modal" id="synthModal" aria-hidden="true">
+      <div
+        class="synth-modal"
+        id="synthModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Tableau de synthèse"
+        aria-hidden="true"
+      >
         <div class="synth-modal-bg" data-synth-close></div>
         <div class="synth-modal-inner">
           <div class="synth-modal-header">
@@ -1369,13 +1466,12 @@
             </div>
           </div>
 
-          <!-- L'iframe Office Online qui rend le xlsx interactif -->
-          <!-- Container où SheetJS va injecter le tableau HTML -->
+          <!-- Aperçu Google Sheets (src injecté à la première ouverture) -->
           <div class="synth-modal-frame-wrap">
             <iframe
               id="synthFrame"
               class="synth-modal-frame"
-              src="https://docs.google.com/spreadsheets/d/1qrParuTXo9oM5wZF_aVZGQ8szoeZ8Kgp/preview"
+              data-src="https://docs.google.com/spreadsheets/d/1qrParuTXo9oM5wZF_aVZGQ8szoeZ8Kgp/preview"
               title="Tableau de synthèse"
               frameborder="0"
               allowfullscreen
@@ -1435,6 +1531,7 @@
               </div>
 
               <button type="submit" class="contact-submit">SEND MESSAGE</button>
+              <p class="contact-status" id="contactStatus" role="status" aria-live="polite"></p>
             </form>
           </div>
 
@@ -1549,11 +1646,7 @@
 
               <!-- Container photo : remplace le placeholder par <img> quand prêt -->
               <div class="contact-photo">
-                <img src="assets/images/me.png" alt="Thibault Brebion" />
-                <!--
-                Quand tu auras ta photo, remplace le placeholder par :
-                <img src="assets/images/photo.jpg" alt="Thibault Brebion" />
-                -->
+                <img src="assets/images/me.webp" alt="Thibault Brebion" loading="lazy" decoding="async" />
               </div>
             </div>
           </div>
@@ -1562,19 +1655,19 @@
     </main>
     <div class="proj-project-thumbnail">
       <div class="proj-thumbnail">
-        <img src="./assets/images/projects/AP11.png" alt="" />
+        <img src="./assets/images/projects/AP11.webp" alt="" decoding="async" />
       </div>
       <div class="proj-thumbnail">
-        <img src="./assets/images/projects/AP12.png" alt="" />
+        <img src="./assets/images/projects/AP12.webp" alt="" decoding="async" />
       </div>
       <div class="proj-thumbnail">
-        <img src="./assets/images/projects/AP2.png" alt="" />
+        <img src="./assets/images/projects/AP2.webp" alt="" decoding="async" />
       </div>
       <div class="proj-thumbnail">
-        <img src="./assets/images/projects/AP3.png" alt="" />
+        <img src="./assets/images/projects/AP3.webp" alt="" decoding="async" />
       </div>
       <div class="proj-thumbnail">
-        <img src="./assets/images/projects/AP4.png" alt="" />
+        <img src="./assets/images/projects/AP4.webp" alt="" decoding="async" />
       </div>
     </div>
   </body>

@@ -843,7 +843,7 @@ body.stage-modal-open {
 .hero {
   position: relative;
   width: 100%;
-  height: 100vh; /* hauteur normale, scroll naturel */
+  height: var(--vh-screen); /* hauteur normale, scroll naturel */
   background: #000000;
   z-index: 1;
   overflow: hidden;
@@ -1062,7 +1062,7 @@ body.stage-modal-open {
 .journey-left {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: var(--vh-screen);
   display: flex;
   align-items: center;
   padding: 4rem 3rem 4rem 4rem;
@@ -1376,7 +1376,7 @@ body.stage-modal-open {
 .skills-circular {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: var(--vh-screen);
   background: #000000;
   color: #ffffff;
   overflow: hidden;
@@ -3418,8 +3418,8 @@ body.synth-modal-open {
     padding: 0;
   }
   .synth-modal-inner {
-    max-height: 100vh;
-    height: 100vh;
+    max-height: var(--vh-full);
+    height: var(--vh-full);
     border: none;
   }
   .synth-modal-actions .synth-modal-btn span {
@@ -3433,7 +3433,7 @@ body.synth-modal-open {
 .contact-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--vh-full);
   background: #000000;
   color: #ffffff;
   padding: 4rem;
@@ -4332,7 +4332,7 @@ a.watch-source {
   right: 0;
   width: 100%;
   max-width: 1100px;
-  height: 100vh;
+  height: var(--vh-full);
   background: #ffffff;
   color: #000000;
   display: flex;
@@ -4754,7 +4754,6 @@ a.watch-source {
    ============================================ */
 @supports (height: 100dvh) {
   @media (max-width: 768px) {
-    .hero__top,
     .stages-section,
     .contact-section {
       min-height: 100dvh;
@@ -4781,4 +4780,59 @@ a.watch-source {
   .stage-card {
     padding: 1.75rem 1.5rem;
   }
+}
+
+/* ============================================
+   ACCESSIBILITÉ — focus clavier, carte retournée au focus,
+   message du formulaire, réduction des animations
+   ============================================ */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+.cert-card:focus-visible,
+.contact-field input:focus-visible,
+.contact-field textarea:focus-visible {
+  outline: 2px solid #f4f1bb;
+  outline-offset: 3px;
+}
+
+.cert-card:focus-visible .cert-card-inner,
+.cert-card:focus-within .cert-card-inner {
+  transform: rotateY(180deg);
+}
+
+.contact-status {
+  min-height: 1.4em;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.contact-status.is-error {
+  color: #ed6a5a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .certs-marquee-track,
+  .watch-ticker-track {
+    animation: none !important;
+  }
+}
+
+.stage-subhead {
+  font-family: "Anton", sans-serif;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 1.1rem;
+  margin: 2rem 0 0.8rem;
+  letter-spacing: -0.01em;
 }
