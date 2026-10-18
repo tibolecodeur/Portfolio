@@ -4,7 +4,7 @@ Portfolio statique (HTML / CSS / JavaScript) : parcours, compétences, certifica
 
 ## Stack
 - HTML5, CSS3, JavaScript vanilla
-- [GSAP + ScrollTrigger](https://gsap.com/) pour les animations
+- [GSAP + ScrollTrigger + Draggable](https://gsap.com/) pour les animations
 - [Lenis](https://lenis.darkroom.engineering/) pour le scroll fluide
 
 ## Lancer en local
@@ -19,7 +19,8 @@ npx serve .
 index.html
 assets/
   css/styles.css
-  js/script.js      # animations + contenu des modales projets / stages
+  js/data.js        # contenu : skills, projets, stages
+  js/script.js      # animations, panneaux, filtres, formulaire
   images/           # photo + vignettes projets (WebP)
   files/            # tableau de synthèse (.xlsx)
 ```
