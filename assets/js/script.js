@@ -4,17 +4,83 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   // 1. SMOOTH SCROLL SETUP (Lenis)
   // ============================================
-  // Désactivation de Lenis sur mobile/tactile (iOS Safari le gère mieux nativement)
-  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+  // Lenis n'intercepte pas le touch (syncTouch: false) : scroll natif sur mobile
   const lenis = new Lenis({
     lerp: 0.1,
     smoothWheel: true,
-    // Désactivé sur touch (iOS) — le scroll natif est plus fluide
-    smoothTouch: false,
-    touchMultiplier: 1.5,
-    // Sur iOS, on laisse Lenis exister mais on n'intercepte pas le touchmove
     syncTouch: false,
   });
+
+  // ============================================
+  // 1b. HELPERS — accessibilité des modales / éléments cliquables
+  // ============================================
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  const FOCUSABLE =
+    'a[href], button:not([disabled]), input, textarea, select, iframe, [tabindex]:not([tabindex="-1"])';
+
+  // Gère focus initial, piège du focus (Tab) et retour du focus à la fermeture
+  function createModalFocus(modal) {
+    let lastFocused = null;
+    function onKeydown(e) {
+      if (e.key !== "Tab") return;
+      const items = [...modal.querySelectorAll(FOCUSABLE)].filter(
+        (el) => el.offsetParent !== null,
+      );
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    return {
+      open() {
+        lastFocused = document.activeElement;
+        modal.addEventListener("keydown", onKeydown);
+        const closeBtn = modal.querySelector(
+          "button[data-proj-close], button[data-stage-close], button[data-synth-close]",
+        );
+        if (closeBtn) closeBtn.focus({ preventScroll: true });
+      },
+      close() {
+        modal.removeEventListener("keydown", onKeydown);
+        if (lastFocused && lastFocused.focus) {
+          lastFocused.focus({ preventScroll: true });
+        }
+      },
+    };
+  }
+
+  // Rend un élément non-bouton activable au clavier (Entrée / Espace)
+  function makeKeyboardClickable(el) {
+    el.addEventListener("keydown", (e) => {
+      if (e.target !== el) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        el.click();
+      }
+    });
+  }
+
+  // Logo de secours généré localement (remplace les placeholders externes)
+  function badgeImage(label) {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 90">' +
+      '<rect width="70" height="90" rx="8" fill="#ffffff"/>' +
+      '<text x="35" y="52" font-family="Arial,sans-serif" font-size="' +
+      (label.length > 5 ? 15 : 20) +
+      '" font-weight="700" text-anchor="middle" fill="#000000">' +
+      label +
+      "</text></svg>";
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
 
   // Connecter Lenis à ScrollTrigger pour que pin et scrub fonctionnent
   // Lenis pilote le scroll, on synchronise ScrollTrigger sur ses updates
@@ -38,29 +104,38 @@ document.addEventListener("DOMContentLoaded", () => {
       mouseY = 0;
     let followerX = 0,
       followerY = 0;
+    let cursorRunning = false;
 
-    let lastMouseMove = 0;
+    // La propriété CSS `translate` laisse intact le transform des feuilles de style
+    // (centrage -50% et scale au survol). La boucle s'arrête quand le suiveur a rattrapé la souris.
+    function cursorTick() {
+      followerX += (mouseX - followerX) * 0.18;
+      followerY += (mouseY - followerY) * 0.18;
+      cursor.style.translate = `${mouseX}px ${mouseY}px`;
+      follower.style.translate = `${followerX}px ${followerY}px`;
+
+      if (
+        Math.abs(mouseX - followerX) > 0.1 ||
+        Math.abs(mouseY - followerY) > 0.1
+      ) {
+        requestAnimationFrame(cursorTick);
+      } else {
+        cursorRunning = false;
+      }
+    }
+
     document.addEventListener(
       "mousemove",
       (e) => {
-        const now = Date.now();
-        if (now - lastMouseMove > 16) {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          gsap.set(cursor, { x: mouseX, y: mouseY });
-          lastMouseMove = now;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!cursorRunning) {
+          cursorRunning = true;
+          requestAnimationFrame(cursorTick);
         }
       },
       { passive: true },
     );
-
-    function animateFollower() {
-      followerX += (mouseX - followerX) * 0.15;
-      followerY += (mouseY - followerY) * 0.15;
-      gsap.set(follower, { x: followerX, y: followerY });
-      requestAnimationFrame(animateFollower);
-    }
-    animateFollower();
 
     const hoverables = document.querySelectorAll("a, button");
     hoverables.forEach((el) => {
@@ -161,11 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
   menuItems.forEach((item) => {
     const li = document.createElement("li");
     li.className = "pill-col";
-    li.setAttribute("role", "none");
     const a = document.createElement("a");
     a.className = "pill-link";
     a.href = item.href;
-    a.setAttribute("role", "menuitem");
     a.setAttribute("aria-label", item.ariaLabel || item.label);
     a.style.setProperty("--item-rot", `${item.rotation ?? 0}deg`);
     a.style.setProperty("--pill-bg", MENU_BG);
@@ -227,6 +300,19 @@ document.addEventListener("DOMContentLoaded", () => {
       lenis.start();
       blurOverlay.classList.remove("active");
       closeMenu();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isMenuOpen) {
+      isMenuOpen = false;
+      toggleBtn.setAttribute("aria-pressed", "false");
+      toggleBtn.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      lenis.start();
+      blurOverlay.classList.remove("active");
+      closeMenu();
+      toggleBtn.focus({ preventScroll: true });
     }
   });
 
@@ -427,16 +513,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     reveal
       // 1. Le conteneur entier : deblur + fade in
-      // À la fin, on retire complètement le filter (pas blur(0))
-      // pour ne pas casser position:fixed/sticky des sections internes
+      // (pas de filter blur sur toute la page : trop coûteux à rendre)
       .to(homeContent, {
         opacity: 1,
-        filter: "blur(0px)",
         duration: 1.4,
         ease: "expo.out",
-        onComplete: () => {
-          homeContent.style.filter = "none";
-        },
       })
 
       // 2. Les mots du nom slident depuis le bas (effet masque)
@@ -526,7 +607,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Suivre la carte "active" (la plus proche du centre du viewport)
     let currentActiveIndex = -1;
 
+    let journeyVisible = true;
+    new IntersectionObserver(
+      (entries) => {
+        journeyVisible = entries[0].isIntersecting;
+      },
+      { rootMargin: "100px 0px" },
+    ).observe(document.querySelector(".journey-section"));
+
     function updateActiveCard() {
+      if (!journeyVisible && currentActiveIndex !== -1) return;
       const viewportCenter = window.innerHeight / 2;
       let closestIndex = 0;
       let closestDistance = Infinity;
@@ -663,7 +753,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "Symfony",
         level: "75%",
         category: "Framework",
-        desc: "API REST &amp; MVC",
+        desc: "API REST & MVC",
         image:
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg",
       },
@@ -732,7 +822,7 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "85%",
         category: "Modélisation",
         desc: "Conception base de données",
-        image: "https://placehold.co/70x90/ffffff/000000?text=MCD",
+        image: badgeImage("MCD"),
       },
 
       // ─── OUTILS & MÉTHODES ───
@@ -740,7 +830,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "Git",
         level: "85%",
         category: "Outil",
-        desc: "Versioning &amp; GitHub",
+        desc: "Versioning & GitHub",
         image:
           "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
       },
@@ -772,8 +862,8 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "Agile",
         level: "75%",
         category: "Méthode",
-        desc: "Scrum &amp; Kanban",
-        image: "https://placehold.co/70x90/ffffff/000000?text=Agile",
+        desc: "Scrum & Kanban",
+        image: badgeImage("Agile"),
       },
 
       // ─── DOUBLONS pour remplir 25 cartes ───
@@ -790,21 +880,21 @@ document.addEventListener("DOMContentLoaded", () => {
         level: "80%",
         category: "Architecture",
         desc: "Conception API",
-        image: "https://placehold.co/70x90/ffffff/000000?text=REST",
+        image: badgeImage("REST"),
       },
       {
         name: "WSO2",
         level: "60%",
         category: "Middleware",
         desc: "Stage BlackFox",
-        image: "https://placehold.co/70x90/ffffff/000000?text=WSO2",
+        image: badgeImage("WSO2"),
       },
       {
         name: "Talend",
         level: "60%",
         category: "ETL",
         desc: "Stage BlackFox",
-        image: "https://placehold.co/70x90/ffffff/000000?text=Talend",
+        image: badgeImage("Talend"),
       },
       {
         name: "Linux",
@@ -1133,7 +1223,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Parallax + flip cards au survol — uniquement quand la souris est dans la section
     skillsSection.addEventListener("mousemove", (e) => {
-      if (isPreviewActive || isTransitioning || config.isMobile) return;
+      if (
+        isPreviewActive ||
+        isTransitioning ||
+        config.isMobile ||
+        prefersReducedMotion
+      )
+        return;
 
       const rect = skillsSection.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -1183,8 +1279,41 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // La boucle d'animation ne travaille que quand la section est visible
+    let galleryVisible = true;
+    new IntersectionObserver(
+      (entries) => {
+        galleryVisible = entries[0].isIntersecting;
+      },
+      { threshold: 0 },
+    ).observe(skillsSection);
+
+    const EPS = 0.01;
+    function isSettled() {
+      if (
+        Math.abs(parallaxState.targetX - parallaxState.currentX) > EPS ||
+        Math.abs(parallaxState.targetY - parallaxState.currentY) > EPS ||
+        Math.abs(parallaxState.targetZ - parallaxState.currentZ) > EPS
+      )
+        return false;
+      return transformState.every(
+        (st) =>
+          Math.abs(st.targetRotation - st.currentRotation) < EPS &&
+          Math.abs(st.targetScale - st.currentScale) < EPS &&
+          Math.abs(st.targetX - st.currentX) < EPS &&
+          Math.abs(st.targetY - st.currentY) < EPS,
+      );
+    }
+
+    let wasSettled = false;
     function animate() {
-      if (!isPreviewActive && !isTransitioning) {
+      if (
+        galleryVisible &&
+        !isPreviewActive &&
+        !isTransitioning &&
+        !(wasSettled && isSettled())
+      ) {
+        wasSettled = isSettled();
         parallaxState.currentX +=
           (parallaxState.targetX - parallaxState.currentX) * config.lerpFactor;
         parallaxState.currentY +=
@@ -1261,6 +1390,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cards.forEach((card) => observer.observe(card));
 
+    // Clavier : Entrée / Espace retourne la carte (le focus la retourne aussi, via CSS)
+    cards.forEach((card) => {
+      card.addEventListener("keydown", (e) => {
+        if (e.target !== card) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          card.classList.toggle("is-flipped");
+        }
+      });
+    });
+
     // Sur mobile (pas de hover) : tap pour flip
     const isTouchDevice =
       "ontouchstart" in window || navigator.maxTouchPoints > 0;
@@ -1268,6 +1408,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isTouchDevice) {
       cards.forEach((card) => {
         card.addEventListener("click", (e) => {
+          // Laisser le lien "Voir le cours" fonctionner normalement
+          if (e.target.closest(".cert-back-link")) return;
           e.preventDefault();
           // Fermer les autres cartes pour qu'une seule soit flip à la fois
           cards.forEach((c) => {
@@ -1399,7 +1541,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ScrollTrigger.create({
         trigger: ".watch-services",
         start: "top top",
-        end: `+=${window.innerHeight * 2}`,
+        end: () => `+=${window.innerHeight * 2}`,
+        invalidateOnRefresh: true,
         pin: true,
         scrub: 1,
         pinSpacing: true,
@@ -1454,13 +1597,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const openBtn = document.getElementById("synthOpenBtn");
     const modal = document.getElementById("synthModal");
     const closers = document.querySelectorAll("[data-synth-close]");
+    const frame = document.getElementById("synthFrame");
     if (!openBtn || !modal) return;
+    const focusHelper = createModalFocus(modal);
+    makeKeyboardClickable(openBtn);
 
     function openModal() {
+      // Chargement de l'iframe Google Sheets uniquement à la première ouverture
+      if (frame && !frame.getAttribute("src") && frame.dataset.src) {
+        frame.setAttribute("src", frame.dataset.src);
+      }
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("synth-modal-open");
       if (typeof lenis !== "undefined") lenis.stop();
+      focusHelper.open();
     }
 
     function closeModal() {
@@ -1468,6 +1619,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("synth-modal-open");
       if (typeof lenis !== "undefined") lenis.start();
+      focusHelper.close();
     }
 
     openBtn.addEventListener("click", (e) => {
@@ -1498,10 +1650,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = form.querySelector("#contactEmail").value.trim();
       const message = form.querySelector("#contactMessage").value.trim();
 
+      const status = document.getElementById("contactStatus");
+      const setStatus = (text, isError) => {
+        if (!status) return;
+        status.textContent = text;
+        status.classList.toggle("is-error", Boolean(isError));
+      };
+
       if (!name || !email || !message) {
-        alert("Merci de remplir tous les champs.");
+        setStatus("Merci de remplir tous les champs.", true);
         return;
       }
+      if (!form.querySelector("#contactEmail").checkValidity()) {
+        setStatus("Merci d'indiquer une adresse e-mail valide.", true);
+        return;
+      }
+      setStatus(
+        "Ouverture de votre messagerie… Si rien ne s'ouvre, écrivez-moi à brebionthibault2006@gmail.com.",
+        false,
+      );
 
       // Solution simple sans backend : ouvre le client mail avec les infos
       const subject = encodeURIComponent(`[Portfolio] Message de ${name}`);
@@ -1521,6 +1688,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const titleEl = modal?.querySelector("[data-proj-title]");
     const contentEl = modal?.querySelector("[data-proj-content]");
     if (!projectItems.length || !modal || !contentEl) return;
+    const focusHelper = createModalFocus(modal);
 
     // ─── DONNÉES DES PROJETS ───
     const projectsData = {
@@ -1748,7 +1916,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (prestataire de services en ingénierie informatique basée à
             Nantes), mission de réalisation d'un site web pour gérer la
             <strong>collecte des déchets</strong> dans une commune. Projet
-            réalisé en équipe de 4 (Thibault, Paul, Noah, Clayton) sur
+            réalisé en équipe de 4 (Thibault + 3 camarades) sur
             7 séances.
           </p>
 
@@ -2025,6 +2193,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // On stoppe Lenis pour bloquer le scroll de la page derrière
       if (typeof lenis !== "undefined") lenis.stop();
+      focusHelper.open();
     }
 
     function closeModal() {
@@ -2033,6 +2202,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.remove("proj-modal-open");
 
       if (typeof lenis !== "undefined") lenis.start();
+      focusHelper.close();
     }
 
     // ─── FIX SCROLL DANS LA MODALE ───
@@ -2065,6 +2235,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     projectItems.forEach((item) => {
+      makeKeyboardClickable(item);
       item.addEventListener("click", () => {
         const key = item.dataset.project;
         if (key) openProject(key);
@@ -2094,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "[data-stage-breadcrumb-name]",
     );
     if (!stageCards.length || !modal || !contentEl) return;
+    const focusHelper = createModalFocus(modal);
 
     // ─── DONNÉES DES STAGES ───
     const stagesData = {
@@ -2165,8 +2337,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 (support_admin, support_ctn).
               </p>
               <p>
-                Travail réalisé en autonomie avec encadrement de Mathéo (référent
-                de stage) et Sébastien sur la création des tickets, le
+                Travail réalisé en autonomie avec encadrement de mon référent
+                de stage et d'un second développeur sur la création des tickets, le
                 déblocage technique et la validation des choix d'architecture.
               </p>
             `,
@@ -2190,11 +2362,11 @@ document.addEventListener("DOMContentLoaded", () => {
                   "Clonage et compilation des 5 projets : API C#, ButtonHec, He-Container, MPH, Support",
                   "Création et restauration de la base de données <code>hygiene_expert</code> via scripts SQL",
                   "Correction des variables d'environnement de l'API pour pointer vers la bonne base",
-                  "Rédaction de la documentation prévisionnelle de mission (validée par Mathéo)",
+                  "Rédaction de la documentation prévisionnelle de mission (validée par mon référent de stage)",
                 ],
                 difficulty: {
                   title: "Difficulté principale",
-                  text: "Plusieurs jours sans droits administrateur sur le poste de travail, empêchant l'installation des outils. Travail temporaire via Stackblitz en attendant la configuration définitive avec Mathéo (NVM, NPM, Node).",
+                  text: "Plusieurs jours sans droits administrateur sur le poste de travail, empêchant l'installation des outils. Travail temporaire via Stackblitz en attendant la configuration définitive avec mon référent (NVM, NPM, Node).",
                 },
               },
               {
@@ -2234,7 +2406,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ],
                 difficulty: {
                   title: "Difficulté principale",
-                  text: "Localisation des fichiers à modifier dans une architecture complexe. Plusieurs heures de recherche infructueuse avant de débloquer la situation avec l'aide de Mathéo qui a indiqué les zones précises du code à adapter.",
+                  text: "Localisation des fichiers à modifier dans une architecture complexe. Plusieurs heures de recherche infructueuse avant de débloquer la situation avec l'aide de mon référent qui a indiqué les zones précises du code à adapter.",
                 },
               },
               {
@@ -2252,7 +2424,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   "Création de la méthode <code>getHaccpEntrepriseByAgencies()</code> avec INNER JOIN sur <code>user_agency</code>",
                   "Filtrage conditionnel : actif uniquement pour les utilisateurs ayant <strong>seulement</strong> access_support",
                   "3 scénarios de tests validés (access_support seul / support_admin seul / les deux combinés)",
-                  "Maquettage Figma de la nouvelle vue techniciens (validée par Sébastien)",
+                  "Maquettage Figma de la nouvelle vue techniciens (validée par le responsable technique)",
                 ],
                 difficulty: {
                   title: "Difficulté principale",
@@ -2293,7 +2465,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   "Formulaire multiselect pour ajouter une ou plusieurs agences à un technicien",
                   "Adaptation du code aux nouveaux noms de tables (recherche et remplacement systématique)",
                   "Collecte de captures d'écran pour la soutenance orale",
-                  "Remplissage des documents administratifs de fin de stage avec Mathéo",
+                  "Remplissage des documents administratifs de fin de stage avec mon référent",
                   "Commit final regroupant l'ensemble des travaux réalisés",
                 ],
                 difficulty: {
@@ -2315,7 +2487,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 cadre professionnel réel.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Compétences techniques</h4>
+              <h4 class="stage-subhead">Compétences techniques</h4>
               <p>
                 <strong>Back-end (C# / .NET)</strong> — création de controllers,
                 services métiers, requêtes SQL complexes (JOIN, agrégation
@@ -2339,7 +2511,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 visuelle.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Compétences méthodologiques</h4>
+              <h4 class="stage-subhead">Compétences méthodologiques</h4>
               <p>
                 <strong>Méthode Scrum</strong> — participation quotidienne aux
                 Scrums du matin, organisation des tâches en tickets et
@@ -2359,7 +2531,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 garantir la cohérence du code.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Résultat final</h4>
+              <h4 class="stage-subhead">Résultat final</h4>
               <p>
                 Le stage s'est conclu avec un <strong>projet fonctionnel
                 complet</strong> de gestion des techniciens, incluant
@@ -2371,8 +2543,8 @@ document.addEventListener("DOMContentLoaded", () => {
               <p>
                 Le projet a été livré avec une documentation complète des
                 fonctionnalités, des captures d'écran pour la soutenance orale,
-                et un transfert de connaissances structuré avec Mathéo (référent
-                de stage) pour assurer la continuité après mon départ.
+                et un transfert de connaissances structuré avec mon référent
+                de stage pour assurer la continuité après mon départ.
               </p>
             `,
           },
@@ -2385,7 +2557,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "BlackFox",
         hero: {
           metaLeft: "STAGE · BTS SIO SLAM",
-          metaRight: "Janvier 2026 · 6 semaines",
+          metaRight: "Janv — Fév 2026 · 6 semaines",
           title: `Black<br /><em>Fox.</em>`,
           subtitle:
             "Stage de 6 semaines chez un grossiste en bottes caoutchouc. Automatisation des flux de données entre l'ERP Divalto et la plateforme PDM (A3PDM) via scripts ETL Python, requêtage SQL Server, et analyse de middleware (WSO2 → Talend).",
@@ -2491,7 +2663,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 description:
                   "Avant de démarrer le projet principal, plusieurs <strong>scripts utilitaires</strong> ont été développés pour répondre à des besoins immédiats de l'équipe. Cela m'a permis de monter en compétence sur différents environnements (PowerShell, Apps Script) tout en livrant rapidement de la valeur.",
                 bullets: [
-                  "<strong>Script PowerShell d'audit ACL</strong> : lecture des droits sur des milliers de dossiers/sous-dossiers et génération d'un fichier HTML avec arborescence interactive pour Guillaume et Jean-Baptiste",
+                  "<strong>Script PowerShell d'audit ACL</strong> : lecture des droits sur des milliers de dossiers/sous-dossiers et génération d'un fichier HTML avec arborescence interactive pour l'équipe infrastructure",
                   "<strong>Script Google Apps Script</strong> de synchronisation des contacts utilisateurs vers un fichier Drive, avec <strong>triggers automatiques</strong> (lundi et vendredi)",
                   "Accès complet à <strong>A3PDM</strong> (plateforme de gestion d'articles AGENA3000) et début des tests de la plateforme",
                   "Remplissage d'un <strong>cahier de recette</strong> pour recenser les bugs et erreurs identifiés sur A3PDM",
@@ -2531,8 +2703,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 bullets: [
                   "Création d'une <strong>vue SQL Server</strong> qui fait l'agencement entre les champs Divalto et les colonnes du modèle A3PDM",
                   "Simplification du script Python : il ne fait plus que lire la vue et remplir le fichier Excel",
-                  "<strong>Script de déduplication</strong> pour Guillaume : scan automatique du serveur ajs-vm-020 et conservation d'un seul fichier par client",
-                  "Ajout du statut <strong>'Inactif'</strong> automatique à l'import (demandé par François, mon maître de stage)",
+                  "<strong>Script de déduplication</strong> pour l'équipe infrastructure : scan automatique d'un serveur de fichiers et conservation d'un seul fichier par client",
+                  "Ajout du statut <strong>'Inactif'</strong> automatique à l'import (demandé par mon maître de stage)",
                   "<strong>Premier import en production</strong> de ~12 000 articles invalidés dans A3PDM (durée ~20 min)",
                   "Correction d'un bug de TRIM : espaces parasites en fin de champ provenant de la table Sous-article Divalto",
                 ],
@@ -2547,12 +2719,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 period: "Semaine 5 · Janvier-Février 2026",
                 tags: ["SQL", "A3PDM", "Tests", "Production"],
                 description:
-                  "Phase de fiabilisation : correction des écarts de comptage, purge et réimport des données, puis passage à l'import des <strong>articles validés</strong> (~40 000 articles) sur la base de production ERPPROD.",
+                  "Phase de fiabilisation : correction des écarts de comptage, purge et réimport des données, puis passage à l'import des <strong>articles validés</strong> (~40 000 articles) sur la base de production.",
                 bullets: [
                   "Détection d'un <strong>écart de 6 300 articles</strong> entre la vue (11 700) et la BDD réelle (18 000) — analyse comparative via Excel",
                   "Cause identifiée : conditions trop restrictives dans la vue (articles sans famille ni taille exclus)",
                   "Purge complète des articles importés, ajustement des conditions de la vue",
-                  "Migration de l'environnement <strong>Test → Production</strong> (base ERPPROD)",
+                  "Migration de l'environnement <strong>Test → Production</strong>",
                   "Import des articles validés : modification du filtre sur le champ <code>UDT_HSDT</code> (date de validité)",
                   "Mise à jour du statut des articles validés à <strong>'Commercialisé'</strong> dans A3PDM",
                 ],
@@ -2573,7 +2745,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   "Conception d'une <strong>table d'historique</strong> <code>A3PDM_HISTORIQUE</code> pour éviter les doublons d'import (logique delta)",
                   "Implémentation du <strong>mode Append</strong> : ajout des nouveaux articles à la suite dans un fichier Excel unique",
                   "Transformation du script Python en <strong>exécutable .exe</strong> via PyInstaller + WinPython (contournement de l'absence de Python sur la VM)",
-                  "Déploiement sur la VM <strong>ajs-vm-020</strong> (disque E:) avec gestion fine des droits d'accès",
+                  "Déploiement sur une <strong>VM de production</strong> (disque E:) avec gestion fine des droits d'accès",
                   "Configuration du <strong>Planificateur de tâches Windows</strong> : lancement quotidien à 6h00 du matin",
                   "Création d'un <strong>kit de livraison utilisateur</strong> : lanceur manuel <code>.bat</code> + mode d'emploi pour forcer un export ponctuel",
                 ],
@@ -2597,7 +2769,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 multiples technologies du data engineering.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Compétences techniques</h4>
+              <h4 class="stage-subhead">Compétences techniques</h4>
               <p>
                 <strong>Data engineering &amp; ETL</strong> — conception et
                 développement d'un pipeline ETL complet (extraction SQL,
@@ -2628,18 +2800,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 Data Integration en vue d'une migration.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Compétences méthodologiques</h4>
+              <h4 class="stage-subhead">Compétences méthodologiques</h4>
               <p>
                 <strong>Conduite de projet</strong> — participation à la
                 planification (réunions de cadrage, comités projet), passage
                 en revue semestriel des projets, points réguliers avec le
-                maître de stage (François) et l'éditeur externe (NextDecision).
+                maître de stage et l'éditeur externe (NextDecision).
               </p>
               <p>
                 <strong>Approche itérative</strong> — première version du
                 script en Python pur, refactoring en architecture SQL-first
                 pour la maintenabilité, puis industrialisation finale. Chaque
-                version validée avec François avant de passer à la suivante.
+                version validée avec mon maître de stage avant de passer à la suivante.
               </p>
               <p>
                 <strong>Documentation</strong> — rédaction de tutoriels pour
@@ -2648,7 +2820,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 cahier de recette pour A3PDM.
               </p>
 
-              <h4 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-weight: 400; font-size: 1.1rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em;">Résultat final</h4>
+              <h4 class="stage-subhead">Résultat final</h4>
               <p>
                 Le stage s'est conclu avec un <strong>pipeline ETL
                 100% autonome</strong> en production : extraction quotidienne
@@ -2791,6 +2963,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("stage-modal-open");
       if (typeof lenis !== "undefined") lenis.stop();
+      focusHelper.open();
     }
 
     function closeModal() {
@@ -2798,9 +2971,11 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("stage-modal-open");
       if (typeof lenis !== "undefined") lenis.start();
+      focusHelper.close();
     }
 
     stageCards.forEach((card) => {
+      makeKeyboardClickable(card);
       card.addEventListener("click", () => {
         const key = card.dataset.stage;
         if (key) openStage(key);
@@ -2827,23 +3002,12 @@ document.addEventListener("DOMContentLoaded", () => {
         { passive: false },
       );
 
-      let touchStartY = 0;
-      contentEl.addEventListener(
-        "touchstart",
-        (e) => {
-          touchStartY = e.touches[0].clientY;
-        },
-        { passive: true },
-      );
-
+      // Touch : scroll natif uniquement (un scrollTop manuel en plus
+      // doublait le défilement sur mobile)
       contentEl.addEventListener(
         "touchmove",
         (e) => {
           e.stopPropagation();
-          const touchY = e.touches[0].clientY;
-          const deltaY = touchStartY - touchY;
-          contentEl.scrollTop += deltaY;
-          touchStartY = touchY;
         },
         { passive: true },
       );
