@@ -104,29 +104,38 @@ document.addEventListener("DOMContentLoaded", () => {
       mouseY = 0;
     let followerX = 0,
       followerY = 0;
+    let cursorRunning = false;
 
-    let lastMouseMove = 0;
+    // La propriété CSS `translate` laisse intact le transform des feuilles de style
+    // (centrage -50% et scale au survol). La boucle s'arrête quand le suiveur a rattrapé la souris.
+    function cursorTick() {
+      followerX += (mouseX - followerX) * 0.18;
+      followerY += (mouseY - followerY) * 0.18;
+      cursor.style.translate = `${mouseX}px ${mouseY}px`;
+      follower.style.translate = `${followerX}px ${followerY}px`;
+
+      if (
+        Math.abs(mouseX - followerX) > 0.1 ||
+        Math.abs(mouseY - followerY) > 0.1
+      ) {
+        requestAnimationFrame(cursorTick);
+      } else {
+        cursorRunning = false;
+      }
+    }
+
     document.addEventListener(
       "mousemove",
       (e) => {
-        const now = Date.now();
-        if (now - lastMouseMove > 16) {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          gsap.set(cursor, { x: mouseX, y: mouseY });
-          lastMouseMove = now;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!cursorRunning) {
+          cursorRunning = true;
+          requestAnimationFrame(cursorTick);
         }
       },
       { passive: true },
     );
-
-    function animateFollower() {
-      followerX += (mouseX - followerX) * 0.15;
-      followerY += (mouseY - followerY) * 0.15;
-      gsap.set(follower, { x: followerX, y: followerY });
-      requestAnimationFrame(animateFollower);
-    }
-    animateFollower();
 
     const hoverables = document.querySelectorAll("a, button");
     hoverables.forEach((el) => {
@@ -504,16 +513,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     reveal
       // 1. Le conteneur entier : deblur + fade in
-      // À la fin, on retire complètement le filter (pas blur(0))
-      // pour ne pas casser position:fixed/sticky des sections internes
+      // (pas de filter blur sur toute la page : trop coûteux à rendre)
       .to(homeContent, {
         opacity: 1,
-        filter: "blur(0px)",
         duration: 1.4,
         ease: "expo.out",
-        onComplete: () => {
-          homeContent.style.filter = "none";
-        },
       })
 
       // 2. Les mots du nom slident depuis le bas (effet masque)
@@ -603,7 +607,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Suivre la carte "active" (la plus proche du centre du viewport)
     let currentActiveIndex = -1;
 
+    let journeyVisible = true;
+    new IntersectionObserver(
+      (entries) => {
+        journeyVisible = entries[0].isIntersecting;
+      },
+      { rootMargin: "100px 0px" },
+    ).observe(document.querySelector(".journey-section"));
+
     function updateActiveCard() {
+      if (!journeyVisible && currentActiveIndex !== -1) return;
       const viewportCenter = window.innerHeight / 2;
       let closestIndex = 0;
       let closestDistance = Infinity;
@@ -1275,8 +1288,32 @@ document.addEventListener("DOMContentLoaded", () => {
       { threshold: 0 },
     ).observe(skillsSection);
 
+    const EPS = 0.01;
+    function isSettled() {
+      if (
+        Math.abs(parallaxState.targetX - parallaxState.currentX) > EPS ||
+        Math.abs(parallaxState.targetY - parallaxState.currentY) > EPS ||
+        Math.abs(parallaxState.targetZ - parallaxState.currentZ) > EPS
+      )
+        return false;
+      return transformState.every(
+        (st) =>
+          Math.abs(st.targetRotation - st.currentRotation) < EPS &&
+          Math.abs(st.targetScale - st.currentScale) < EPS &&
+          Math.abs(st.targetX - st.currentX) < EPS &&
+          Math.abs(st.targetY - st.currentY) < EPS,
+      );
+    }
+
+    let wasSettled = false;
     function animate() {
-      if (galleryVisible && !isPreviewActive && !isTransitioning) {
+      if (
+        galleryVisible &&
+        !isPreviewActive &&
+        !isTransitioning &&
+        !(wasSettled && isSettled())
+      ) {
+        wasSettled = isSettled();
         parallaxState.currentX +=
           (parallaxState.targetX - parallaxState.currentX) * config.lerpFactor;
         parallaxState.currentY +=

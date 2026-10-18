@@ -200,13 +200,9 @@ body.stage-modal-open {
   position: fixed;
   inset: 0;
   z-index: 97;
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
   background: rgba(0, 0, 0, 0);
   pointer-events: none;
-  transition:
-    backdrop-filter 0.5s ease,
-    background 0.5s ease;
+  transition: background 0.5s ease;
 }
 
 .menu-blur-overlay.active {
@@ -349,7 +345,7 @@ body.stage-modal-open {
     pointer-events: none;
     transform: translate(-50%, -50%);
     will-change: transform;
-    mix-blend-mode: difference;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.55);
   }
 
   .cursor-follower {
@@ -362,7 +358,9 @@ body.stage-modal-open {
     pointer-events: none;
     transform: translate(-50%, -50%);
     will-change: transform;
-    mix-blend-mode: difference;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.45);
   }
 
   .cursor-hover .cursor-follower {
@@ -452,7 +450,6 @@ body.stage-modal-open {
    ============================================ */
 #home-content {
   opacity: 0;
-  filter: blur(20px);
 }
 
 #home-content.content-visible {
@@ -3230,9 +3227,12 @@ body.stage-modal-open {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+}
+
+.synth-modal.is-open .synth-modal-bg {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
 }
 
 .synth-modal-inner {
@@ -3798,9 +3798,12 @@ body.synth-modal-open {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+}
+
+.proj-modal.is-open .proj-modal-bg {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
 }
 
 .proj-modal-inner {
