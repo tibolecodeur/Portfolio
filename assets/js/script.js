@@ -114,6 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let lockCount = 0;
   const scrollLock = {
     stop() {
+      // Largeur de la barre de défilement qui va disparaître : compensée en CSS (--sbw)
+      if (!lockCount) {
+        const sbw = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty("--sbw", `${sbw}px`);
+      }
       lockCount++;
       if (lenis) lenis.stop();
       else document.documentElement.style.overflow = "hidden";
@@ -123,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (lockCount) return;
       if (lenis) lenis.start();
       else document.documentElement.style.overflow = "";
+      document.documentElement.style.removeProperty("--sbw");
     },
   };
 
@@ -323,7 +329,8 @@ document.addEventListener("DOMContentLoaded", () => {
         gsap.fromTo(
           ".menu-links a",
           { yPercent: 110 },
-          { yPercent: 0, duration: 1, stagger: 0.045, ease: "expo.out", delay: 0.2 },
+          // clearProps : rend la main au translateX du :hover en CSS
+          { yPercent: 0, duration: 1, stagger: 0.045, ease: "expo.out", delay: 0.2, clearProps: "transform" },
         );
         gsap.fromTo(
           ".menu-aside > *",
@@ -1153,6 +1160,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/&[a-z#0-9]+;/gi, " ")
       .replace(/\s+/g, " ")
       .trim();
+  // Toutes les chaînes d'un objet (rapport de stage), sans les noms de champs
+  const textValues = (v) =>
+    typeof v === "string" ? v : v && typeof v === "object" ? Object.values(v).map(textValues).join(" ") : "";
   // Minuscules sans accents, en gardant la longueur (indices alignés pour le surlignage)
   const fold = (s) => [...s].map((c) => c.normalize("NFD")[0]).join("").toLowerCase();
 
@@ -1209,7 +1219,7 @@ document.addEventListener("DOMContentLoaded", () => {
           title: `Stage — ${s.name}`,
           sub: plainText(s.hero.metaRight),
           keys: "stage rapport entreprise",
-          text: plainText(JSON.stringify(s)),
+          text: plainText(textValues(s)),
           color: STAGE_COLORS[key],
           hint: "Lire",
           boost: 4,

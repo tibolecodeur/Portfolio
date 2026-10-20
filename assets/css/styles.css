@@ -58,8 +58,6 @@ main [data-theme] { --bg: inherit; --fg: inherit; --accent: inherit; }
 }
 
 html {
-  /* Pas de saut de mise en page quand un panneau bloque le scroll */
-  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   overflow-x: clip;
 }
@@ -72,6 +70,7 @@ html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 body {
+  padding-right: var(--sbw, 0px);
   background-color: var(--bg);
   color: var(--fg);
   font-family: var(--font-display);
@@ -388,6 +387,8 @@ section {
   align-items: center;
   gap: 1rem;
   padding: 1rem var(--gutter);
+  /* Compense la barre de défilement masquée quand un panneau est ouvert */
+  padding-right: calc(var(--gutter) + var(--sbw, 0px));
   pointer-events: none;
   transition:
     transform 0.6s var(--ease),
