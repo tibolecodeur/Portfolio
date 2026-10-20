@@ -36,6 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {
     tomato: "#ff5b37",
   };
 
+  // Famille de chaque catégorie de compétence (filtres + palette)
+  const SKILL_GROUPS = {
+    Front: "dev",
+    Langage: "dev",
+    Framework: "dev",
+    Mobile: "dev",
+    Architecture: "dev",
+    Base: "data",
+    NoSQL: "data",
+    Modélisation: "data",
+    ETL: "data",
+    Middleware: "data",
+    Scripting: "script",
+    OS: "script",
+    Outil: "tools",
+    Design: "tools",
+    Méthode: "tools",
+    IDE: "tools",
+  };
+
   const FOCUSABLE =
     'a[href], button:not([disabled]), input, textarea, select, iframe, [tabindex]:not([tabindex="-1"])';
 
@@ -547,29 +567,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = $("[data-skills-list]");
     if (!wall || !plane || typeof SKILLS === "undefined") return;
 
-    const GROUPS = {
-      Front: "dev",
-      Langage: "dev",
-      Framework: "dev",
-      Mobile: "dev",
-      Architecture: "dev",
-      Base: "data",
-      NoSQL: "data",
-      Modélisation: "data",
-      ETL: "data",
-      Middleware: "data",
-      Scripting: "script",
-      OS: "script",
-      Outil: "tools",
-      Design: "tools",
-      Méthode: "tools",
-      IDE: "tools",
-    };
     const COLORS = ["var(--tomato)", "var(--blue)", "var(--lime)", "var(--pink)", "var(--sun)"];
 
     const skills = SKILLS.map((s, i) => ({
       ...s,
-      group: GROUPS[s.category] || "tools",
+      group: SKILL_GROUPS[s.category] || "tools",
       color: COLORS[i % COLORS.length],
     }));
 
@@ -1017,10 +1019,390 @@ document.addEventListener("DOMContentLoaded", () => {
     $$("[data-viewer-close]", viewer).forEach((el) => el.addEventListener("click", closeViewer));
   }
 
+  // ============================================
+  // 13 bis. PALETTE DE COMMANDES (Ctrl/⌘ K, ou « / »)
+  // ============================================
+  const palette = $("#palette");
+  const paletteInput = $(".palette-input", palette);
+  const paletteList = $(".palette-list", palette);
+  const paletteFocus = createModalFocus(palette);
+  palette.inert = true;
+  let paletteItems = null;
+  let paletteResults = [];
+  let paletteActive = 0;
+
+  const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => HTML_ESCAPES[c]);
+  const plainText = (html) =>
+    String(html || "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&[a-z#0-9]+;/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  // Minuscules sans accents, en gardant la longueur (indices alignés pour le surlignage)
+  const fold = (s) => [...s].map((c) => c.normalize("NFD")[0]).join("").toLowerCase();
+
+  const MAIL = "brebionthibault2006@gmail.com";
+  const openUrl = (url) => window.open(url, "_blank", "noopener");
+
+  // Construit l'index une seule fois, à la première ouverture
+  function buildPaletteItems() {
+    const items = [];
+    const add = (item) =>
+      items.push({
+        keys: "",
+        text: "",
+        boost: 0,
+        hidden: false,
+        ...item,
+        nTitle: fold(item.title),
+        nSub: fold(item.sub || ""),
+        nKeys: fold(item.keys || ""),
+        nText: fold(item.text || ""),
+      });
+
+    $$(".menu-links a").forEach((a) => {
+      const num = a.querySelector("span")?.textContent || "";
+      add({
+        group: "Sections",
+        title: a.textContent.replace(num, "").trim(),
+        sub: num,
+        color: a.style.getPropertyValue("--h"),
+        hint: "Aller",
+        run: () => scrollToTarget(a.getAttribute("href")),
+      });
+    });
+
+    if (typeof PROJECTS !== "undefined") {
+      Object.entries(PROJECTS).forEach(([key, p]) => {
+        add({
+          group: "Projets",
+          title: plainText(p.title),
+          sub: plainText(p.tag).replace(/^\/\s*/, ""),
+          text: plainText(p.content),
+          color: PROJECT_COLORS[key],
+          hint: "Ouvrir",
+          boost: 4,
+          run: () => $(`.p-row[data-project="${key}"]`)?.click(),
+        });
+      });
+    }
+
+    if (typeof STAGES !== "undefined") {
+      Object.entries(STAGES).forEach(([key, s]) => {
+        add({
+          group: "Stages",
+          title: `Stage — ${s.name}`,
+          sub: plainText(s.hero.metaRight),
+          keys: "stage rapport entreprise",
+          text: plainText(JSON.stringify(s)),
+          color: STAGE_COLORS[key],
+          hint: "Lire",
+          boost: 4,
+          run: () => $(`.stage-card[data-stage="${key}"]`)?.click(),
+        });
+      });
+    }
+
+    // Compétences : uniquement en recherche, pour garder la liste par défaut courte
+    if (typeof SKILLS !== "undefined") {
+      SKILLS.forEach((s) => {
+        const group = SKILL_GROUPS[s.category] || "tools";
+        add({
+          group: "Compétences",
+          title: s.name,
+          sub: `${s.category} · ${s.level}`,
+          keys: `${s.desc} competence techno`,
+          color: "var(--sun)",
+          hint: "Voir",
+          hidden: true,
+          boost: 2,
+          run: () => {
+            $(`.filter[data-filter="${group}"]`)?.click();
+            scrollToTarget("#skills");
+          },
+        });
+      });
+    }
+
+    add({
+      group: "Actions",
+      title: "Copier mon e-mail",
+      sub: MAIL,
+      keys: "mail contact adresse",
+      color: "var(--tomato)",
+      hint: "Copier",
+      boost: 3,
+      keepOpen: true,
+      run: async (el) => {
+        try {
+          await navigator.clipboard.writeText(MAIL);
+          el.querySelector(".palette-hint").textContent = "Copié ✓";
+          setTimeout(closePalette, 700);
+        } catch {
+          location.href = `mailto:${MAIL}`;
+        }
+      },
+    });
+    add({
+      group: "Actions",
+      title: "Écrire un e-mail",
+      sub: "Ouvre votre messagerie",
+      keys: "mail contact message",
+      color: "var(--pink)",
+      hint: "↗",
+      run: () => (location.href = `mailto:${MAIL}`),
+    });
+    add({
+      group: "Actions",
+      title: "Voir le tableau de synthèse",
+      sub: "Aperçu en ligne",
+      keys: "synthese tableau competences bts",
+      color: "var(--lime)",
+      hint: "Ouvrir",
+      run: openViewer,
+    });
+    add({
+      group: "Actions",
+      title: "Télécharger le tableau de synthèse",
+      sub: "Fichier .xlsx",
+      keys: "synthese tableau excel xlsx",
+      color: "var(--lime)",
+      hint: "↓",
+      run: () => {
+        const a = document.createElement("a");
+        a.href = "assets/files/Tableau_De_Synthese.xlsx";
+        a.download = "";
+        a.click();
+      },
+    });
+    add({
+      group: "Actions",
+      title: "Retour en haut",
+      sub: "Accueil",
+      keys: "top debut accueil",
+      color: "var(--paper)",
+      hint: "↑",
+      run: () => scrollToTarget("#home"),
+    });
+    [
+      ["GitHub", "https://github.com/tibolecodeur", "code depot repo"],
+      ["LinkedIn", "https://www.linkedin.com/in/thibaultbrebion2103/", "reseau profil cv"],
+      ["Instagram", "https://www.instagram.com/tibo_brb/", "reseau"],
+    ].forEach(([title, url, keys]) =>
+      add({
+        group: "Liens",
+        title,
+        sub: url.replace(/^https:\/\/(www\.)?/, ""),
+        keys,
+        color: "var(--blue)",
+        hint: "↗",
+        run: () => openUrl(url),
+      }),
+    );
+    return items;
+  }
+
+  // Score simple : début de titre > mot du titre > titre > mots-clés > contenu > lettres dans l'ordre
+  function scoreItem(item, tokens) {
+    let total = 0;
+    let where = "title";
+    for (const t of tokens) {
+      let s;
+      if (item.nTitle.startsWith(t)) s = 100;
+      else if (item.nTitle.includes(` ${t}`)) s = 80;
+      else if (item.nTitle.includes(t)) s = 60;
+      else if (item.nKeys.includes(t) || item.nSub.includes(t)) s = 30;
+      else if (item.nText.includes(t)) {
+        s = 12;
+        where = "text";
+      } else {
+        let i = 0;
+        for (const c of item.nTitle) if (c === t[i]) i++;
+        if (i < t.length) return null;
+        s = 4;
+      }
+      total += s;
+    }
+    return { score: total + item.boost, where };
+  }
+
+  // Extrait du contenu autour du mot trouvé
+  function excerpt(item, token) {
+    const i = item.nText.indexOf(token);
+    if (i < 0) return item.sub;
+    const start = Math.max(0, i - 28);
+    return `${start ? "…" : ""}${item.text.slice(start, i + token.length + 34)}…`;
+  }
+
+  function highlight(text, token) {
+    const i = token ? fold(text).indexOf(token) : -1;
+    if (i < 0) return escapeHtml(text);
+    return (
+      escapeHtml(text.slice(0, i)) +
+      `<mark>${escapeHtml(text.slice(i, i + token.length))}</mark>` +
+      escapeHtml(text.slice(i + token.length))
+    );
+  }
+
+  function optionHtml(it, i, sub, token, badge) {
+    return `<div class="palette-item" role="option" id="pal-${i}" data-i="${i}" aria-selected="false" style="--dot: ${it.color || "var(--lime)"}">
+        <span class="palette-dot" aria-hidden="true"></span>
+        <span class="palette-text">
+          <span class="palette-title">${highlight(it.title, token)}</span>
+          <span class="palette-sub">${highlight(sub || "", token)}</span>
+        </span>
+        ${badge ? `<span class="palette-badge">${badge}</span>` : ""}
+        <span class="palette-hint">${it.hint || ""}</span>
+      </div>`;
+  }
+
+  function renderPalette() {
+    const raw = paletteInput.value.trim();
+    const tokens = fold(raw).split(/\s+/).filter(Boolean);
+    let html = "";
+
+    if (!tokens.length) {
+      paletteResults = paletteItems.filter((it) => !it.hidden);
+      let group = "";
+      paletteResults.forEach((it, i) => {
+        if (it.group !== group) {
+          group = it.group;
+          html += `<div class="palette-group" role="presentation">${group}</div>`;
+        }
+        html += optionHtml(it, i, it.sub, "");
+      });
+    } else {
+      paletteResults = paletteItems
+        .map((it) => ({ it, r: scoreItem(it, tokens) }))
+        .filter((x) => x.r)
+        .sort((a, b) => b.r.score - a.r.score)
+        .slice(0, 12)
+        .map(({ it, r }) => ({ ...it, where: r.where }));
+      if (paletteResults.length) {
+        const n = paletteResults.length;
+        html += `<div class="palette-group" role="presentation">${n} résultat${n > 1 ? "s" : ""}</div>`;
+        paletteResults.forEach((it, i) => {
+          const sub = it.where === "text" ? excerpt(it, tokens[0]) : it.sub;
+          html += optionHtml(it, i, sub, tokens[0], it.group);
+        });
+      } else {
+        html = `<div class="palette-empty">
+            <p>Rien pour « ${escapeHtml(raw)} ».</p>
+            <span>Une question ? <a href="mailto:${MAIL}">Écrivez-moi</a>, je réponds vite.</span>
+          </div>`;
+      }
+    }
+
+    paletteList.innerHTML = html;
+    setPaletteActive(0);
+  }
+
+  function setPaletteActive(i) {
+    const options = $$(".palette-item", paletteList);
+    if (!options.length) {
+      paletteInput.removeAttribute("aria-activedescendant");
+      return;
+    }
+    paletteActive = (i + options.length) % options.length;
+    options.forEach((el, k) => {
+      const on = k === paletteActive;
+      el.classList.toggle("is-active", on);
+      el.setAttribute("aria-selected", String(on));
+      if (on) {
+        paletteInput.setAttribute("aria-activedescendant", el.id);
+        el.scrollIntoView({ block: "nearest" });
+      }
+    });
+  }
+
+  function runPaletteItem(i) {
+    const item = paletteResults[i];
+    const el = $(`#pal-${i}`, paletteList);
+    if (!item || !el) return;
+    if (item.keepOpen) {
+      item.run(el);
+      return;
+    }
+    closePalette(true);
+    // Laisse la palette se fermer avant d'ouvrir un panneau ou de défiler
+    setTimeout(() => item.run(el), 120);
+  }
+
+  function openPalette() {
+    if (palette.classList.contains("is-open")) return;
+    if (!paletteItems) paletteItems = buildPaletteItems();
+    if (menuOpen) setMenu(false);
+    closeViewer();
+    closeSheet();
+    paletteInput.value = "";
+    renderPalette();
+    palette.classList.add("is-open");
+    palette.setAttribute("aria-hidden", "false");
+    palette.inert = false;
+    scrollLock.stop();
+    paletteFocus.open(paletteInput);
+  }
+
+  function closePalette(skipFocus) {
+    if (!palette.classList.contains("is-open")) return;
+    palette.classList.remove("is-open");
+    palette.setAttribute("aria-hidden", "true");
+    palette.inert = true;
+    scrollLock.start();
+    if (skipFocus === true) document.activeElement?.blur();
+    else paletteFocus.close();
+  }
+
+  function initPalette() {
+    const kbd = $("[data-palette-kbd]");
+    if (kbd && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) kbd.textContent = "⌘ K";
+
+    $$("[data-palette-open]").forEach((btn) => btn.addEventListener("click", openPalette));
+    $$("[data-palette-close]", palette).forEach((el) => el.addEventListener("click", () => closePalette()));
+
+    paletteInput.addEventListener("input", renderPalette);
+    paletteInput.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setPaletteActive(paletteActive + 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setPaletteActive(paletteActive - 1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        runPaletteItem(paletteActive);
+      }
+    });
+    paletteList.addEventListener("pointermove", (e) => {
+      const opt = e.target.closest(".palette-item");
+      if (opt && Number(opt.dataset.i) !== paletteActive) setPaletteActive(Number(opt.dataset.i));
+    });
+    paletteList.addEventListener("click", (e) => {
+      const opt = e.target.closest(".palette-item");
+      if (opt) runPaletteItem(Number(opt.dataset.i));
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const typing = e.target.closest?.("input, textarea, select, [contenteditable]");
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (palette.classList.contains("is-open")) closePalette();
+        else openPalette();
+      } else if (e.key === "/" && !typing && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        openPalette();
+      }
+    });
+  }
+
   // Échap ferme ce qui est ouvert, du plus haut au plus bas
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-    if (viewer.classList.contains("is-open")) closeViewer();
+    if (palette.classList.contains("is-open")) closePalette();
+    else if (viewer.classList.contains("is-open")) closeViewer();
     else if (sheet.classList.contains("is-open")) closeSheet();
     else if (menuOpen) {
       setMenu(false);
@@ -1200,6 +1582,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjects();
   initStages();
   initViewer();
+  initPalette();
   initContact();
   initStatements();
   initReveals();

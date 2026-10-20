@@ -125,6 +125,20 @@
       <div class="header-right">
         <button
           type="button"
+          class="palette-btn"
+          data-palette-open
+          aria-label="Recherche rapide"
+          aria-keyshortcuts="Control+K Meta+K"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.8" />
+            <path d="M11 11l3.2 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <span class="palette-btn-label">Rechercher</span>
+          <kbd class="palette-kbd" data-palette-kbd>Ctrl K</kbd>
+        </button>
+        <button
+          type="button"
           class="menu-btn magnetic"
           id="menuBtn"
           aria-expanded="false"
@@ -1370,6 +1384,40 @@
         </footer>
       </section>
     </main>
+
+    <!-- ============================================
+         PALETTE DE COMMANDES (Ctrl/⌘ K)
+         ============================================ -->
+    <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Recherche rapide" aria-hidden="true">
+      <div class="palette-bg" data-palette-close></div>
+      <div class="palette-panel">
+        <div class="palette-field">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.8" />
+            <path d="M11 11l3.2 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <input
+            type="text"
+            class="palette-input"
+            placeholder="Une section, un projet, une techno…"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="paletteList"
+            aria-autocomplete="list"
+            autocomplete="off"
+            spellcheck="false"
+            enterkeyhint="go"
+          />
+          <button type="button" class="palette-esc" data-palette-close>esc</button>
+        </div>
+        <div class="palette-list" id="paletteList" role="listbox" aria-label="Résultats" data-lenis-prevent></div>
+        <footer class="palette-foot" aria-hidden="true">
+          <span><kbd>↑</kbd><kbd>↓</kbd> naviguer</span>
+          <span><kbd>↵</kbd> ouvrir</span>
+          <span class="palette-foot-tip">Essayez « Symfony » ou « stage »</span>
+        </footer>
+      </div>
+    </div>
 
     <!-- ============================================
          PANNEAU LATÉRAL — projets & stages

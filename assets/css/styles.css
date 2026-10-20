@@ -58,6 +58,8 @@ main [data-theme] { --bg: inherit; --fg: inherit; --accent: inherit; }
 }
 
 html {
+  /* Pas de saut de mise en page quand un panneau bloque le scroll */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   overflow-x: clip;
 }
@@ -1892,6 +1894,251 @@ section {
   letter-spacing: 0.05em;
 }
 .footer-top:hover { text-decoration: underline; }
+
+/* --------------------------------------------------------------------------
+   17 bis. PALETTE DE COMMANDES (Ctrl/⌘ K)
+   -------------------------------------------------------------------------- */
+.palette-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 2.9rem;
+  padding: 0 0.55rem 0 1rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform 0.4s var(--ease-back);
+}
+.palette-btn:hover { transform: translateY(-2px) rotate(-2deg); }
+.palette-kbd,
+.palette kbd {
+  padding: 0.18rem 0.45rem;
+  border: 1.5px solid currentColor;
+  border-radius: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.palette-kbd { opacity: 0.75; }
+
+.palette {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 1rem 1rem;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.35s;
+}
+.palette.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.palette-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 18, 18, 0.55);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+.palette.is-open .palette-bg { opacity: 1; }
+
+.palette-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(640px, 100%);
+  max-height: min(560px, 76vh);
+  border: 2px solid var(--ink);
+  border-radius: 1.3rem;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 10px 10px 0 var(--ink);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-14px) rotate(-1deg) scale(0.97);
+  transition:
+    opacity 0.3s var(--ease-out),
+    transform 0.45s var(--ease-back);
+}
+.palette.is-open .palette-panel {
+  opacity: 1;
+  transform: none;
+}
+
+.palette-field {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 2px solid var(--ink);
+}
+.palette-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.palette-input::placeholder { color: rgba(18, 18, 18, 0.4); }
+.palette-esc {
+  padding: 0.2rem 0.5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  opacity: 0.6;
+}
+
+.palette-list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.4rem 0.5rem 0.6rem;
+}
+.palette-group {
+  padding: 0.9rem 0.7rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+}
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.8rem;
+  cursor: pointer;
+}
+.palette-item.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+.palette-dot {
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background: var(--dot);
+  transition: transform 0.35s var(--ease-back);
+}
+.palette-item.is-active .palette-dot { transform: scale(1.35); }
+.palette-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.palette-title {
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.palette-sub {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.palette mark {
+  padding: 0 0.1em;
+  border-radius: 0.2em;
+  background: var(--lime);
+  color: var(--ink);
+}
+.palette-badge {
+  flex: none;
+  padding: 0.15rem 0.5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+.palette-hint {
+  flex: none;
+  min-width: 3.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-align: right;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.2s,
+    transform 0.3s var(--ease-out);
+}
+.palette-item.is-active .palette-hint {
+  opacity: 1;
+  transform: none;
+}
+
+.palette-empty {
+  display: grid;
+  gap: 0.4rem;
+  padding: 2.2rem 1rem;
+  text-align: center;
+}
+.palette-empty p {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.palette-empty span { font-size: 0.9rem; opacity: 0.7; }
+.palette-empty a { text-decoration: underline; text-underline-offset: 3px; }
+
+.palette-foot {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.7rem 1.1rem;
+  border-top: 2px solid var(--ink);
+  background: var(--sun);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+}
+.palette-foot kbd { margin-right: 0.2rem; }
+.palette-foot-tip { margin-left: auto; opacity: 0.7; }
+
+@media (max-width: 800px) {
+  .palette-btn {
+    width: 2.9rem;
+    padding: 0;
+    justify-content: center;
+  }
+  .palette-btn-label,
+  .palette-kbd { display: none; }
+  .palette-hint { display: none; }
+  .palette { padding: 0.75rem; }
+  .palette-panel {
+    max-height: calc(100dvh - 1.5rem);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+}
+/* Pas de clavier physique : pas d'aide clavier */
+@media (hover: none), (pointer: coarse) {
+  .palette-foot > span:not(.palette-foot-tip),
+  .palette-esc { display: none; }
+  .palette-foot-tip { margin-left: 0; }
+}
 
 /* --------------------------------------------------------------------------
    17. PANNEAU LATÉRAL (projets & stages)
