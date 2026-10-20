@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   // 1. SCROLL FLUIDE (Lenis) + verrouillage
   // ============================================
+  window.scrollTo(0, 0);
   let lenis = null;
   if (typeof Lenis !== "undefined" && !reduceMotion) {
     lenis = new Lenis({ lerp: 0.1, smoothWheel: true, syncTouch: false });
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   if (animate) {
     gsap.set(".hero .line-inner", { yPercent: 115 });
-    gsap.set(".hero-meta > *, .hero-bottom > *", { y: 40, opacity: 0 });
+    gsap.set(".hero-bottom > *", { y: 40, opacity: 0 });
     gsap.set(".sticker", { scale: 0 });
     gsap.set(".hero-marquee", { yPercent: 160 });
     gsap.set(".header", { yPercent: -120 });
@@ -220,11 +221,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .to(".header", { yPercent: 0, duration: 1, ease: "expo.out", clearProps: "transform" }, 0.1)
       .to(
-        ".hero-meta > *",
-        { y: 0, opacity: 1, duration: 0.9, stagger: 0.06, ease: "expo.out" },
-        0.15,
-      )
-      .to(
         ".hero-bottom > *",
         { y: 0, opacity: 1, duration: 1.1, stagger: 0.1, ease: "expo.out" },
         0.35,
@@ -244,11 +240,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ============================================
-  // 4. HEADER : horloge + masquage au scroll
+  // 4. HEADER : horloge du footer + masquage au scroll
   // ============================================
   function initHeader() {
     const header = $(".header");
-    const clockEls = $$("[data-clock]");
     const footerClock = $("[data-clock-footer]");
     const fmt = new Intl.DateTimeFormat("fr-FR", {
       hour: "2-digit",
@@ -258,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const tick = () => {
       const t = fmt.format(new Date());
-      clockEls.forEach((el) => (el.textContent = t));
       if (footerClock) footerClock.textContent = `Vendée, FR — ${t}`;
     };
     tick();
@@ -359,6 +353,12 @@ document.addEventListener("DOMContentLoaded", () => {
       { rootMargin: "-50% 0px -50% 0px" },
     );
     $$("main > section[data-theme]").forEach((s) => observer.observe(s));
+
+    // Marquees et stickers qui tournent : en pause quand ils ne sont pas visibles
+    const pauser = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle("is-offscreen", !entry.isIntersecting));
+    });
+    $$(".hero, .watch-bands").forEach((el) => pauser.observe(el));
   }
 
   // ============================================
@@ -475,7 +475,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const st = { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.6 };
       gsap.to(".hero-title .line:first-child .line-inner", { xPercent: -10, scrollTrigger: st });
       gsap.to(".hero-title .line--2 .line-inner", { xPercent: 8, scrollTrigger: { ...st } });
-      gsap.to(".hero-stickers", { y: -140, scrollTrigger: { ...st } });
+      // Sur mobile les stickers sont dans le flux : la parallaxe creuserait un trou
+      gsap.matchMedia().add("(min-width: 801px)", () => {
+        gsap.to(".hero-stickers", { y: -140, scrollTrigger: { ...st } });
+      });
     }
   }
 
@@ -539,8 +542,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // 10. COMPÉTENCES : rendu + filtres
   // ============================================
   function initSkills() {
-    const grid = $("[data-skills-grid]");
-    if (!grid || typeof SKILLS === "undefined") return;
+    const wall = $("[data-skills-wall]");
+    const plane = $("[data-skills-plane]");
+    const list = $("[data-skills-list]");
+    if (!wall || !plane || typeof SKILLS === "undefined") return;
 
     const GROUPS = {
       Front: "dev",
@@ -562,88 +567,181 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const COLORS = ["var(--tomato)", "var(--blue)", "var(--lime)", "var(--pink)", "var(--sun)"];
 
-    grid.innerHTML = SKILLS.map((s, i) => {
-      const level = parseInt(s.level, 10) / 100;
-      const logo = s.image
-        ? `<span class="skill-logo"><img src="${s.image}" alt="" loading="lazy" decoding="async" width="34" height="34" /></span>`
-        : `<span class="skill-logo skill-logo--mono" aria-hidden="true">${s.name}</span>`;
-      return `
-        <li data-group="${GROUPS[s.category] || "tools"}">
-          <article class="skill" style="--c: ${COLORS[i % COLORS.length]}; --lvl: ${level}; --tilt: ${i % 2 ? 1.5 : -1.5}deg">
-            <div class="skill-top">${logo}<span class="skill-cat">${s.category}</span></div>
-            <h3 class="skill-name">${s.name}</h3>
-            <p class="skill-desc">${s.desc}</p>
-            <div class="skill-meter" aria-label="Niveau ${s.level}">
-              <span class="skill-bar"><i></i></span>
-              <span class="skill-level">${s.level}</span>
-            </div>
-          </article>
-        </li>`;
-    }).join("");
+    const skills = SKILLS.map((s, i) => ({
+      ...s,
+      group: GROUPS[s.category] || "tools",
+      color: COLORS[i % COLORS.length],
+    }));
 
-    const items = $$("li", grid);
+    // Le mur est décoratif (tuiles dupliquées) : la liste lisible est à part
+    if (list) {
+      list.innerHTML = skills
+        .map((s) => `<li>${s.name} — ${s.category}, niveau ${s.level}</li>`)
+        .join("");
+    }
     const count = $("[data-skills-count]");
-    if (count) count.textContent = items.length;
+    if (count) count.textContent = skills.length;
 
-    // Entrée : cartes + jauges
-    if (animate) {
-      gsap.set(items, { y: 70, opacity: 0, rotate: () => gsap.utils.random(-6, 6) });
-      ScrollTrigger.batch(items, {
-        start: "top 92%",
-        once: true,
-        onEnter: (batch) =>
-          gsap.to(batch, {
-            y: 0,
-            opacity: 1,
-            rotate: 0,
-            duration: 0.9,
-            stagger: 0.05,
-            ease: "back.out(1.4)",
-          }),
+    // ---- Mur 3D en dérive ----
+    const TILE_W = 200;
+    const UNIT = 132 + 18; // hauteur de tuile + gap
+    const SPEED = 38; // px/s
+    const VARIANCE = 0.45;
+    const PARALLAX = 0.6;
+    const BASE = { tilt: 18, turn: 0, depth: 120 };
+
+    const tileHTML = (s, c) => {
+      const logo = s.image
+        ? `<span class="dw-logo"><img src="${s.image}" alt="" loading="lazy" decoding="async" width="28" height="28" draggable="false" /></span>`
+        : `<span class="dw-logo dw-logo--mono">${s.name}</span>`;
+      return `<div class="dw-tile" data-col="${c}" data-group="${s.group}" style="--c: ${s.color}; --lvl: ${parseInt(s.level, 10) / 100}">
+          <div class="dw-inner">
+            ${logo}<span class="dw-level">${s.level}</span>
+            <span class="dw-name">${s.name}</span>
+            <span class="dw-cat">${s.category}</span>
+            <span class="dw-bar"><i></i></span>
+          </div>
+        </div>`;
+    };
+
+    let cols = [];
+    let layoutKey = "";
+
+    // Ne reconstruit le DOM que si le nombre de colonnes / copies change
+    const build = () => {
+      const w = wall.clientWidth;
+      const h = wall.clientHeight;
+      if (!w || !h) return;
+      const n = Math.min(7, Math.max(3, Math.ceil((w * 1.25) / (TILE_W + 18))));
+      const groups = Array.from({ length: n }, () => []);
+      skills.forEach((s, i) => groups[i % n].push(s));
+      const metas = groups.map((g) => {
+        const copyH = Math.max(UNIT, g.length * UNIT);
+        return { g, copyH, copies: Math.max(2, Math.ceil((h * 1.6) / copyH) + 1) };
       });
-      $$(".skill-bar i", grid).forEach((barEl) => {
-        gsap.from(barEl, {
-          scaleX: 0,
-          duration: 1.2,
-          ease: "expo.out",
-          scrollTrigger: { trigger: barEl, start: "top 92%", once: true },
-        });
+      const key = metas.map((m) => `${m.g.length}x${m.copies}`).join("|");
+      if (key === layoutKey) return;
+      layoutKey = key;
+
+      plane.innerHTML = metas
+        .map(({ g, copies }, c) => {
+          const tiles = g.map((s) => tileHTML(s, c)).join("");
+          return `<div class="dw-col"><div class="dw-track">${tiles.repeat(copies)}</div></div>`;
+        })
+        .join("");
+
+      cols = $$(".dw-track", plane).map((track, c) => {
+        const pseudo = ((c * 0.6180339887 + 0.35) % 1) * 2 - 1;
+        const base = SPEED * (1 + VARIANCE * pseudo) * (c % 2 ? -1 : 1);
+        const copyH = metas[c].copyH;
+        return { track, copyH, base, vel: base, offset: copyH * ((c * 0.37) % 1) };
       });
+      active = null;
+      hoveredCol = -1;
+      render(0);
+    };
+
+    // ---- Boucle d'animation (s'arrête hors écran / onglet caché) ----
+    const pointer = { x: 0, y: 0, dx: 0, dy: 0 };
+    let hoveredCol = -1;
+    let active = null;
+    let raf = 0;
+    let last = 0;
+    let visible = false;
+    let planeKey = "";
+
+    const setPlane = () => {
+      const key = `${pointer.dx.toFixed(2)},${pointer.dy.toFixed(2)}`;
+      if (key === planeKey) return;
+      planeKey = key;
+      plane.style.transform =
+        `translate(-50%, -50%) scale(1.18) rotateX(${BASE.tilt + pointer.dy}deg) ` +
+        `rotateY(${BASE.turn + pointer.dx}deg) translateZ(${-BASE.depth}px)`;
+    };
+
+    const render = (dt) => {
+      const damp = 1 - Math.exp(-dt / 0.12);
+      pointer.dx += (pointer.x * PARALLAX * 8 - pointer.dx) * damp;
+      pointer.dy += (-pointer.y * PARALLAX * 8 - pointer.dy) * damp;
+      setPlane();
+      for (let c = 0; c < cols.length; c++) {
+        const col = cols[c];
+        if (dt) {
+          const target = hoveredCol === c ? 0 : col.base;
+          col.vel += (target - col.vel) * (1 - Math.exp(-dt / (target === 0 ? 0.16 : 0.28)));
+          col.offset = (((col.offset + col.vel * dt) % col.copyH) + col.copyH) % col.copyH;
+        }
+        col.track.style.transform = `translate3d(0, ${-col.offset.toFixed(2)}px, 0)`;
+      }
+    };
+
+    const tick = (ts) => {
+      raf = 0;
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0;
+      last = ts;
+      render(dt);
+      if (visible && !document.hidden) raf = requestAnimationFrame(tick);
+    };
+    const start = () => {
+      if (raf || !animate || !visible || document.hidden) return;
+      last = 0;
+      raf = requestAnimationFrame(tick);
+    };
+
+    new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        start();
+      },
+      { rootMargin: "100px 0px" },
+    ).observe(wall);
+    document.addEventListener("visibilitychange", start);
+
+    let resizeRaf = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(build);
+    }).observe(wall);
+    build();
+
+    // ---- Survol : délégation, pas de hit-test à chaque mouvement ----
+    const setActive = (tile) => {
+      if (tile === active) return;
+      active?.classList.remove("is-active");
+      tile?.classList.add("is-active");
+      active = tile;
+      hoveredCol = tile ? Number(tile.dataset.col) : -1;
+    };
+    wall.addEventListener("pointerover", (e) => setActive(e.target.closest(".dw-tile")));
+    wall.addEventListener("pointerleave", () => {
+      setActive(null);
+      pointer.x = 0;
+      pointer.y = 0;
+    });
+    if (finePointer && animate) {
+      let rect = null;
+      wall.addEventListener("pointerenter", () => (rect = wall.getBoundingClientRect()));
+      wall.addEventListener("pointermove", (e) => {
+        if (!rect) rect = wall.getBoundingClientRect();
+        pointer.x = (e.clientX - rect.left) / rect.width - 0.5;
+        pointer.y = (e.clientY - rect.top) / rect.height - 0.5;
+      });
+      window.addEventListener("scroll", () => (rect = null), { passive: true });
     }
 
-    // Filtres
+    // ---- Filtres : on met en avant une famille sans recalculer le mur ----
     const filters = $$(".filter");
     filters.forEach((btn) => {
       btn.addEventListener("click", () => {
         const f = btn.dataset.filter;
         filters.forEach((b) => {
-          const active = b === btn;
-          b.classList.toggle("is-active", active);
-          b.setAttribute("aria-pressed", String(active));
+          const on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-pressed", String(on));
         });
-        const visible = [];
-        items.forEach((li) => {
-          const show = f === "all" || li.dataset.group === f;
-          li.classList.toggle("is-hidden", !show);
-          if (show) visible.push(li);
-        });
-        if (count) count.textContent = visible.length;
-        if (animate) {
-          gsap.fromTo(
-            visible,
-            { scale: 0.85, opacity: 0, rotate: () => gsap.utils.random(-5, 5) },
-            {
-              scale: 1,
-              opacity: 1,
-              rotate: 0,
-              y: 0,
-              duration: 0.6,
-              stagger: 0.03,
-              ease: "back.out(1.6)",
-              overwrite: true,
-            },
-          );
-          ScrollTrigger.refresh();
+        wall.dataset.filter = f;
+        if (count) {
+          count.textContent = f === "all" ? skills.length : skills.filter((s) => s.group === f).length;
         }
       });
     });

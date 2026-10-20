@@ -280,13 +280,10 @@ section {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.8); opacity: 0; }
-}
 
-/* Révélation au scroll (pilotée par JS) */
-[data-reveal] { will-change: transform, opacity; }
+/* Animations en boucle figées hors écran (classe posée par JS) */
+.is-offscreen,
+.is-offscreen * { animation-play-state: paused !important; }
 
 /* --------------------------------------------------------------------------
    4. LOADER
@@ -385,7 +382,7 @@ section {
   right: 0;
   z-index: 70;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 1rem;
   padding: 1rem var(--gutter);
@@ -422,49 +419,11 @@ section {
 }
 .header-logo:hover .header-logo-mark { transform: rotate(-20deg) scale(1.08); }
 
-.header-clock {
-  display: flex;
-  gap: 0.9rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.header-clock span:last-child { font-variant-numeric: tabular-nums; }
-
 .header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.8rem;
-}
-
-.header-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.55rem 0.95rem;
-  border: 1.5px solid currentColor;
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.header-status i {
-  position: relative;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: #29c46b;
-}
-.header-status i::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: inherit;
-  animation: pulse 2s ease-out infinite;
 }
 
 .menu-btn {
@@ -643,18 +602,6 @@ section {
   padding-top: 6.2rem;
   padding-bottom: 0;
   overflow: clip;
-}
-
-.hero-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1.5px solid currentColor;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .hero-title {
@@ -1052,107 +999,154 @@ section {
 .filter:hover { transform: translateY(-2px) rotate(-2deg); }
 .filter.is-active { background: var(--ink); color: var(--sun); }
 
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 215px), 1fr));
-  gap: 1rem;
-}
-.skill {
-  --c: var(--tomato);
+/* Mur 3D en dérive (inspiré de DriftWall — React Bits) */
+.drift-wall {
   position: relative;
+  height: clamp(440px, 72svh, 680px);
+  margin-inline: calc(-1 * var(--gutter));
+  overflow: hidden;
+  contain: layout paint;
+  perspective: 1200px;
+  /* Fondu sur les 4 bords : le mur se dissout dans le fond au lieu d'être coupé */
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent),
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent),
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent);
+  mask-composite: intersect;
+}
+.dw-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.dw-col {
+  width: calc(200px + 18px);
+  transform-style: preserve-3d;
+}
+.dw-track {
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.dw-tile {
+  position: relative;
+  flex: none;
+  height: calc(132px + 18px);
+  transform-style: preserve-3d;
+}
+/* Pas de translateZ au repos : seule la tuile survolée devient un calque */
+.dw-inner {
+  position: absolute;
+  inset: 9px;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 0.45rem;
-  height: 100%;
-  padding: 1.1rem;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
+  align-items: start;
+  column-gap: 0.5rem;
+  padding: 0.85rem 0.95rem;
   border: 2px solid var(--ink);
-  border-radius: 1.2rem;
+  border-radius: 14px;
   background: var(--paper);
   color: var(--ink);
+  opacity: 0.85;
+  pointer-events: none;
   transition:
-    transform 0.45s var(--ease-back),
-    box-shadow 0.45s var(--ease-back);
+    transform 0.42s var(--ease-out),
+    opacity 0.42s var(--ease-out),
+    box-shadow 0.42s var(--ease-out);
 }
-.skill:hover {
-  transform: translate(-4px, -4px) rotate(var(--tilt, -1.5deg));
-  box-shadow: 6px 6px 0 var(--ink);
-}
-.skill-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.6rem;
-}
-.skill-logo {
+.dw-logo {
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.8rem;
-  background: #fff;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.6rem;
   border: 1.5px solid var(--ink);
-  overflow: hidden;
+  background: #fff;
 }
-.skill-logo img {
+.dw-logo img {
   width: 70%;
   height: 70%;
   object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.skill-logo--mono {
-  padding: 0 0.2rem;
+.dw-logo--mono {
+  padding: 0 0.15rem;
   background: var(--c);
+  font-size: 0.5rem;
   font-weight: 800;
-  font-size: 0.66rem;
   line-height: 1;
   text-align: center;
-  letter-spacing: -0.02em;
+  overflow: hidden;
 }
-.skill-cat {
+.dw-level {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.dw-name {
+  grid-column: 1 / -1;
+  align-self: end;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dw-cat {
+  grid-column: 1 / -1;
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.6;
 }
-.skill-name {
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-.skill-desc {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  opacity: 0.72;
-}
-.skill-meter {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.4rem;
-}
-.skill-bar {
-  flex: 1;
-  height: 8px;
+.dw-bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  margin-top: 0.5rem;
   border-radius: 99px;
   background: rgba(18, 18, 18, 0.1);
   overflow: hidden;
 }
-.skill-bar i {
+.dw-bar i {
   display: block;
   height: 100%;
+  border-right: 2px solid var(--ink);
   border-radius: inherit;
   background: var(--c);
-  border-right: 2px solid var(--ink);
-  transform-origin: left;
   transform: scaleX(var(--lvl));
+  transform-origin: left;
 }
-.skill-level {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-variant-numeric: tabular-nums;
+.dw-tile.is-active .dw-inner {
+  opacity: 1;
+  transform: translateZ(64px);
+  box-shadow: 6px 6px 0 var(--ink);
 }
-.skills-grid li.is-hidden { display: none; }
+
+/* Filtres : la famille choisie ressort, le reste s'efface */
+.drift-wall:not([data-filter="all"]) .dw-inner { opacity: 0.18; }
+.drift-wall[data-filter="dev"] [data-group="dev"] .dw-inner,
+.drift-wall[data-filter="data"] [data-group="data"] .dw-inner,
+.drift-wall[data-filter="script"] [data-group="script"] .dw-inner,
+.drift-wall[data-filter="tools"] [data-group="tools"] .dw-inner,
+.drift-wall .dw-tile.is-active .dw-inner { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dw-plane,
+  .dw-track { will-change: auto; }
+}
 
 /* --------------------------------------------------------------------------
    11. CERTIFICATIONS
@@ -2282,8 +2276,6 @@ section {
    19. RESPONSIVE
    -------------------------------------------------------------------------- */
 @media (max-width: 1100px) {
-  .header-clock { display: none; }
-  .header { grid-template-columns: 1fr auto; }
   .certs-grid { grid-template-columns: repeat(2, 1fr); }
   .stage-card { min-height: 30rem; }
   .p-row { grid-template-columns: 5.5rem 1fr 3rem; }
@@ -2291,7 +2283,7 @@ section {
   .p-arrow { width: 3rem; height: 3rem; }
 }
 
-/* Parcours : liste verticale quand il n'y a pas de scroll horizontal */
+/* Parcours : pas de pin horizontal, les cartes passent en swipe (voir plus bas) */
 @media (max-width: 899px) {
   .journey { padding: var(--section-y) 0; }
   .journey-pin {
@@ -2300,21 +2292,13 @@ section {
     overflow: visible;
   }
   .journey-progress { display: none; }
-  .journey-track {
-    flex-direction: column;
-    width: auto;
-    padding: 0 var(--gutter);
-  }
   .j-card {
-    width: auto;
     height: auto;
-    min-height: 0;
+    min-height: 24rem;
   }
-  .j-card-year { margin-top: 1.4rem; }
 }
 
 @media (max-width: 800px) {
-  .header-status { display: none; }
   .header-logo-name { display: none; }
 
   .section-head {
@@ -2336,10 +2320,11 @@ section {
   .menu-links a { font-size: min(6.3vh, 11.5vw); }
   .menu-aside { justify-content: flex-start; padding-bottom: 2rem; }
 
-  .hero { padding-top: 5.4rem; }
-  .hero-meta span:nth-child(3) { display: none; }
+  :root { --section-y: 4.5rem; }
+
+  .hero { padding-top: 5.4rem; min-height: 0; }
   .line--2 { text-align: left; }
-  .hero-bottom { grid-template-columns: 1fr; }
+  .hero-bottom { grid-template-columns: 1fr; margin-bottom: 0; }
   .hero-hint { display: none; }
 
   /* Stickers : rangés sous le texte, toujours déplaçables */
@@ -2351,7 +2336,7 @@ section {
     align-items: center;
     justify-content: center;
     gap: 0.9rem 0.7rem;
-    margin: 2.2rem 0 1rem;
+    margin: 2rem 0 0.5rem;
   }
   .sticker {
     position: relative;
@@ -2363,7 +2348,6 @@ section {
   .hero-marquee { transform: rotate(-2deg) translateY(-0.5rem) scaleX(1.08); }
 
   .stages-grid,
-  .sources-grid,
   .synth-card,
   .contact-grid { grid-template-columns: 1fr; }
   .stage-card { min-height: 26rem; }
@@ -2411,12 +2395,42 @@ section {
 }
 
 @media (max-width: 560px) {
-  .certs-grid { grid-template-columns: 1fr; }
-  .cert--wide { grid-column: auto; }
   .cert { height: 19rem; }
   .proj-modal-log-entry { grid-template-columns: 1fr; }
   .proj-modal-log-date { grid-row: auto; justify-self: start; }
   .footer { flex-direction: column; }
+}
+
+/* Mobile : les longues séries de cartes deviennent un swipe horizontal natif
+   (scroll-snap, pas de JS) au lieu de 3-4 écrans de défilement */
+@media (max-width: 899px) {
+  .journey-track,
+  .certs-grid,
+  .sources-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 0.9rem;
+    width: auto;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0.6rem var(--gutter) 1.4rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .journey-track::-webkit-scrollbar,
+  .certs-grid::-webkit-scrollbar,
+  .sources-grid::-webkit-scrollbar { display: none; }
+  /* La section Parcours n'a pas de gouttière latérale */
+  .journey-track { margin-inline: 0; }
+  .journey-track > *,
+  .certs-grid > *,
+  .sources-grid > * {
+    flex: 0 0 min(84vw, 23rem);
+    scroll-snap-align: start;
+  }
 }
 
 /* --------------------------------------------------------------------------
