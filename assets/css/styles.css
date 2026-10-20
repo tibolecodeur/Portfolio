@@ -512,7 +512,7 @@ section {
     color 0.35s var(--ease-out),
     transform 0.5s var(--ease-out);
 }
-.menu-links a span {
+.menu-links a > span:first-child {
   margin-top: 0.55em;
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -522,9 +522,104 @@ section {
 }
 .menu-links a:hover,
 .menu-links a:focus-visible {
-  color: var(--h);
   transform: translateX(1.2rem);
 }
+.menu-links a { transition: opacity 0.45s var(--ease-out), transform 0.5s var(--ease-out); }
+.menu-links a.is-dim { opacity: 0.25; }
+
+/* Lettres qui roulent vers une version penchée */
+.ml-word { display: inline-flex; }
+.ml-ch {
+  display: inline-block;
+  height: 1.12em;
+  margin: -0.04em -0.07em;
+  padding: 0 0.07em;
+  overflow: hidden;
+  line-height: 1.12;
+}
+.ml-ch > span {
+  display: block;
+  transition: transform 0.6s var(--ease) calc(var(--i) * 22ms);
+}
+.ml-ch > span + span { font-style: italic; }
+.menu-links a:hover .ml-ch > span,
+.menu-links a:focus-visible .ml-ch > span { transform: translateY(-100%); }
+
+/* Repère de la section en cours de lecture */
+.menu-links a.is-current::after {
+  content: "Vous êtes ici";
+  align-self: center;
+  margin-left: 0.9rem;
+  padding: 0.3rem 0.65rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Couleur qui envahit le menu depuis le curseur */
+.menu { --menu-fg: var(--paper); --menu-on-fg: var(--ink); }
+.menu[data-tone="ink"] { --menu-fg: var(--ink); --menu-on-fg: var(--paper); color: var(--ink); }
+.menu-flood {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.menu-flood-layer {
+  position: absolute;
+  inset: 0;
+  clip-path: circle(0% at var(--fx) var(--fy));
+  transition: clip-path 0.8s var(--ease);
+}
+.menu-flood-layer.is-in { clip-path: circle(150% at var(--fx) var(--fy)); }
+.menu-inner { position: relative; }
+.menu-open[data-menu-tone="ink"] .header { color: var(--ink); }
+.menu-open[data-menu-tone="ink"] .header-logo-mark,
+.menu-open[data-menu-tone="ink"] .menu-btn { background: var(--ink); color: var(--paper); }
+
+/* Grand numéro + phrase de la section survolée */
+.menu-preview {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: auto;
+  padding-top: 1rem;
+}
+.menu-preview-num {
+  display: block;
+  font-size: clamp(7rem, 24vh, 15rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--menu-fg);
+}
+.menu-preview-blurb {
+  max-width: 18ch;
+  min-height: 2.4em;
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-style: italic;
+  line-height: 1.15;
+}
+
+.menu-search {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-weight: 600;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+.menu-search:hover { background: var(--menu-fg); color: var(--menu-on-fg); }
 
 .menu-aside {
   display: flex;
@@ -561,7 +656,7 @@ section {
     background-color 0.3s,
     color 0.3s;
 }
-.menu-socials a:hover { background: var(--paper); color: var(--ink); }
+.menu-socials a:hover { background: var(--menu-fg); color: var(--menu-on-fg); }
 
 /* --------------------------------------------------------------------------
    7. CURSEUR (bulle d'action, pointeurs fins uniquement)
@@ -2566,6 +2661,19 @@ section {
   }
   .menu-links a { font-size: min(6.3vh, 11.5vw); }
   .menu-aside { justify-content: flex-start; padding-bottom: 2rem; }
+  .menu-preview { display: none; }
+  .menu-inner { overflow-x: hidden; }
+  /* Repère « vous êtes ici » réduit à une pastille */
+  .menu-links a.is-current::after {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-left: 0.55rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--lime);
+  }
 
   :root { --section-y: 4.5rem; }
 

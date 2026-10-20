@@ -353,6 +353,118 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Effets du menu : lettres qui roulent, couleur qui envahit l'écran depuis
+  // le curseur, grand numéro + phrase de la section, repère « vous êtes ici »
+  function initMenuFx() {
+    const links = $$(".menu-links a");
+    const flood = $(".menu-flood", menu);
+    const num = $("[data-menu-num]", menu);
+    const blurb = $("[data-menu-blurb]", menu);
+    if (!links.length || !flood) return;
+
+    // Chaque lettre est doublée pour rouler au survol ; le nom reste lisible via aria-label
+    links.forEach((a) => {
+      const numEl = a.querySelector("span");
+      const name = a.textContent.replace(numEl?.textContent || "", "").trim();
+      a.setAttribute("aria-label", name);
+      const word = document.createElement("span");
+      word.className = "ml-word";
+      word.setAttribute("aria-hidden", "true");
+      word.innerHTML = [...name]
+        .map((c, i) => `<span class="ml-ch" style="--i: ${i}"><span>${c}</span><span>${c}</span></span>`)
+        .join("");
+      [...a.childNodes].forEach((n) => n.nodeType === Node.TEXT_NODE && n.remove());
+      a.appendChild(word);
+    });
+
+    let current = null;
+    let here = null;
+    let toneTimer = 0;
+
+    const setPreview = (link) => {
+      if (!link) return;
+      num.textContent = link.querySelector("span").textContent;
+      blurb.textContent = link.dataset.blurb || "";
+      if (!animate) return;
+      gsap.fromTo(num, { yPercent: 40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: "expo.out", overwrite: true });
+      gsap.fromTo(blurb, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.05, ease: "expo.out", overwrite: true });
+    };
+
+    // Nouvelle couche de couleur qui grandit depuis (x, y) ; les anciennes sont retirées dessous
+    const pour = (color, tone, x, y) => {
+      const layer = document.createElement("span");
+      layer.className = "menu-flood-layer";
+      layer.style.background = color;
+      layer.style.setProperty("--fx", `${x}px`);
+      layer.style.setProperty("--fy", `${y}px`);
+      flood.appendChild(layer);
+      layer.getBoundingClientRect(); // force le point de départ de la transition
+      layer.classList.add("is-in");
+      const clear = () => {
+        while (flood.firstChild && flood.firstChild !== layer) flood.firstChild.remove();
+      };
+      if (animate) layer.addEventListener("transitionend", clear, { once: true });
+      else clear();
+      // Le texte change de teinte une fois que la couleur a couvert le lien survolé
+      clearTimeout(toneTimer);
+      toneTimer = setTimeout(
+        () => {
+          menu.dataset.tone = tone;
+          document.body.dataset.menuTone = tone;
+        },
+        animate ? 160 : 0,
+      );
+    };
+
+    const activate = (link, x, y) => {
+      if (link === current) return;
+      current = link;
+      pour(link.style.getPropertyValue("--h"), link.dataset.tone || "ink", x, y);
+      links.forEach((l) => l.classList.toggle("is-dim", l !== link));
+      setPreview(link);
+    };
+
+    const release = (x, y) => {
+      if (!current) return;
+      current = null;
+      pour("var(--ink)", "paper", x, y);
+      links.forEach((l) => l.classList.remove("is-dim"));
+      setPreview(here);
+    };
+
+    const list = $(".menu-links", menu);
+    links.forEach((link) => {
+      link.addEventListener("pointerenter", (e) => activate(link, e.clientX, e.clientY));
+      // Tactile : la couleur jaillit du doigt juste avant de naviguer
+      link.addEventListener("pointerdown", (e) => e.pointerType !== "mouse" && activate(link, e.clientX, e.clientY));
+      link.addEventListener("focus", () => {
+        const r = link.getBoundingClientRect();
+        activate(link, r.left + 24, r.top + r.height / 2);
+      });
+    });
+    list.addEventListener("pointerleave", (e) => e.pointerType === "mouse" && release(e.clientX, e.clientY));
+
+    // À l'ouverture : section en cours de lecture + menu remis à l'encre
+    menuBtn.addEventListener("click", () => {
+      if (!menuOpen) return;
+      const mid = window.innerHeight / 2;
+      const section = $$("main > section[id]").find((s) => {
+        const r = s.getBoundingClientRect();
+        return r.top <= mid && r.bottom > mid;
+      });
+      here = links.find((l) => l.getAttribute("href") === `#${section?.id}`) || links[0];
+      links.forEach((l) => l.classList.toggle("is-current", l === here));
+      current = null;
+      clearTimeout(toneTimer);
+      flood.innerHTML = "";
+      links.forEach((l) => l.classList.remove("is-dim"));
+      menu.dataset.tone = "paper";
+      document.body.dataset.menuTone = "paper";
+      num.textContent = here.querySelector("span").textContent;
+      blurb.textContent = here.dataset.blurb || "";
+    });
+  }
+
   // ============================================
   // 6. THÈME DE COULEUR SELON LA SECTION
   // ============================================
@@ -1067,7 +1179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const num = a.querySelector("span")?.textContent || "";
       add({
         group: "Sections",
-        title: a.textContent.replace(num, "").trim(),
+        title: a.getAttribute("aria-label") || a.textContent.replace(num, "").trim(),
         sub: num,
         color: a.style.getPropertyValue("--h"),
         hint: "Aller",
@@ -1357,8 +1469,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function initPalette() {
-    const kbd = $("[data-palette-kbd]");
-    if (kbd && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) kbd.textContent = "⌘ K";
+    const kbds = $$("[data-palette-kbd]");
+    if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) kbds.forEach((k) => (k.textContent = "⌘ K"));
 
     $$("[data-palette-open]").forEach((btn) => btn.addEventListener("click", openPalette));
     $$("[data-palette-close]", palette).forEach((el) => el.addEventListener("click", () => closePalette()));
@@ -1570,6 +1682,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   initHeader();
   initMenu();
+  initMenuFx();
   initThemes();
   initCursor();
   initMagnetic();

@@ -159,56 +159,66 @@
       aria-label="Navigation principale"
       aria-hidden="true"
     >
+      <!-- Couches de couleur qui envahissent le menu au survol (JS) -->
+      <div class="menu-flood" aria-hidden="true"></div>
       <div class="menu-inner">
         <ul class="menu-links">
           <li>
-            <a href="#home" data-scroll-to style="--h: var(--tomato)"
+            <a href="#home" data-scroll-to style="--h: var(--tomato)" data-blurb="Qui je suis, en deux phrases."
               ><span>01</span>Accueil</a
             >
           </li>
           <li>
-            <a href="#journey" data-scroll-to style="--h: var(--lime)"
+            <a href="#journey" data-scroll-to style="--h: var(--lime)" data-blurb="Du lycée à l'alternance, en six étapes."
               ><span>02</span>Parcours</a
             >
           </li>
           <li>
-            <a href="#skills" data-scroll-to style="--h: var(--sun)"
+            <a href="#skills" data-scroll-to style="--h: var(--sun)" data-blurb="25 outils et langages, pratiqués pour de vrai."
               ><span>03</span>Compétences</a
             >
           </li>
           <li>
-            <a href="#certifications" data-scroll-to style="--h: var(--pink)"
+            <a href="#certifications" data-scroll-to style="--h: var(--pink)" data-blurb="Sept formations et certifications."
               ><span>04</span>Certifications</a
             >
           </li>
           <li>
-            <a href="#projets" data-scroll-to style="--h: var(--blue)"
+            <a href="#projets" data-scroll-to style="--h: var(--blue)" data-tone="paper" data-blurb="Cinq ateliers professionnels du BTS."
               ><span>05</span>Projets</a
             >
           </li>
           <li>
-            <a href="#stages" data-scroll-to style="--h: var(--tomato)"
+            <a href="#stages" data-scroll-to style="--h: var(--tomato)" data-blurb="Deux stages, douze semaines en entreprise."
               ><span>06</span>Stages</a
             >
           </li>
           <li>
-            <a href="#veille" data-scroll-to style="--h: var(--lime)"
+            <a href="#veille" data-scroll-to style="--h: var(--lime)" data-blurb="Les agents IA autonomes, décryptés."
               ><span>07</span>Veille</a
             >
           </li>
           <li>
-            <a href="#synth" data-scroll-to style="--h: var(--sun)"
+            <a href="#synth" data-scroll-to style="--h: var(--sun)" data-blurb="Toutes mes compétences, en un tableau."
               ><span>08</span>Synthèse</a
             >
           </li>
           <li>
-            <a href="#contact" data-scroll-to style="--h: var(--pink)"
+            <a href="#contact" data-scroll-to style="--h: var(--pink)" data-blurb="Une alternance à proposer ? Parlons-en."
               ><span>09</span>Contact</a
             >
           </li>
         </ul>
 
         <aside class="menu-aside">
+          <div class="menu-preview" aria-hidden="true">
+            <span class="menu-preview-num" data-menu-num>01</span>
+            <p class="menu-preview-blurb" data-menu-blurb></p>
+          </div>
+          <button type="button" class="menu-search" data-palette-open>
+            <span>Tout chercher</span>
+            <kbd class="palette-kbd" data-palette-kbd>Ctrl K</kbd>
+          </button>
           <div>
             <p class="label">Écrire</p>
             <a href="mailto:brebionthibault2006@gmail.com" class="menu-mail"
